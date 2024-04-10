@@ -9,9 +9,9 @@ export function test_regexp(adresse, type) {
   let bon_format = "";
 
   if (type == "cidr") {
-    bon_format = /\d+[.]\d+[.]\d+[.]\d+[/]\d/g;
+    bon_format = /\d+[.]\d+[.]\d+[.]\d+[/]\d+/g;
   } else {
-    bon_format = /\d+[.]\d+[.]\d+[.]\d/g;
+    bon_format = /\d+[.]\d+[.]\d+[.]\d+/g;
   }
   let concordance = bon_format.test(adresse);
   if (concordance) {
