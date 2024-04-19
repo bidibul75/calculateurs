@@ -1,10 +1,9 @@
-import { chaine_vers_decimal, chaine_vers_tableau, tableau_vers_chaine, conversion_binaire_tableau } from "./conversion_chaines_tableaux.js";
-import { test_nombres, test_regexp } from "./validation_nettoyage_entrees.js";
+import { test_regexp, test_nombres } from "./validation_nettoyage_entrees.js";
+import {chaine_vers_tableau, chaine_vers_decimal, chaine_vers_tableau, tableau_vers_chaine, conversion_binaire_tableau} from "conversion_chaines_tableaux.js";
 
 let erreur = "";
-let adresses_reseau = ["192.16 8.1.0", "1 92.168.2.0", "192.0.3.0", "192.132.3.0"];
+let reseaux = ["110", "27", "50", "200"];
 let adresses_reseau_bin = [];
-
 
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -56,8 +55,16 @@ function traitement_adresse(adresse) {
   let suffixe = supernet.length;
   console.log("supernet :", supernet, " suffixe : ", suffixe);
   supernet += "0".repeat(32 - supernet.length);
-  supernet = chaine_vers_decimal(supernet) + "/" + suffixe;
+  supernet = decimal(supernet) + "/" + suffixe;
   return supernet;
 }
 
-console.log("résultat :",traitement_adresse(adresses_reseau));
+function calcul_masques (nombre_hotes){
+  for (let i=1; i<nombre_hotes; i++){
+    if (2**i>=nombre_hotes) return 32-i;
+  }
+}
+
+console.log(calcul_masques(40));
+
+// console.log("résultat :",traitement_adresse(adresses_reseau));
