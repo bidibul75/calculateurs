@@ -1,8 +1,8 @@
 import { test_regexp, test_nombres } from "./validation_nettoyage_entrees.js";
-import {chaine_vers_tableau, chaine_vers_decimal, chaine_vers_tableau, tableau_vers_chaine, conversion_binaire_tableau} from "conversion_chaines_tableaux.js";
+import { chaine_vers_decimal, chaine_vers_tableau, tableau_vers_chaine, conversion_binaire_tableau} from "./conversion_chaines_tableaux.js";
 
 let erreur = "";
-let reseaux = ["110", "27", "50", "200"];
+let adresses_reseau = ["110", "27", "50", "200"];
 let adresses_reseau_bin = [];
 
 
@@ -18,7 +18,7 @@ function test_supernet(adresse) {
   return supernet;
 }
 //------------------------------------------------------------------------------------------------------------------------
-function traitement_adresse(adresse) {
+function traitement_adresse(adresses_reseau) {
   let adresses_bin_tableau = [];
   // Nettoyage et test des adresses
   for (let i = 0; i < adresses_reseau.length; i++) {
@@ -65,6 +65,6 @@ function calcul_masques (nombre_hotes){
   }
 }
 
-console.log(calcul_masques(40));
+console.log(calcul_masques(200));
 
 // console.log("résultat :",traitement_adresse(adresses_reseau));
