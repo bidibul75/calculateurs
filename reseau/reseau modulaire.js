@@ -1,3 +1,5 @@
+'use strict';
+
 import { test_regexp } from "./validation_nettoyage_entrees.js";
 
 let erreur = "";

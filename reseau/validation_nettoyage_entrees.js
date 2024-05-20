@@ -1,3 +1,5 @@
+'use strict';
+
 // Regroupe les fonctions de validation et de nettoyage des entrées utilisateur
 
 

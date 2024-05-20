@@ -1,3 +1,5 @@
+'use strict';
+
 import { chaine_vers_tableau, tableau_vers_chaine } from "./conversion_chaines_tableaux.js";
 
 // Regroupe des traitements sur les adresses IP 

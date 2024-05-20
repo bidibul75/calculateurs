@@ -1,3 +1,5 @@
+'use strict';
+
 import { chaine_vers_decimal, chaine_vers_tableau, tableau_vers_chaine, conversion_binaire_tableau } from "./conversion_chaines_tableaux.js";
 import { test_nombres, test_regexp } from "./validation_nettoyage_entrees.js";
 

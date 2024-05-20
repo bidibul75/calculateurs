@@ -1,3 +1,5 @@
+'use strict';
+
 // Regroupe les fonctions de conversions de chaînes de caractères et de tableaux
 
 // Convertit une chaîne de caractères contenant une adresse IP en tableau

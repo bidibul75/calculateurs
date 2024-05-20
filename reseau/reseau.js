@@ -1,3 +1,5 @@
+'use strict';
+
 import { chaine_vers_decimal, conversion_binaire_tableau, chaine_vers_tableau } from "./conversion_chaines_tableaux.js";
 import { calcul_adresses_disponibles, decalage_adresse } from "./traitements_adresses.js";
 import { test_regexp, test_nombres } from "./validation_nettoyage_entrees.js";

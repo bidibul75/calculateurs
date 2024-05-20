@@ -1,3 +1,5 @@
+'use strict';
+
 // La fonction agencement_sous_reseaux calcule le meilleur agencement de sous-réseaux
 // pour loger les sous-réseaux dans un espace donné avec un minimum de perte.
 
