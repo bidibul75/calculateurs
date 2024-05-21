@@ -1,13 +1,44 @@
 'use strict';
 
-import { chaine_vers_decimal, conversion_binaire_tableau, chaine_vers_tableau } from "./conversion_chaines_tableaux.js";
-import { calcul_adresses_disponibles, decalage_adresse } from "./traitements_adresses.js";
-import { test_regexp, test_nombres } from "./validation_nettoyage_entrees.js";
+import { test_regexp } from "./validation_nettoyage_entrees.js";
 
 let erreur = "";
 let adresse_reseau = "";
 let adresse_diffusion = "";
+//-----------------------------------------------------------------------------------------------------------------------
+function chaine_vers_tableau(chaine) {
+  let tableau = chaine.split(".");
+  return tableau;
+}
 
+function tableau_vers_chaine(tableau) {
+  let chaine = tableau.join(".");
+  return chaine;
+}
+//-----------------------------------------------------------------------------------------------------------------------
+function calcul_adresses_disponibles(adresse_diffusion, adresse_reseau) {
+  adresse_reseau = chaine_vers_tableau(adresse_reseau);
+  adresse_diffusion = chaine_vers_tableau(adresse_diffusion);
+
+  let nb_adresses_disponibles = 1;
+  let ecart = 0;
+  for (let i = 0; i < 4; i++) {
+    ecart = adresse_diffusion[i] - adresse_reseau[i];
+    if (ecart != 0) nb_adresses_disponibles *= ecart + 1;
+  }
+  return nb_adresses_disponibles;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Fonction pour calculer la première adresse réseau disponible ou la dernière
+// à partir des adresses réseau ou de diffusion
+function decalage_adresse(adresse, decalage) {
+  let adresse_reseau_tableau = chaine_vers_tableau(adresse);
+  adresse_reseau_tableau[3] = String(Number(adresse_reseau_tableau[3]) + decalage
+  );
+  let nouvelle_adresse_reseau = tableau_vers_chaine(adresse_reseau_tableau);
+  return nouvelle_adresse_reseau;
+}
 
 //------------------------------------------------------------------------------------------------------------------------
 function traitement_adresse(adresse) {
@@ -23,7 +54,7 @@ function traitement_adresse(adresse) {
   let adresse_bin = adresse.split("/");
   let masque = Number(adresse_bin[1]);
   let adresse_traitee = adresse_bin[0];
-  adresse_bin = chaine_vers_tableau(adresse_traitee);
+  adresse_bin = adresse_traitee.split(".");
   erreur = test_nombres(adresse_bin, masque);
   adresse = adresse_bin[0];
 
@@ -48,17 +79,17 @@ function traitement_adresse(adresse) {
     adresse_diffusion += adresse_bin2[i] | masque_generique[i];
   };
 
-  // On met en forme les adresses au format décimal séparé par des points à l'aide de la fonction chaine_vers_decimal :
-  masque_reseau = chaine_vers_decimal(masque_reseau);
-  masque_generique = chaine_vers_decimal(masque_generique);
+  // On met en forme les adresses au format décimal séparé par des points à l'aide de la fonction decimal :
+  masque_reseau = decimal(masque_reseau);
+  masque_generique = decimal(masque_generique);
 
    // On met en forme les adresses au format décimal séparé par des points à l'aide de la fonction décimal :
   
-   adresse_reseau = chaine_vers_decimal(adresse_reseau);
+   adresse_reseau = decimal(adresse_reseau);
  
    let premiere_adresse_reseau = decalage_adresse(adresse_reseau, 1);
  
-   adresse_diffusion = chaine_vers_decimal(adresse_diffusion);
+   adresse_diffusion = decimal(adresse_diffusion);
  
    let derniere_adresse_reseau = decalage_adresse(adresse_diffusion, -1);
  
