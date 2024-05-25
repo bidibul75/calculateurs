@@ -1,19 +1,25 @@
 import 'dart:io';
 
 void main() {
-  Adresse adresse = Adresse('122.2  .33.44/2 4', 'cidr');
+  Adresse adresse = Adresse('125.126  .128.222/8', 'cidr');
   print("adresse_bin : ");
   print(adresse.adresse_bin);
-  print("Adresse réseau :" + adresse.masque_reseau);
-  print("Adresse de diffusion :" + adresse.masque_diffusion);
-  print("adresse seule : ");
-  print(adresse.adresseSeule);
   print("Adresse réseau :");
   print(adresse.adresse_reseau);
   print("Adresse diffusion");
   print(adresse.adresse_diffusion);
-  print("adresse réseau");
+  print("Adresse fournie");
   print(adresse.adresse_bin2);
+  print("adresse reseau tableau");
+  print(adresse.adresseReseauTableau);
+  print("adresse diffusion tableau");
+  print(adresse.adresseDiffusionTableau);
+  print("Première adresse réseau");
+  print(adresse.premiereAdresseReseau);
+  print("Dernière adresse réseau");
+  print(adresse.derniereAdresseReseau);
+  print("nombre d'adresses");
+  print(adresse.nombreAdressesDisponibles);
 }
 
 class Adresse {
@@ -25,13 +31,18 @@ class Adresse {
       masque_reseau = "",
       masque_diffusion = "",
       adresse_bin2 = "";
-  int suffixe = 0, longueur = 0;
-  List<dynamic> adresse_bin = [], adresseSeule = [];
+  int suffixe = 0, longueur = 0, valeurTemp = 0;
+  double nombreAdressesDisponibles = 0;
+  List<dynamic> adresse_bin = [],
+      adresseSeule = [],
+      adresseReseauTableau = [],
+      adresseDiffusionTableau = [],
+      premiereAdresseReseau = [],
+      derniereAdresseReseau = [];
 
   Adresse(this.adresseATraiter, this.type) {
     test();
     String resultat = traitement_regexp();
-    print(resultat);
     if (resultat.substring(0, 6) == "Erreur") exit(1);
     this.adresse_bin = decoupe();
     calcul_masques();
@@ -41,6 +52,15 @@ class Adresse {
     this.adresse_reseau = chaineVersDecimal(this.adresse_reseau);
     this.adresse_diffusion = chaineVersDecimal(this.adresse_diffusion);
     this.adresse_bin2 = chaineVersDecimal(this.adresse_bin2);
+    this.adresseReseauTableau = chaineVersTableau(this.adresse_reseau);
+    this.adresseDiffusionTableau = chaineVersTableau(this.adresse_diffusion);
+
+    this.premiereAdresseReseau = this.adresseReseauTableau.sublist(0);
+    this.premiereAdresseReseau = decalageAdresse(this.premiereAdresseReseau, 1);
+    this.derniereAdresseReseau = this.adresseDiffusionTableau.sublist(0);
+    this.derniereAdresseReseau =
+        decalageAdresse(this.derniereAdresseReseau, -1);
+    this.nombreAdressesDisponibles = calculAdressesDisponibles();
   }
 
   void test() => print("adresse en début de traitement : $adresseATraiter");
@@ -61,7 +81,6 @@ class Adresse {
         this.adresseATraiter = adresseTraitee;
         return adresseTraitee;
       }
-      ;
     } else {
       RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+");
       if (exp.firstMatch(adresseTraitee) == null) {
@@ -71,24 +90,23 @@ class Adresse {
         this.adresseATraiter = adresseTraitee;
         return adresseTraitee;
       }
-      ;
     }
   }
 
-  List decoupe() {
+  List<dynamic> decoupe() {
     adresse_bin = this.adresseATraiter.split("/");
     adresse_bin = test_nombres(adresse_bin);
     return adresse_bin;
   }
 
-  List test_nombres(List adresse_bin) {
+  List<dynamic> test_nombres(List adresse_bin) {
     suffixe = int.parse(adresse_bin[1]);
     this.suffixe = suffixe;
     if (suffixe < 0 || suffixe > 32) {
       print("Erreur : suffixe incorrect");
       exit(1);
     }
-    List adresse_bin2 = adresse_bin[0].split(".");
+    List<dynamic> adresse_bin2 = adresse_bin[0].split(".");
     adresse_bin2.add(adresse_bin[1]);
     return adresse_bin2;
   }
@@ -129,8 +147,42 @@ class Adresse {
     }
     return chaineDecimale;
   }
-//String decalageAdresse(String adresse, int decalage){
 
-//}
+  List<dynamic> chaineVersTableau(String chaine) {
+    return chaine.split(".");
+  }
 
+  String tableauVersChaine(List tableau) {
+    return tableau.join(".");
+  }
+
+  double calculAdressesDisponibles() {
+    double nbAdressesDisponibles = 1, ecart;
+    for (int i = 0; i < 4; i++) {
+      ecart = double.parse(this.adresseDiffusionTableau[i]) -
+          double.parse(this.adresseReseauTableau[i]);
+      print(ecart);
+      if (ecart != 0) nbAdressesDisponibles *= (ecart + 1);
+    }
+    return nbAdressesDisponibles;
+  }
+
+  List decalageAdresse(List<dynamic> adresse, int decalage) {
+    int i = 3;
+    valeurTemp = (int.parse(adresse[i]) + decalage);
+    if (valeurTemp == -1) {
+      adresse[i] = "255";
+      for (int j = 2; j > 0; j--) {
+        if (adresse[j] == "0") {
+          adresse[j] = "255";
+        } else {
+          adresse[j] = (int.parse(adresse[j]) + decalage).toString();
+          break;
+        }
+      }
+    } else {
+      adresse[i] = valeurTemp.toString();
+    }
+    return adresse;
+  }
 }
