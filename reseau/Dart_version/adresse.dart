@@ -1,19 +1,17 @@
+// IPV4 mask calculator
+
 import 'dart:io';
 
 void main() {
-  Adresse adresse = Adresse('125.126  .128.222/8', 'cidr');
-  print("adresse_bin : ");
-  print(adresse.adresse_bin);
+  Adresse adresse = Adresse('192.16 18.1.0/6', 'cidr');
+  print("Masque réseau :");
+  print(adresse.masque_reseau);
+  print("Masque inverse :");
+  print(adresse.masque_diffusion);
   print("Adresse réseau :");
   print(adresse.adresse_reseau);
   print("Adresse diffusion");
   print(adresse.adresse_diffusion);
-  print("Adresse fournie");
-  print(adresse.adresse_bin2);
-  print("adresse reseau tableau");
-  print(adresse.adresseReseauTableau);
-  print("adresse diffusion tableau");
-  print(adresse.adresseDiffusionTableau);
   print("Première adresse réseau");
   print(adresse.premiereAdresseReseau);
   print("Dernière adresse réseau");
@@ -31,8 +29,7 @@ class Adresse {
       masque_reseau = "",
       masque_diffusion = "",
       adresse_bin2 = "";
-  int suffixe = 0, longueur = 0, valeurTemp = 0;
-  double nombreAdressesDisponibles = 0;
+  int suffixe = 0, longueur = 0, valeurTemp = 0, nombreAdressesDisponibles = 0;
   List<dynamic> adresse_bin = [],
       adresseSeule = [],
       adresseReseauTableau = [],
@@ -61,6 +58,8 @@ class Adresse {
     this.derniereAdresseReseau =
         decalageAdresse(this.derniereAdresseReseau, -1);
     this.nombreAdressesDisponibles = calculAdressesDisponibles();
+    this.masque_reseau = chaineVersDecimal(this.masque_reseau);
+    this.masque_diffusion = chaineVersDecimal(this.masque_diffusion);
   }
 
   void test() => print("adresse en début de traitement : $adresseATraiter");
@@ -107,6 +106,12 @@ class Adresse {
       exit(1);
     }
     List<dynamic> adresse_bin2 = adresse_bin[0].split(".");
+    for (int i = 0; i < 4; i++) {
+      if (int.parse(adresse_bin2[i]) < 0 || int.parse(adresse_bin2[i]) > 255) {
+        print("L'adresse comporte une erreur sur un(des) nombres.");
+        exit(1);
+      }
+    }
     adresse_bin2.add(adresse_bin[1]);
     return adresse_bin2;
   }
@@ -156,12 +161,11 @@ class Adresse {
     return tableau.join(".");
   }
 
-  double calculAdressesDisponibles() {
-    double nbAdressesDisponibles = 1, ecart;
+  int calculAdressesDisponibles() {
+    int nbAdressesDisponibles = 1, ecart;
     for (int i = 0; i < 4; i++) {
-      ecart = double.parse(this.adresseDiffusionTableau[i]) -
-          double.parse(this.adresseReseauTableau[i]);
-      print(ecart);
+      ecart = int.parse(this.adresseDiffusionTableau[i]) -
+          int.parse(this.adresseReseauTableau[i]);
       if (ecart != 0) nbAdressesDisponibles *= (ecart + 1);
     }
     return nbAdressesDisponibles;
@@ -172,7 +176,7 @@ class Adresse {
     valeurTemp = (int.parse(adresse[i]) + decalage);
     if (valeurTemp == -1) {
       adresse[i] = "255";
-      for (int j = 2; j > 0; j--) {
+      for (int j = 2; j >= 0; j--) {
         if (adresse[j] == "0") {
           adresse[j] = "255";
         } else {
