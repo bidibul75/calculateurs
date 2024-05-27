@@ -3,7 +3,7 @@
 import 'dart:io';
 
 void main() {
-  Adresse adresse = Adresse('192.16 18.1.0/6', 'cidr');
+  Adresse adresse = Adresse('192.16.18.1/31');
   print("Masque réseau :");
   print(adresse.masque_reseau);
   print("Masque inverse :");
@@ -16,8 +16,10 @@ void main() {
   print(adresse.premiereAdresseReseau);
   print("Dernière adresse réseau");
   print(adresse.derniereAdresseReseau);
-  print("nombre d'adresses");
+  print("Nombre d'adresses");
   print(adresse.nombreAdressesDisponibles);
+  print("Adresse binaire :");
+  print(adresse.adresse_bin2);
 }
 
 class Adresse {
@@ -25,7 +27,6 @@ class Adresse {
       erreur = "",
       adresse_reseau = "",
       adresse_diffusion = "",
-      type,
       masque_reseau = "",
       masque_diffusion = "",
       adresse_bin2 = "";
@@ -37,7 +38,7 @@ class Adresse {
       premiereAdresseReseau = [],
       derniereAdresseReseau = [];
 
-  Adresse(this.adresseATraiter, this.type) {
+  Adresse(this.adresseATraiter) {
     test();
     String resultat = traitement_regexp();
     if (resultat.substring(0, 6) == "Erreur") exit(1);
@@ -48,16 +49,21 @@ class Adresse {
     calculAdressesReseauDiffusion();
     this.adresse_reseau = chaineVersDecimal(this.adresse_reseau);
     this.adresse_diffusion = chaineVersDecimal(this.adresse_diffusion);
-    this.adresse_bin2 = chaineVersDecimal(this.adresse_bin2);
     this.adresseReseauTableau = chaineVersTableau(this.adresse_reseau);
     this.adresseDiffusionTableau = chaineVersTableau(this.adresse_diffusion);
 
     this.premiereAdresseReseau = this.adresseReseauTableau.sublist(0);
-    this.premiereAdresseReseau = decalageAdresse(this.premiereAdresseReseau, 1);
     this.derniereAdresseReseau = this.adresseDiffusionTableau.sublist(0);
-    this.derniereAdresseReseau =
-        decalageAdresse(this.derniereAdresseReseau, -1);
-    this.nombreAdressesDisponibles = calculAdressesDisponibles();
+    this.nombreAdressesDisponibles = 0;
+
+    if (this.suffixe < 31) {
+      this.premiereAdresseReseau =
+          decalageAdresse(this.premiereAdresseReseau, 1);
+      this.derniereAdresseReseau =
+          decalageAdresse(this.derniereAdresseReseau, -1);
+      this.nombreAdressesDisponibles = calculAdressesDisponibles();
+    }
+
     this.masque_reseau = chaineVersDecimal(this.masque_reseau);
     this.masque_diffusion = chaineVersDecimal(this.masque_diffusion);
   }
@@ -68,27 +74,16 @@ class Adresse {
     String adresseTraitee = this.adresseATraiter;
     adresseTraitee = adresseTraitee.replaceAll(" ", "");
     print(adresseTraitee);
-    if (adresseTraitee.length > 18)
-      return "$adresseTraitee Erreur ! l'adresse entrée comporte trop de caractères.";
-
-    if (type == 'cidr') {
-      RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+[/][0-9]+");
-      if (exp.firstMatch(adresseTraitee) == null) {
-        return "Erreur REGEXP";
-      } else {
-        print("passe regexp");
-        this.adresseATraiter = adresseTraitee;
-        return adresseTraitee;
-      }
+    if (adresseTraitee.length > 18) {
+      return "Erreur ! l'adresse entrée comporte trop de caractères.";
+    }
+    RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+[/][0-9]+");
+    if (exp.firstMatch(adresseTraitee) == null) {
+      return "Erreur REGEXP";
     } else {
-      RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+");
-      if (exp.firstMatch(adresseTraitee) == null) {
-        return "Erreur REGEXP";
-      } else {
-        print("passe regexp");
-        this.adresseATraiter = adresseTraitee;
-        return adresseTraitee;
-      }
+      print("passe regexp");
+      this.adresseATraiter = adresseTraitee;
+      return adresseTraitee;
     }
   }
 
@@ -143,7 +138,7 @@ class Adresse {
     }
   }
 
-  String chaineVersDecimal(String chaine) {
+ static String chaineVersDecimal(String chaine) {
     String chaineDecimale = "";
     for (int i = 0; i < 32; i += 8) {
       chaineDecimale +=
