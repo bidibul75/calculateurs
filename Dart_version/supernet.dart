@@ -2,13 +2,13 @@ import 'adresse.dart';
 
 void main() {
   List<String> adresses_reseau = [
-    "192.13 2.3.1/32",
-    "192.132.3.1/32",
-    "1 92.168.2.0/32",
-    "192.0.3.0/32",
-    "192.132.3.0/27"
+    "192.168.1.0/8",
+    "192.168.2.0/24",
+    "192.168.3.0/24",
+    "192.168.4.0/24"
   ];
   List<Supernet> adresses_reseau_objet = [];
+  List<String> listToBeTreated = [];
   List bottomAddress, topAddress;
   String supernetAddress = "";
   int addressCount = adresses_reseau.length, supernetAddressSuffix = 0;
@@ -22,8 +22,10 @@ void main() {
   // Tests if there are duplicate addresses and
   // if an address is inside another one
   for (int i = 0; i < adresses_reseau_objet.length; i++) {
+    print("i=" + i.toString());
     if (adresses_reseau_objet[i].suffixe == 32) {
       for (int j = 0; j < adresses_reseau_objet.length; j++) {
+        print("j=" + j.toString());
         if (j == i) continue;
         if (adresses_reseau_objet[j].suffixe != 32) {
           // launches the inside test
@@ -46,7 +48,7 @@ void main() {
           print("adresse reseau tableau");
           print(adresses_reseau_objet[i].adresseReseauTableau);
           print(adresses_reseau_objet[j].adresseReseauTableau);
-
+          // Equality of 2 addresses test
           if (Supernet.testIfEqual(
               adresses_reseau_objet[i].adresseReseauTableau,
               adresses_reseau_objet[j].adresseReseauTableau)) {
@@ -56,10 +58,20 @@ void main() {
       }
     }
   }
+// Creation of the list to submit to calculation of the supernet
+  for (int i = 0; i < adresses_reseau_objet.length; i++) {
+    if (adresses_reseau_objet[i].suffixe == 32) {
+      listToBeTreated.add(adresses_reseau_objet[i].adresse_bin2);
+    } else {
+      listToBeTreated.add(adresses_reseau_objet[i].adresseReseauStringBinaire);
+      listToBeTreated
+          .add(adresses_reseau_objet[i].adresseDiffusionStringBinaire);
+    }
+  }
 
   // Calculation of the supernet address
   supernetAddress =
-      supernetCalculation(addressCount, adresses_reseau_objet, supernetAddress);
+      supernetCalculation(addressCount, listToBeTreated, supernetAddress = "");
   supernetAddressSuffix = supernetAddress.length;
   supernetAddress += "0" * (32 - supernetAddressSuffix);
   supernetAddress = Adresse.chaineVersDecimal(supernetAddress) +
@@ -74,17 +86,16 @@ Supernet implementationObjet(String adresse) {
   return supernet;
 }
 
-String supernetCalculation(int addressCount,
-    List<Supernet> adresses_reseau_objet, String supernetAddress) {
+String supernetCalculation(
+    int addressCount, List<String> list, String supernetAddress) {
   for (int i = 0; i < 32; i++) {
     for (int addressNumber = 0;
         addressNumber < addressCount - 1;
         addressNumber++) {
-      if (adresses_reseau_objet[addressNumber].adresse_bin2[i] !=
-          adresses_reseau_objet[addressNumber + 1].adresse_bin2[i])
+      if (list[addressNumber][i] != list[addressNumber + 1][i])
         return supernetAddress;
     }
-    supernetAddress += adresses_reseau_objet[0].adresse_bin2[i];
+    supernetAddress += list[0][i];
   }
   return supernetAddress;
 }
