@@ -3,7 +3,7 @@
 import 'dart:io';
 
 void main() {
-  Adresse adresse = Adresse('192.16.18.1/31');
+  Adresse adresse = Adresse("192.132.3.0/27");
   print("Masque réseau :");
   print(adresse.masque_reseau);
   print("Masque inverse :");
@@ -29,14 +29,16 @@ class Adresse {
       adresse_diffusion = "",
       masque_reseau = "",
       masque_diffusion = "",
-      adresse_bin2 = "";
-  int suffixe = 0, longueur = 0, valeurTemp = 0, nombreAdressesDisponibles = 0;
-  List<dynamic> adresse_bin = [],
+      adresse_bin2 = "",
+      adresseReseauStringBinaire = "",
+      adresseDiffusionStringBinaire = "";
+  int suffixe = 0, valeurTemp = 0, nombreAdressesDisponibles = 0;
+
+  List<String> adresseReseauTableau = [],
       adresseSeule = [],
-      adresseReseauTableau = [],
       adresseDiffusionTableau = [],
-      premiereAdresseReseau = [],
-      derniereAdresseReseau = [];
+      adresse_bin = [];
+  List<dynamic> premiereAdresseReseau = [], derniereAdresseReseau = [];
 
   Adresse(this.adresseATraiter) {
     test();
@@ -45,13 +47,16 @@ class Adresse {
     this.adresse_bin = decoupe();
     calcul_masques();
     this.adresseSeule = this.adresse_bin.sublist(0, 4);
-    conversionBinaireTableau();
+    conversionBinaireTableau(this.adresseSeule);
     calculAdressesReseauDiffusion();
     this.adresse_reseau = chaineVersDecimal(this.adresse_reseau);
     this.adresse_diffusion = chaineVersDecimal(this.adresse_diffusion);
     this.adresseReseauTableau = chaineVersTableau(this.adresse_reseau);
     this.adresseDiffusionTableau = chaineVersTableau(this.adresse_diffusion);
-
+    this.adresseReseauStringBinaire =
+        conversionTableauVersStringBinaire(adresseReseauTableau);
+    this.adresseDiffusionStringBinaire =
+        conversionTableauVersStringBinaire(adresseDiffusionTableau);
     this.premiereAdresseReseau = this.adresseReseauTableau.sublist(0);
     this.derniereAdresseReseau = this.adresseDiffusionTableau.sublist(0);
     this.nombreAdressesDisponibles = 0;
@@ -74,10 +79,9 @@ class Adresse {
     String adresseTraitee = this.adresseATraiter;
     adresseTraitee = adresseTraitee.replaceAll(" ", "");
     print(adresseTraitee);
-    if (adresseTraitee.length > 18) {
+    if (adresseTraitee.length > 18)
       return "Erreur ! l'adresse entrée comporte trop de caractères.";
-    }
-    RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+[/][0-9]+");
+    RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+/[0-9]+");
     if (exp.firstMatch(adresseTraitee) == null) {
       return "Erreur REGEXP";
     } else {
@@ -87,20 +91,20 @@ class Adresse {
     }
   }
 
-  List<dynamic> decoupe() {
+  List<String> decoupe() {
     adresse_bin = this.adresseATraiter.split("/");
     adresse_bin = test_nombres(adresse_bin);
     return adresse_bin;
   }
 
-  List<dynamic> test_nombres(List adresse_bin) {
+  List<String> test_nombres(List adresse_bin) {
     suffixe = int.parse(adresse_bin[1]);
     this.suffixe = suffixe;
     if (suffixe < 0 || suffixe > 32) {
       print("Erreur : suffixe incorrect");
       exit(1);
     }
-    List<dynamic> adresse_bin2 = adresse_bin[0].split(".");
+    List<String> adresse_bin2 = adresse_bin[0].split(".");
     for (int i = 0; i < 4; i++) {
       if (int.parse(adresse_bin2[i]) < 0 || int.parse(adresse_bin2[i]) > 255) {
         print("L'adresse comporte une erreur sur un(des) nombres.");
@@ -116,12 +120,18 @@ class Adresse {
     this.masque_diffusion = "0" * suffixe + "1" * (32 - suffixe);
   }
 
-  void conversionBinaireTableau() {
+  List<String> conversionBinaireTableau(List<String> adresseTableau) {
     for (int i = 0; i < 4; i++) {
-      this.adresseSeule[i] = (int.parse(this.adresseSeule[i])).toRadixString(2);
-      longueur = this.adresseSeule[i].length;
-      this.adresseSeule[i] = "0" * (8 - longueur) + this.adresseSeule[i];
+      adresseTableau[i] = (int.parse(adresseTableau[i])).toRadixString(2);
+      int longueur = adresseTableau[i].length;
+      adresseTableau[i] = "0" * (8 - longueur) + adresseTableau[i];
     }
+    return adresseTableau;
+  }
+
+  String conversionTableauVersStringBinaire(List<String> liste) {
+    liste = conversionBinaireTableau(liste);
+    return liste.join("");
   }
 
   void calculAdressesReseauDiffusion() {
@@ -138,7 +148,7 @@ class Adresse {
     }
   }
 
- static String chaineVersDecimal(String chaine) {
+  static String chaineVersDecimal(String chaine) {
     String chaineDecimale = "";
     for (int i = 0; i < 32; i += 8) {
       chaineDecimale +=
@@ -148,7 +158,7 @@ class Adresse {
     return chaineDecimale;
   }
 
-  List<dynamic> chaineVersTableau(String chaine) {
+  List<String> chaineVersTableau(String chaine) {
     return chaine.split(".");
   }
 
@@ -167,21 +177,20 @@ class Adresse {
   }
 
   List decalageAdresse(List<dynamic> adresse, int decalage) {
-    int i = 3;
-    valeurTemp = (int.parse(adresse[i]) + decalage);
-    if (valeurTemp == -1) {
-      adresse[i] = "255";
-      for (int j = 2; j >= 0; j--) {
-        if (adresse[j] == "0") {
-          adresse[j] = "255";
-        } else {
-          adresse[j] = (int.parse(adresse[j]) + decalage).toString();
-          break;
-        }
+    for (int i = 3; i > -1; i--) {
+      if (decalage == -1 && adresse[i] == "0") {
+        adresse[i] = "255";
+        continue;
       }
-    } else {
-      adresse[i] = valeurTemp.toString();
+      if (decalage == 1 && adresse[i] == "255") {
+        adresse[i] = "0";
+        continue;
+      }
+      adresse[i] = (int.parse(adresse[i]) + decalage).toString();
+      return adresse;
     }
+    print(
+        "Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255.");
     return adresse;
   }
 }
