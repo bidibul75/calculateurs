@@ -8,8 +8,7 @@ void main() {
     "192.168.4.0/24"
   ];
   List<Supernet> adresses_reseau_objet = [];
-  List<String> listToBeTreated = [];
-  List bottomAddress, topAddress;
+  List<String> listToBeTreated = [], bottomAddress, topAddress;
   String supernetAddress = "";
   int addressCount = adresses_reseau.length, supernetAddressSuffix = 0;
 
@@ -22,10 +21,8 @@ void main() {
   // Tests if there are duplicate addresses and
   // if an address is inside another one
   for (int i = 0; i < adresses_reseau_objet.length; i++) {
-    print("i=" + i.toString());
     if (adresses_reseau_objet[i].suffixe == 32) {
       for (int j = 0; j < adresses_reseau_objet.length; j++) {
-        print("j=" + j.toString());
         if (j == i) continue;
         if (adresses_reseau_objet[j].suffixe != 32) {
           // launches the inside test
@@ -74,7 +71,7 @@ void main() {
       supernetCalculation(addressCount, listToBeTreated, supernetAddress = "");
   supernetAddressSuffix = supernetAddress.length;
   supernetAddress += "0" * (32 - supernetAddressSuffix);
-  supernetAddress = Adresse.chaineVersDecimal(supernetAddress) +
+  supernetAddress = chaineVersDecimal(supernetAddress) +
       "/" +
       supernetAddressSuffix.toString();
   print("L'adresse supernet est : " + supernetAddress);
