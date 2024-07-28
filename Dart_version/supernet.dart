@@ -4,8 +4,9 @@ void main() {
   List<String> adresses_reseau = [
     "192.168.1.0/8",
     "192.168.2.0/24",
-    "192.168.3.0/24",
-    "192.168.4.0/24"
+    "192.168.2.0/24",
+    "192.168.4.0/24",
+    "192.168.9.1/32"
   ];
   List<Supernet> adresses_reseau_objet = [];
   List<String> listToBeTreated = [], bottomAddress, topAddress;
@@ -58,7 +59,7 @@ void main() {
 // Creation of the list to submit to calculation of the supernet
   for (int i = 0; i < adresses_reseau_objet.length; i++) {
     if (adresses_reseau_objet[i].suffixe == 32) {
-      listToBeTreated.add(adresses_reseau_objet[i].adresse_bin2);
+      listToBeTreated.add(adresses_reseau_objet[i].address_only_string);
     } else {
       listToBeTreated.add(adresses_reseau_objet[i].adresseReseauStringBinaire);
       listToBeTreated
@@ -71,7 +72,7 @@ void main() {
       supernetCalculation(addressCount, listToBeTreated, supernetAddress = "");
   supernetAddressSuffix = supernetAddress.length;
   supernetAddress += "0" * (32 - supernetAddressSuffix);
-  supernetAddress = chaineVersDecimal(supernetAddress) +
+  supernetAddress = string_binary_to_string_decimal_dots(supernetAddress) +
       "/" +
       supernetAddressSuffix.toString();
   print("L'adresse supernet est : " + supernetAddress);
@@ -102,8 +103,9 @@ class Supernet extends Adresse {
 
   Supernet(this.adresse_reseau_temp) : super(adresse_reseau_temp) {}
 
+  // Tests if an address (without suffix) is included in a range
   static bool testIfInInterval(
-      List stringToTest, List bottomAddress, List topAddress) {
+      List<String> stringToTest, bottomAddress, topAddress) {
     for (int i = 0; i < 4; i++) {
       if ((int.parse(stringToTest[i]) > int.parse(topAddress[i])) ||
           (int.parse(stringToTest[i]) < int.parse(bottomAddress[i])))
@@ -112,8 +114,10 @@ class Supernet extends Adresse {
     return true;
   }
 
+  // Tests if 2 lists are equal
   static bool testIfEqual(List listA, List listB) {
-    for (int i = 0; i < 4; i++) {
+    if (listA.length != listB.length) return false;
+    for (int i = 0; i < listA.length; i++) {
       if (int.parse(listA[i]) != int.parse(listB[i])) return false;
     }
     return true;
