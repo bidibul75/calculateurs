@@ -14,6 +14,7 @@ void main() {
   print("Dernière adresse réseau : " + adresse.derniereAdresseReseau.toString());
   print("Nombre d'adresses : " + adresse.nombreAdressesDisponibles.toString());
   print("Adresse binaire : " + adresse.address_only_string);
+  print("Adresse list : " + adresse.adresseList.toString());
 }
 
 class Adresse {

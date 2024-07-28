@@ -10,7 +10,7 @@ void main() {
   ];
   List<Supernet> adresses_reseau_objet = [];
   List<String> listToBeTreated = [], bottomAddress, topAddress;
-  String supernetAddress = "";
+  String supernetAddress = "", result = "";
   int addressCount = adresses_reseau.length, supernetAddressSuffix = 0;
 
   // Creates a list of objects
@@ -21,41 +21,25 @@ void main() {
   // Tests on list items
   // Tests if there are duplicate addresses and
   // if an address is inside another one
+  List<String> bottomAddressA, topAddressA, bottomAddressB, topAddressB  ;
   for (int i = 0; i < adresses_reseau_objet.length; i++) {
-    if (adresses_reseau_objet[i].suffixe == 32) {
-      for (int j = 0; j < adresses_reseau_objet.length; j++) {
-        if (j == i) continue;
-        if (adresses_reseau_objet[j].suffixe != 32) {
-          // launches the inside test
-          print(adresses_reseau_objet[i].suffixe);
-          bottomAddress = adresses_reseau_objet[j].adresseReseauTableau;
-          topAddress = adresses_reseau_objet[j].adresseDiffusionTableau;
-          if (Supernet.testIfInInterval(
-              adresses_reseau_objet[i].adresseReseauTableau,
-              bottomAddress,
-              topAddress)) {
-            print(adresses_reseau_objet[i].adresseReseauTableau);
-            print(" is in the interval ");
-            print(adresses_reseau_objet[j].adresseReseauTableau);
-          } else {
-            print(adresses_reseau_objet[i].adresseReseauTableau);
-            print("isn't in the interval");
-            print(adresses_reseau_objet[j].adresseReseauTableau);
-          }
-        } else {
-          print("adresse reseau tableau");
-          print(adresses_reseau_objet[i].adresseReseauTableau);
-          print(adresses_reseau_objet[j].adresseReseauTableau);
-          // Equality of 2 addresses test
-          if (Supernet.testIfEqual(
-              adresses_reseau_objet[i].adresseReseauTableau,
-              adresses_reseau_objet[j].adresseReseauTableau)) {
-            print("Information : duplicate entries.");
-          }
-        }
+    for (int j = 0; j < adresses_reseau_objet.length; j++) {
+      if (j == i) continue;
+
+      bottomAddressA = adresses_reseau_objet[i].adresseReseauTableau;
+      topAddressA = adresses_reseau_objet[i].adresseDiffusionTableau;
+      bottomAddressB = adresses_reseau_objet[j].adresseReseauTableau;
+      topAddressB = adresses_reseau_objet[j].adresseDiffusionTableau;
+      result = Supernet.testIfIntersecting(bottomAddressA, topAddressA, bottomAddressB, topAddressB);
+
+      print("Result : $result");
+        print("Adresse A : bottom : " + bottomAddressA.toString() + " top : " + topAddressA.toString());
+        print("Adresse B : bottom : " + bottomAddressB.toString() + " top : " + topAddressB.toString());
+        continue;
       }
     }
-  }
+
+
 // Creation of the list to submit to calculation of the supernet
   for (int i = 0; i < adresses_reseau_objet.length; i++) {
     if (adresses_reseau_objet[i].suffixe == 32) {
@@ -103,23 +87,59 @@ class Supernet extends Adresse {
 
   Supernet(this.adresse_reseau_temp) : super(adresse_reseau_temp) {}
 
-  // Tests if an address (without suffix) is included in a range
-  static bool testIfInInterval(
-      List<String> stringToTest, bottomAddress, topAddress) {
-    for (int i = 0; i < 4; i++) {
-      if ((int.parse(stringToTest[i]) > int.parse(topAddress[i])) ||
-          (int.parse(stringToTest[i]) < int.parse(bottomAddress[i])))
-        return false;
+ static String testIfIntersecting(List<String> bottomAddressA, List<String> topAddressA, List<String> bottomAddressB, List<String> topAddressB) {
+
+    switch (testPosition(topAddressA, topAddressB)){
+      case "equal":
+        switch (testPosition(bottomAddressA, bottomAddressB)){
+          case "equal":
+            return "equal";
+          case "higher":
+            return "A_inside_B";
+          case "lower":
+            return "B_inside_A";
+        }
+      case "higher":
+        switch (testPosition(bottomAddressA, topAddressB)){
+          case "equal":
+            return "intersecting";
+          case "higher":
+            return "outside";
+          case "lower":
+            switch (testPosition(bottomAddressA, bottomAddressB)){
+              case "equal":
+                return "B_inside_A";
+              case "higher":
+                return "intersecting";
+              case "lower":
+                return "B_inside_A";
+            }
+        }
+      case "lower":
+        switch (testPosition(topAddressA, bottomAddressB)){
+          case "equal":
+            return "intersecting";
+          case "higher":
+            switch (testPosition(bottomAddressA, bottomAddressB)){
+              case "equal":
+                return "A_inside_B";
+              case "higher":
+                return "A_inside_B";
+              case "lower":
+                return "intersecting";
+            };
+          case "lower":
+            return "outside";
+        }
     }
-    return true;
+    return "Erreur de test des ensembles.";
   }
 
-  // Tests if 2 lists are equal
-  static bool testIfEqual(List listA, List listB) {
-    if (listA.length != listB.length) return false;
-    for (int i = 0; i < listA.length; i++) {
-      if (int.parse(listA[i]) != int.parse(listB[i])) return false;
+    static String testPosition (List<String> listA, List<String> listB){
+      for (int i = 0; i < 4; i++){
+        if (int.parse(listA[i]) > int.parse(listB[i])) return "higher";
+        if (int.parse(listA[i]) < int.parse(listB[i])) return "lower";
+      }
+      return "equal";
     }
-    return true;
-  }
 }
