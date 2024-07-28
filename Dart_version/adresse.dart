@@ -5,23 +5,15 @@ import 'dart:io';
 import 'MyException.dart';
 
 void main() {
-  Adresse adresse = Adresse("255.255.255.255/123");
-  print("Masque réseau :");
-  print(adresse.masque_reseau);
-  print("Masque inverse :");
-  print(adresse.masque_diffusion);
-  print("Adresse réseau :");
-  print(adresse.adresse_reseau);
-  print("Adresse diffusion");
-  print(adresse.adresse_diffusion);
-  print("Première adresse réseau");
-  print(adresse.premiereAdresseReseau);
-  print("Dernière adresse réseau");
-  print(adresse.derniereAdresseReseau);
-  print("Nombre d'adresses");
-  print(adresse.nombreAdressesDisponibles);
-  print("Adresse binaire :");
-  print(adresse.address_only_string);
+  Adresse adresse = Adresse("255.255.255.255/12");
+  print("Masque réseau : " + adresse.masque_reseau);
+  print("Masque inverse : " + adresse.masque_diffusion);
+  print("Adresse réseau : " + adresse.adresse_reseau);
+  print("Adresse diffusion : " + adresse.adresse_diffusion);
+  print("Première adresse réseau : " + adresse.premiereAdresseReseau.toString());
+  print("Dernière adresse réseau : " + adresse.derniereAdresseReseau.toString());
+  print("Nombre d'adresses : " + adresse.nombreAdressesDisponibles.toString());
+  print("Adresse binaire : " + adresse.address_only_string);
 }
 
 class Adresse {
@@ -63,12 +55,8 @@ class Adresse {
     this.address_only_string = list_strings_decimal_to_string_binary(this.address_only_list);
 
     for (int i = 0; i < 32; i++) {
-      this.adresse_reseau +=
-          (int.parse(this.address_only_string[i]) & int.parse(this.masque_reseau[i]))
-              .toString();
-      this.adresse_diffusion += (int.parse(this.address_only_string[i]) |
-              int.parse(this.masque_diffusion[i]))
-          .toString();
+      this.adresse_reseau += (int.parse(this.address_only_string[i]) & int.parse(this.masque_reseau[i])).toString();
+      this.adresse_diffusion += (int.parse(this.address_only_string[i]) | int.parse(this.masque_diffusion[i])).toString();
     }
 
     // Network address processing
