@@ -6,87 +6,86 @@ import 'MyException.dart';
 
 void main() {
   Adresse adresse = Adresse(" 90.16.84.82/22");
-  print("Masque réseau : " + adresse.masque_reseau);
-  print("Masque inverse : " + adresse.masque_diffusion);
-  print("Adresse réseau : " + adresse.adresse_reseau);
-  print("Adresse diffusion : " + adresse.adresse_diffusion);
-  print("Première adresse réseau : " + adresse.premiereAdresseReseau.toString());
-  print("Dernière adresse réseau : " + adresse.derniereAdresseReseau.toString());
-  print("Nombre d'adresses : " + thousand_spaces(adresse.nombreAdressesDisponibles));
-  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.nombreAdressesDisponibles-2));
+  print("Masque réseau : " + adresse.mask);
+  print("Masque inverse : " + adresse.wildcard_mask);
+  print("Adresse réseau : " + adresse.address_network);
+  print("Adresse diffusion : " + adresse.address_broadcast);
+  print("Première adresse réseau : " + adresse.address_available_first_one.toString());
+  print("Dernière adresse réseau : " + adresse.address_available_last_one.toString());
+  print("Nombre d'adresses : " + thousand_spaces(adresse.number_available_addresses));
+  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.number_available_addresses-2));
   print("Adresse binaire : " + adresse.address_only_string);
-  print("Adresse list : " + adresse.adresseList.toString());
+  print("Adresse list : " + adresse.address_list.toString());
 }
 
 class Adresse {
-  String adresseATraiter,
-      erreur = "",
-      adresse_reseau = "",
-      adresse_diffusion = "",
-      masque_reseau = "",
-      masque_diffusion = "",
+  String address_to_process,
+      address_network = "",
+      address_broadcast = "",
+      mask = "",
+      wildcard_mask = "",
       address_only_string = "",
-      adresseReseauStringBinaire = "",
-      adresseDiffusionStringBinaire = "";
-  int suffixe = 0, valeurTemp = 0, nombreAdressesDisponibles = 0;
+      address_network_string_binary = "",
+      address_broadcast_string_binary = "";
+  int suffix = 0, value_temp = 0, number_available_addresses = 0;
 
-  List<String> adresseList = [],
-      adresseReseauTableau = [],
+  List<String> address_list = [],
+      address_network_list = [],
       address_only_list = [],
-      adresseDiffusionTableau = [],
-      adresse_bin = [],
-      premiereAdresseReseau = [],
-      derniereAdresseReseau = [];
+      address_broadcast_list = [],
+      address_binary = [],
+      address_available_first_one = [],
+      address_available_last_one = [];
 
-  Adresse(this.adresseATraiter) {
-    String resultat = regexp_process(this.adresseATraiter);
-    this.adresseATraiter = resultat;
-    this.adresseList = string_to_list_strings(this.adresseATraiter);
+  Adresse(this.address_to_process) {
+    String resultat = regexp_process(this.address_to_process);
+    this.address_to_process = resultat;
+    this.address_list = string_to_list_strings(this.address_to_process);
 
     // Test of address numbers
-    tests_numbers_in_list(adresseList);
+    tests_numbers_in_list(address_list);
 
-    this.suffixe = int.parse(adresseList[4]);
+    this.suffix = int.parse(address_list[4]);
 
     // Calculation of network mask and diffusion mask
-    this.masque_reseau = "1" * this.suffixe + "0" * (32 - this.suffixe);
-    this.masque_diffusion = "0" * this.suffixe + "1" * (32 - this.suffixe);
+    this.mask = "1" * this.suffix + "0" * (32 - this.suffix);
+    this.wildcard_mask = "0" * this.suffix + "1" * (32 - this.suffix);
     
     // Extraction of the address without the suffix and casting it into a binary numbers string
-    this.address_only_list = this.adresseList.sublist(0, 4);
+    this.address_only_list = this.address_list.sublist(0, 4);
     this.address_only_string = list_strings_decimal_to_string_binary(this.address_only_list);
 
     for (int i = 0; i < 32; i++) {
-      this.adresse_reseau += (int.parse(this.address_only_string[i]) & int.parse(this.masque_reseau[i])).toString();
-      this.adresse_diffusion += (int.parse(this.address_only_string[i]) | int.parse(this.masque_diffusion[i])).toString();
+      this.address_network += (int.parse(this.address_only_string[i]) & int.parse(this.mask[i])).toString();
+      this.address_broadcast += (int.parse(this.address_only_string[i]) | int.parse(this.wildcard_mask[i])).toString();
     }
 
     // Network address processing
-    this.adresse_reseau = string_binary_to_string_decimal_dots(this.adresse_reseau);
-    this.adresseReseauTableau = string_dots_to_list(this.adresse_reseau);
-    this.adresseReseauStringBinaire = list_strings_decimal_to_string_binary(this.adresseReseauTableau);
-    this.adresseReseauTableau = list_strings_binary_to_decimal(this.adresseReseauTableau);
+    this.address_network = string_binary_to_string_decimal_dots(this.address_network);
+    this.address_network_list = string_dots_to_list(this.address_network);
+    this.address_network_string_binary = list_strings_decimal_to_string_binary(this.address_network_list);
+    this.address_network_list = list_strings_binary_to_decimal(this.address_network_list);
     // List's hard copy
-    this.premiereAdresseReseau = this.adresseReseauTableau.sublist(0);
+    this.address_available_first_one = this.address_network_list.sublist(0);
 
     // Broadcast address processing
-    this.adresse_diffusion = string_binary_to_string_decimal_dots(this.adresse_diffusion);
-    this.adresseDiffusionTableau = string_dots_to_list(this.adresse_diffusion);
-    this.adresseDiffusionStringBinaire = list_strings_decimal_to_string_binary(this.adresseDiffusionTableau);
-    this.adresseDiffusionTableau = list_strings_binary_to_decimal(this.adresseDiffusionTableau);
+    this.address_broadcast = string_binary_to_string_decimal_dots(this.address_broadcast);
+    this.address_broadcast_list = string_dots_to_list(this.address_broadcast);
+    this.address_broadcast_string_binary = list_strings_decimal_to_string_binary(this.address_broadcast_list);
+    this.address_broadcast_list = list_strings_binary_to_decimal(this.address_broadcast_list);
     // List's hard copy
-    this.derniereAdresseReseau = this.adresseDiffusionTableau.sublist(0);
+    this.address_available_last_one = this.address_broadcast_list.sublist(0);
 
-    if (this.suffixe < 32) {
-      this.premiereAdresseReseau = address_shift(this.premiereAdresseReseau, 1);
-      this.derniereAdresseReseau = address_shift(this.derniereAdresseReseau, -1);
-      this.nombreAdressesDisponibles = counts_available_addresses(this.adresseReseauTableau, this.adresseDiffusionTableau);
+    if (this.suffix < 32) {
+      this.address_available_first_one = address_shift(this.address_available_first_one, 1);
+      this.address_available_last_one = address_shift(this.address_available_last_one, -1);
+      this.number_available_addresses = counts_available_addresses(this.address_network_list, this.address_broadcast_list);
     } else {
-      this.nombreAdressesDisponibles = 1;
+      this.number_available_addresses = 1;
     }
 
-    this.masque_reseau = string_binary_to_string_decimal_dots(this.masque_reseau);
-    this.masque_diffusion = string_binary_to_string_decimal_dots(this.masque_diffusion);
+    this.mask = string_binary_to_string_decimal_dots(this.mask);
+    this.wildcard_mask = string_binary_to_string_decimal_dots(this.wildcard_mask);
   }
 }
 
