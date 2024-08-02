@@ -5,112 +5,91 @@ import 'dart:io';
 import 'MyException.dart';
 
 void main() {
-  Adresse adresse = Adresse("255.255.255.255/33");
-  print("Masque réseau :");
-  print(adresse.masque_reseau);
-  print("Masque inverse :");
-  print(adresse.masque_diffusion);
-  print("Adresse réseau :");
-  print(adresse.adresse_reseau);
-  print("Adresse diffusion");
-  print(adresse.adresse_diffusion);
-  print("Première adresse réseau");
-  print(adresse.premiereAdresseReseau);
-  print("Dernière adresse réseau");
-  print(adresse.derniereAdresseReseau);
-  print("Nombre d'adresses");
-  print(adresse.nombreAdressesDisponibles);
-  print("Adresse binaire :");
-  print(adresse.adresse_bin2);
+  Adresse adresse = Adresse(" 90.16.84.82/22");
+  print("Masque réseau : " + adresse.mask);
+  print("Masque inverse : " + adresse.wildcard_mask);
+  print("Adresse réseau : " + adresse.address_network);
+  print("Adresse diffusion : " + adresse.address_broadcast);
+  print("Première adresse réseau : " + adresse.address_available_first_one.toString());
+  print("Dernière adresse réseau : " + adresse.address_available_last_one.toString());
+  print("Nombre d'adresses : " + thousand_spaces(adresse.number_available_addresses));
+  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.number_available_addresses-2));
+  print("Adresse binaire : " + adresse.address_only_string);
+  print("Adresse list : " + adresse.address_list.toString());
 }
 
 class Adresse {
-  String adresseATraiter,
-      erreur = "",
-      adresse_reseau = "",
-      adresse_diffusion = "",
-      masque_reseau = "",
-      masque_diffusion = "",
-      adresse_bin2 = "",
-      adresseReseauStringBinaire = "",
-      adresseDiffusionStringBinaire = "";
-  int suffixe = 0, valeurTemp = 0, nombreAdressesDisponibles = 0;
+  String address_to_process,
+      address_network = "",
+      address_broadcast = "",
+      mask = "",
+      wildcard_mask = "",
+      address_only_string = "",
+      address_network_string_binary = "",
+      address_broadcast_string_binary = "";
+  int suffix = 0, value_temp = 0, number_available_addresses = 0;
 
-  List<String> adresseList = [],
-      adresseReseauTableau = [],
-      adresseSeule = [],
-      adresseDiffusionTableau = [],
-      adresse_bin = [],
-      premiereAdresseReseau = [],
-      derniereAdresseReseau = [];
+  List<String> address_list = [],
+      address_network_list = [],
+      address_only_list = [],
+      address_broadcast_list = [],
+      address_binary = [],
+      address_available_first_one = [],
+      address_available_last_one = [];
 
-  Adresse(this.adresseATraiter) {
-    String resultat = regexpProcess(this.adresseATraiter);
-    this.adresseATraiter = resultat;
-    this.adresseList = stringToListStrings(this.adresseATraiter);
+  Adresse(this.address_to_process) {
+    String resultat = regexp_process(this.address_to_process);
+    this.address_to_process = resultat;
+    this.address_list = string_to_list_strings(this.address_to_process);
 
     // Test of address numbers
-    testNumbersOfList(adresseList);
+    tests_numbers_in_list(address_list);
 
-    this.suffixe = int.parse(adresseList[4]);
+    this.suffix = int.parse(address_list[4]);
 
     // Calculation of network mask and diffusion mask
-    this.masque_reseau = "1" * this.suffixe + "0" * (32 - this.suffixe);
-    this.masque_diffusion = "0" * this.suffixe + "1" * (32 - this.suffixe);
+    this.mask = "1" * this.suffix + "0" * (32 - this.suffix);
+    this.wildcard_mask = "0" * this.suffix + "1" * (32 - this.suffix);
+    
+    // Extraction of the address without the suffix and casting it into a binary numbers string
+    this.address_only_list = this.address_list.sublist(0, 4);
+    this.address_only_string = list_strings_decimal_to_string_binary(this.address_only_list);
 
-    this.adresseSeule = this.adresseList.sublist(0, 4);
-
-    this.adresseSeule = listStringsDecimalToBinary(this.adresseSeule);
-
-    this.adresse_bin2 = this.adresseSeule.join("");
     for (int i = 0; i < 32; i++) {
-      this.adresse_reseau +=
-          (int.parse(this.adresse_bin2[i]) & int.parse(this.masque_reseau[i]))
-              .toString();
-      this.adresse_diffusion += (int.parse(this.adresse_bin2[i]) |
-              int.parse(this.masque_diffusion[i]))
-          .toString();
-    }
-    this.adresse_reseau = chaineVersDecimal(this.adresse_reseau);
-    this.adresse_diffusion = chaineVersDecimal(this.adresse_diffusion);
-    this.adresseReseauTableau = chaineVersTableau(this.adresse_reseau);
-    this.adresseDiffusionTableau = chaineVersTableau(this.adresse_diffusion);
-    this.adresseReseauStringBinaire =
-        conversionTableauVersStringBinaire(this.adresseReseauTableau);
-    this.adresseDiffusionStringBinaire =
-        conversionTableauVersStringBinaire(this.adresseDiffusionTableau);
-    this.premiereAdresseReseau = this.adresseReseauTableau.sublist(0);
-    this.premiereAdresseReseau =
-        listStringsBinaryToDecimal(this.premiereAdresseReseau);
-
-    this.derniereAdresseReseau = this.adresseDiffusionTableau.sublist(0);
-    this.derniereAdresseReseau =
-        listStringsBinaryToDecimal(this.derniereAdresseReseau);
-    this.adresseReseauTableau =
-        listStringsBinaryToDecimal(this.adresseReseauTableau);
-    this.adresseDiffusionTableau =
-        listStringsBinaryToDecimal(this.adresseDiffusionTableau);
-    this.nombreAdressesDisponibles = 0;
-
-    if (this.suffixe < 31) {
-      this.premiereAdresseReseau =
-          decalageAdresse(this.premiereAdresseReseau, 1);
-      this.derniereAdresseReseau =
-          decalageAdresse(this.derniereAdresseReseau, -1);
-
-      print("avant nb adresses");
-      print(adresseReseauTableau);
-      print(adresseDiffusionTableau);
-      this.nombreAdressesDisponibles = calculAdressesDisponibles(
-          this.adresseReseauTableau, this.adresseDiffusionTableau);
+      this.address_network += (int.parse(this.address_only_string[i]) & int.parse(this.mask[i])).toString();
+      this.address_broadcast += (int.parse(this.address_only_string[i]) | int.parse(this.wildcard_mask[i])).toString();
     }
 
-    this.masque_reseau = chaineVersDecimal(this.masque_reseau);
-    this.masque_diffusion = chaineVersDecimal(this.masque_diffusion);
+    // Network address processing
+    this.address_network = string_binary_to_string_decimal_dots(this.address_network);
+    this.address_network_list = string_dots_to_list(this.address_network);
+    this.address_network_string_binary = list_strings_decimal_to_string_binary(this.address_network_list);
+    this.address_network_list = list_strings_binary_to_decimal(this.address_network_list);
+    // List's hard copy
+    this.address_available_first_one = this.address_network_list.sublist(0);
+
+    // Broadcast address processing
+    this.address_broadcast = string_binary_to_string_decimal_dots(this.address_broadcast);
+    this.address_broadcast_list = string_dots_to_list(this.address_broadcast);
+    this.address_broadcast_string_binary = list_strings_decimal_to_string_binary(this.address_broadcast_list);
+    this.address_broadcast_list = list_strings_binary_to_decimal(this.address_broadcast_list);
+    // List's hard copy
+    this.address_available_last_one = this.address_broadcast_list.sublist(0);
+
+    if (this.suffix < 32) {
+      this.address_available_first_one = address_shift(this.address_available_first_one, 1);
+      this.address_available_last_one = address_shift(this.address_available_last_one, -1);
+      this.number_available_addresses = counts_available_addresses(this.address_network_list, this.address_broadcast_list);
+    } else {
+      this.number_available_addresses = 1;
+    }
+
+    this.mask = string_binary_to_string_decimal_dots(this.mask);
+    this.wildcard_mask = string_binary_to_string_decimal_dots(this.wildcard_mask);
   }
 }
 
-String regexpProcess(String addressToProcess) {
+String regexp_process(String addressToProcess) {
   addressToProcess = addressToProcess.replaceAll(" ", "");
   print(addressToProcess);
   if (addressToProcess.length > 18)
@@ -127,7 +106,7 @@ String regexpProcess(String addressToProcess) {
 }
 
 // Converts a string into a list of 5 strings (the elements of the address)
-List<String> stringToListStrings(String adresseString) {
+List<String> string_to_list_strings(String adresseString) {
   List<String> adresseList = adresseString.split("/");
   String suffixe = adresseList[1];
   adresseList = adresseList[0].split(".");
@@ -137,10 +116,10 @@ List<String> stringToListStrings(String adresseString) {
 }
 
 // Tests the numbers of the address
-void testNumbersOfList(List<String> adresseList) {
+void tests_numbers_in_list(List<String> adresseList) {
   int suffixe = int.parse(adresseList[4]);
   if (suffixe < 0 || suffixe > 32) {
-    throw new MyException("Erreur ! suffixe incorrect ", suffixe.toString());
+    throw new MyException("Erreur ! suffixe incorrect ", "");
   }
   for (int i = 0; i < 4; i++) {
     if (int.parse(adresseList[i]) < 0 || int.parse(adresseList[i]) > 255) {
@@ -149,23 +128,18 @@ void testNumbersOfList(List<String> adresseList) {
   }
 }
 
-// Converts a list of strings representing decimal numbers
-// into a list of strings representing binary numbers
-List<String> listStringsDecimalToBinary(List<String> addressListShort) {
+// Casts a list of decimal numbers into a single binary string
+String list_strings_decimal_to_string_binary(List<String> addressListShort) {
   for (int i = 0; i < 4; i++) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
     int longueur = addressListShort[i].length;
     addressListShort[i] = "0" * (8 - longueur) + addressListShort[i];
   }
-  return addressListShort;
+  return addressListShort.join("");
 }
 
-String conversionTableauVersStringBinaire(List<String> liste) {
-  liste = listStringsDecimalToBinary(liste);
-  return liste.join("");
-}
-
-String chaineVersDecimal(String chaine) {
+// Casts a binary string into a string of 4 decimals separated by dots
+String string_binary_to_string_decimal_dots(String chaine) {
   String chaineDecimale = "";
   for (int i = 0; i < 32; i += 8) {
     chaineDecimale +=
@@ -175,45 +149,60 @@ String chaineVersDecimal(String chaine) {
   return chaineDecimale;
 }
 
-List<String> chaineVersTableau(String chaine) {
+// Casts a dot-separated String into a List (address without the suffix)
+List<String> string_dots_to_list(String chaine) {
   return chaine.split(".");
 }
 
-String tableauVersChaine(List tableau) {
-  return tableau.join(".");
+// Casts a List into a dot-separated String 
+String list_to_string_dots(List list) {
+  return list.join(".");
 }
 
-int calculAdressesDisponibles(
+// Counts the number of available addresses among a range
+int counts_available_addresses(
     List<String> adresseReseauTableau, adresseDiffusionTableau) {
-  int nbAdressesDisponibles = 1, ecart;
+  int nbAdressesDisponibles = 1, ecart = 0;
   for (int i = 0; i < 4; i++) {
     ecart = int.parse(adresseDiffusionTableau[i]) -
         int.parse(adresseReseauTableau[i]);
-    if (ecart != 0) nbAdressesDisponibles *= (ecart + 1);
+    if (ecart != 0) {
+        nbAdressesDisponibles *= (ecart + 1);
+        }
   }
   return nbAdressesDisponibles;
 }
 
-List<String> decalageAdresse(List<String> adresse, int decalage) {
+// Calculates the address that follows or precedes a given address (without suffix)
+List<String> address_shift(List<String> address, int step) {
   for (int i = 3; i > -1; i--) {
-    if (decalage == -1 && adresse[i] == "0") {
-      adresse[i] = "255";
+    if (step == -1 && address[i] == "0") {
+      address[i] = "255";
       continue;
     }
-    if (decalage == 1 && adresse[i] == "255") {
-      adresse[i] = "0";
+    if (step == 1 && address[i] == "255") {
+      address[i] = "0";
       continue;
     }
-    adresse[i] = (int.parse(adresse[i]) + decalage).toString();
-    return adresse;
+    address[i] = (int.parse(address[i]) + step).toString();
+    return address;
   }
-  String addressString = tableauVersChaine(adresse);
+  String addressString = list_to_string_dots(address);
   throw new MyException ("Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ", addressString);
 }
 
-List<String> listStringsBinaryToDecimal(List<String> address) {
+List<String> list_strings_binary_to_decimal(List<String> address) {
   for (int i = 0; i < 4; i++) {
     address[i] = int.parse(address[i], radix: 2).toString();
   }
   return address;
+}
+
+String thousand_spaces(int number){
+  String number_string = number.toString(), result = "";
+  while (number_string.length > 3) {
+    result = number_string.substring(number_string.length-3) + " " + result;
+    number_string = number_string.substring(0, number_string.length-3);
+  }
+return (number_string + " " + result).trimRight();
 }

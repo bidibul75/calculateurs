@@ -1,85 +1,70 @@
 import 'adresse.dart';
+import 'relation.dart';
 
 void main() {
-  List<String> adresses_reseau = [
+  List<String> addresses_list = [
     "192.168.1.0/8",
     "192.168.2.0/24",
-    "192.168.3.0/24",
-    "192.168.4.0/24"
+    "192.168.2.0/24",
+    "192.168.4.0/24",
+    "192.168.9.1/32"
   ];
-  List<Supernet> adresses_reseau_objet = [];
-  List<String> listToBeTreated = [], bottomAddress, topAddress;
-  String supernetAddress = "";
-  int addressCount = adresses_reseau.length, supernetAddressSuffix = 0;
+  List<Supernet> addresses_object = [];
+  List<String> list_to_be_processed = [], bottomAddress, topAddress;
+  String supernetAddress = "", result = "", global_result = "";
+  int addressCount = addresses_list.length, supernet_address_Suffix = 0;
 
   // Creates a list of objects
-  for (int i = 0; i < adresses_reseau.length; i++) {
-    adresses_reseau_objet.add(implementationObjet(adresses_reseau[i]));
+  for (int i = 0; i < addresses_list.length; i++) {
+    addresses_object.add(implementation_object(addresses_list[i]));
   }
 
   // Tests on list items
   // Tests if there are duplicate addresses and
   // if an address is inside another one
-  for (int i = 0; i < adresses_reseau_objet.length; i++) {
-    if (adresses_reseau_objet[i].suffixe == 32) {
-      for (int j = 0; j < adresses_reseau_objet.length; j++) {
-        if (j == i) continue;
-        if (adresses_reseau_objet[j].suffixe != 32) {
-          // launches the inside test
-          print(adresses_reseau_objet[i].suffixe);
-          bottomAddress = adresses_reseau_objet[j].adresseReseauTableau;
-          topAddress = adresses_reseau_objet[j].adresseDiffusionTableau;
-          if (Supernet.testIfInInterval(
-              adresses_reseau_objet[i].adresseReseauTableau,
-              bottomAddress,
-              topAddress)) {
-            print(adresses_reseau_objet[i].adresseReseauTableau);
-            print(" is in the interval ");
-            print(adresses_reseau_objet[j].adresseReseauTableau);
-          } else {
-            print(adresses_reseau_objet[i].adresseReseauTableau);
-            print("isn't in the interval");
-            print(adresses_reseau_objet[j].adresseReseauTableau);
-          }
-        } else {
-          print("adresse reseau tableau");
-          print(adresses_reseau_objet[i].adresseReseauTableau);
-          print(adresses_reseau_objet[j].adresseReseauTableau);
-          // Equality of 2 addresses test
-          if (Supernet.testIfEqual(
-              adresses_reseau_objet[i].adresseReseauTableau,
-              adresses_reseau_objet[j].adresseReseauTableau)) {
-            print("Information : duplicate entries.");
-          }
-        }
+  List<String> bottom_address_A, top_address_A, bottom_address_B, top_address_B  ;
+  for (int i = 0; i < addresses_object.length; i++) {
+    for (int j = 0; j < addresses_object.length; j++) {
+      if (j == i) continue;
+
+      bottom_address_A = addresses_object[i].address_network_list;
+      top_address_A = addresses_object[i].address_broadcast_list;
+      bottom_address_B = addresses_object[j].address_network_list;
+      top_address_B = addresses_object[j].address_broadcast_list;
+      result = Supernet.test_of_intersections(bottom_address_A, top_address_A, bottom_address_B, top_address_B);
+      print("Result : $result");
+        print(" Adresse A : bottom : " + bottom_address_A.toString() + " top : " + top_address_A.toString());
+        print(" Adresse B : bottom : " + bottom_address_B.toString() + " top : " + top_address_B.toString());
+        Relation relation = new Relation (addresses_object[i].address_to_process, addresses_object[j].address_to_process, result);
       }
     }
-  }
+
+
 // Creation of the list to submit to calculation of the supernet
-  for (int i = 0; i < adresses_reseau_objet.length; i++) {
-    if (adresses_reseau_objet[i].suffixe == 32) {
-      listToBeTreated.add(adresses_reseau_objet[i].adresse_bin2);
+  for (int i = 0; i < addresses_object.length; i++) {
+    if (addresses_object[i].suffix == 32) {
+      list_to_be_processed.add(addresses_object[i].address_only_string);
     } else {
-      listToBeTreated.add(adresses_reseau_objet[i].adresseReseauStringBinaire);
-      listToBeTreated
-          .add(adresses_reseau_objet[i].adresseDiffusionStringBinaire);
+      list_to_be_processed.add(addresses_object[i].address_network_string_binary);
+      list_to_be_processed
+          .add(addresses_object[i].address_broadcast_string_binary);
     }
   }
 
   // Calculation of the supernet address
   supernetAddress =
-      supernetCalculation(addressCount, listToBeTreated, supernetAddress = "");
-  supernetAddressSuffix = supernetAddress.length;
-  supernetAddress += "0" * (32 - supernetAddressSuffix);
-  supernetAddress = chaineVersDecimal(supernetAddress) +
+      supernetCalculation(addressCount, list_to_be_processed, supernetAddress = "");
+  supernet_address_Suffix = supernetAddress.length;
+  supernetAddress += "0" * (32 - supernet_address_Suffix);
+  supernetAddress = string_binary_to_string_decimal_dots(supernetAddress) +
       "/" +
-      supernetAddressSuffix.toString();
+      supernet_address_Suffix.toString();
   print("L'adresse supernet est : " + supernetAddress);
 }
 
 // Building objects
-Supernet implementationObjet(String adresse) {
-  Supernet supernet = Supernet(adresse);
+Supernet implementation_object(String address) {
+  Supernet supernet = Supernet(address);
   return supernet;
 }
 
@@ -98,24 +83,63 @@ String supernetCalculation(
 }
 
 class Supernet extends Adresse {
-  String adresse_reseau_temp;
+  String address_temp;
 
-  Supernet(this.adresse_reseau_temp) : super(adresse_reseau_temp) {}
+  Supernet(this.address_temp) : super(address_temp) {}
 
-  static bool testIfInInterval(
-      List stringToTest, List bottomAddress, List topAddress) {
-    for (int i = 0; i < 4; i++) {
-      if ((int.parse(stringToTest[i]) > int.parse(topAddress[i])) ||
-          (int.parse(stringToTest[i]) < int.parse(bottomAddress[i])))
-        return false;
+ static String test_of_intersections(List<String> bottomAddressA, List<String> topAddressA, List<String> bottomAddressB, List<String> topAddressB) {
+
+    switch (testPosition(topAddressA, topAddressB)){
+      case "equal":
+        switch (testPosition(bottomAddressA, bottomAddressB)){
+          case "equal":
+            return "equal";
+          case "higher":
+            return "A_inside_B";
+          case "lower":
+            return "B_inside_A";
+        }
+      case "higher":
+        switch (testPosition(bottomAddressA, topAddressB)){
+          case "equal":
+            return "intersecting";
+          case "higher":
+            return "outside";
+          case "lower":
+            switch (testPosition(bottomAddressA, bottomAddressB)){
+              case "equal":
+                return "B_inside_A";
+              case "higher":
+                return "intersecting";
+              case "lower":
+                return "B_inside_A";
+            }
+        }
+      case "lower":
+        switch (testPosition(topAddressA, bottomAddressB)){
+          case "equal":
+            return "intersecting";
+          case "higher":
+            switch (testPosition(bottomAddressA, bottomAddressB)){
+              case "equal":
+                return "A_inside_B";
+              case "higher":
+                return "A_inside_B";
+              case "lower":
+                return "intersecting";
+            };
+          case "lower":
+            return "outside";
+        }
     }
-    return true;
+    return "Erreur de test des ensembles.";
   }
 
-  static bool testIfEqual(List listA, List listB) {
-    for (int i = 0; i < 4; i++) {
-      if (int.parse(listA[i]) != int.parse(listB[i])) return false;
+    static String testPosition (List<String> listA, List<String> listB){
+      for (int i = 0; i < 4; i++){
+        if (int.parse(listA[i]) > int.parse(listB[i])) return "higher";
+        if (int.parse(listA[i]) < int.parse(listB[i])) return "lower";
+      }
+      return "equal";
     }
-    return true;
-  }
 }
