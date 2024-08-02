@@ -1,4 +1,5 @@
 import 'adresse.dart';
+import 'relation.dart';
 
 void main() {
   List<String> adresses_reseau = [
@@ -10,7 +11,7 @@ void main() {
   ];
   List<Supernet> adresses_reseau_objet = [];
   List<String> listToBeTreated = [], bottomAddress, topAddress;
-  String supernetAddress = "", result = "";
+  String supernetAddress = "", result = "", global_result = "";
   int addressCount = adresses_reseau.length, supernetAddressSuffix = 0;
 
   // Creates a list of objects
@@ -31,11 +32,11 @@ void main() {
       bottomAddressB = adresses_reseau_objet[j].adresseReseauTableau;
       topAddressB = adresses_reseau_objet[j].adresseDiffusionTableau;
       result = Supernet.testIfIntersecting(bottomAddressA, topAddressA, bottomAddressB, topAddressB);
-
       print("Result : $result");
-        print("Adresse A : bottom : " + bottomAddressA.toString() + " top : " + topAddressA.toString());
-        print("Adresse B : bottom : " + bottomAddressB.toString() + " top : " + topAddressB.toString());
-        continue;
+        print(" Adresse A : bottom : " + bottomAddressA.toString() + " top : " + topAddressA.toString());
+        print(" Adresse B : bottom : " + bottomAddressB.toString() + " top : " + topAddressB.toString());
+        Relation relation = new Relation (adresses_reseau_objet[i].adresseATraiter, adresses_reseau_objet[j].adresseATraiter, result);
+        //continue;
       }
     }
 

@@ -5,14 +5,15 @@ import 'dart:io';
 import 'MyException.dart';
 
 void main() {
-  Adresse adresse = Adresse("255.255.255.255/12");
+  Adresse adresse = Adresse(" 90.16.84.82/22");
   print("Masque réseau : " + adresse.masque_reseau);
   print("Masque inverse : " + adresse.masque_diffusion);
   print("Adresse réseau : " + adresse.adresse_reseau);
   print("Adresse diffusion : " + adresse.adresse_diffusion);
   print("Première adresse réseau : " + adresse.premiereAdresseReseau.toString());
   print("Dernière adresse réseau : " + adresse.derniereAdresseReseau.toString());
-  print("Nombre d'adresses : " + adresse.nombreAdressesDisponibles.toString());
+  print("Nombre d'adresses : " + thousand_spaces(adresse.nombreAdressesDisponibles));
+  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.nombreAdressesDisponibles-2));
   print("Adresse binaire : " + adresse.address_only_string);
   print("Adresse list : " + adresse.adresseList.toString());
 }
@@ -196,4 +197,13 @@ List<String> list_strings_binary_to_decimal(List<String> address) {
     address[i] = int.parse(address[i], radix: 2).toString();
   }
   return address;
+}
+
+String thousand_spaces(int number){
+  String number_string = number.toString(), result = "";
+  while (number_string.length > 3) {
+    result = number_string.substring(number_string.length-3) + " " + result;
+    number_string = number_string.substring(0, number_string.length-3);
+  }
+return (number_string + " " + result).trimRight();
 }
