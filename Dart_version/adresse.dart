@@ -1,7 +1,5 @@
 // IPV4 mask calculator
 // erreur nombre d'adresses
-import 'dart:io';
-
 import 'MyException.dart';
 
 void main() {
@@ -55,7 +53,7 @@ class Adresse {
     this.address_only_list = this.address_list.sublist(0, 4);
     this.address_only_string = list_strings_decimal_to_string_binary(this.address_only_list);
 
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; ++i) {
       this.address_network += (int.parse(this.address_only_string[i]) & int.parse(this.mask[i])).toString();
       this.address_broadcast += (int.parse(this.address_only_string[i]) | int.parse(this.wildcard_mask[i])).toString();
     }
@@ -89,8 +87,12 @@ class Adresse {
   }
 }
 
+String eliminate_spaces(String string_to_clean){
+  return string_to_clean.replaceAll(" ", "");
+}
+
 String regexp_process(String addressToProcess) {
-  addressToProcess = addressToProcess.replaceAll(" ", "");
+  addressToProcess = eliminate_spaces(addressToProcess);
   print(addressToProcess);
   if (addressToProcess.length > 18)
     throw new MyException(
@@ -121,7 +123,7 @@ void tests_numbers_in_list(List<String> adresseList) {
   if (suffixe < 0 || suffixe > 32) {
     throw new MyException("Erreur ! suffixe incorrect ", "");
   }
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; ++i) {
     if (int.parse(adresseList[i]) < 0 || int.parse(adresseList[i]) > 255) {
       throw new MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres.", "");
     }
@@ -130,7 +132,7 @@ void tests_numbers_in_list(List<String> adresseList) {
 
 // Casts a list of decimal numbers into a single binary string
 String list_strings_decimal_to_string_binary(List<String> addressListShort) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; ++i) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
     int longueur = addressListShort[i].length;
     addressListShort[i] = "0" * (8 - longueur) + addressListShort[i];
@@ -163,7 +165,7 @@ String list_to_string_dots(List list) {
 int counts_available_addresses(
     List<String> adresseReseauTableau, adresseDiffusionTableau) {
   int nbAdressesDisponibles = 1, ecart = 0;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; ++i) {
     ecart = int.parse(adresseDiffusionTableau[i]) -
         int.parse(adresseReseauTableau[i]);
     if (ecart != 0) {
@@ -192,7 +194,7 @@ List<String> address_shift(List<String> address, int step) {
 }
 
 List<String> list_strings_binary_to_decimal(List<String> address) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; ++i) {
     address[i] = int.parse(address[i], radix: 2).toString();
   }
   return address;
