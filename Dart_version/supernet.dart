@@ -4,9 +4,9 @@ import 'relation.dart';
 void main() {
   List<String> addresses_list = [
     "192.168.1.0/8",
-    "192.168.2. 0/2 4",
+    " 192.168.2. 0/2 4",
     "192.168.2.0/24",
-    "192.168.4.0/24",
+    " 192.168.4.0/24",
     "192.168.9.1/32"
   ], addresses_list_uniques = addresses_list.sublist(0);
   List<Supernet> addresses_object = [], addresses_object_relations = [];
@@ -14,7 +14,7 @@ void main() {
   List<String> list_to_be_processed = [];
   List<String> bottom_address_A, top_address_A, bottom_address_B, top_address_B  ;
   String supernetAddress = "", result = "";
-  addresses_list_uniques = Supernet.eliminate_spaces_list(addresses_list_uniques);
+  addresses_list_uniques = Supernet.regexp_list(addresses_list_uniques);
   addresses_list_uniques = Supernet.process_duplicate_addresses (addresses_list_uniques, relations);
 
   int addressCount = addresses_list_uniques.length, supernet_address_Suffix = 0;
@@ -26,8 +26,6 @@ void main() {
 
   // Hard copy this list to use it for relations
   addresses_object_relations = addresses_object.sublist(0);
-
-
 
   // Tests on list items
   // Tests if there are duplicate addresses and
@@ -48,7 +46,6 @@ void main() {
       relations.add(implementation_objet_relation(addresses_object[i].address_to_process, result, addresses_object[j].address_to_process));
     }
   }
-
 
 // Creation of the list to submit to calculation of the supernet
   for (int i = 0; i < addresses_object.length; ++i) {
@@ -105,11 +102,11 @@ String supernetCalculation(
 class Supernet extends Adresse {
   String address_temp;
 
-  Supernet(this.address_temp) : super(address_temp) {}
+  Supernet(this.address_temp) : super(address_temp, "supernet") {}
 
-  static List<String> eliminate_spaces_list(List<String> list_to_process){
+  static List<String> regexp_list(List<String> list_to_process){
     for (int i = 0; i < list_to_process.length; ++i){
-      list_to_process[i] = eliminate_spaces(list_to_process[i]);
+      list_to_process[i] = regexp_process(list_to_process[i]);
     }
     return list_to_process;
   }

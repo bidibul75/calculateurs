@@ -3,7 +3,7 @@
 import 'MyException.dart';
 
 void main() {
-  Adresse adresse = Adresse(" 90.16.84.82/22");
+  Adresse adresse = Adresse(" 90.16.84.82/22", "adresse");
   print("Masque réseau : " + adresse.mask);
   print("Masque inverse : " + adresse.wildcard_mask);
   print("Adresse réseau : " + adresse.address_network);
@@ -35,9 +35,13 @@ class Adresse {
       address_available_first_one = [],
       address_available_last_one = [];
 
-  Adresse(this.address_to_process) {
-    String resultat = regexp_process(this.address_to_process);
-    this.address_to_process = resultat;
+  Adresse(this.address_to_process, String origin) {
+    // Regexp processing in case of not having done yet
+    if (origin == "adresse") {
+      String resultat = regexp_process(this.address_to_process);
+      this.address_to_process = resultat;
+    }
+    print("origin : $origin");
     this.address_list = string_to_list_strings(this.address_to_process);
 
     // Test of address numbers
@@ -48,7 +52,7 @@ class Adresse {
     // Calculation of network mask and diffusion mask
     this.mask = "1" * this.suffix + "0" * (32 - this.suffix);
     this.wildcard_mask = "0" * this.suffix + "1" * (32 - this.suffix);
-    
+
     // Extraction of the address without the suffix and casting it into a binary numbers string
     this.address_only_list = this.address_list.sublist(0, 4);
     this.address_only_string = list_strings_decimal_to_string_binary(this.address_only_list);
@@ -87,23 +91,19 @@ class Adresse {
   }
 }
 
-String eliminate_spaces(String string_to_clean){
-  return string_to_clean.replaceAll(" ", "");
-}
-
-String regexp_process(String addressToProcess) {
-  addressToProcess = eliminate_spaces(addressToProcess);
-  print(addressToProcess);
-  if (addressToProcess.length > 18)
+String regexp_process(String address_to_process_string) {
+  address_to_process_string = address_to_process_string.replaceAll(" ", "");
+  print(address_to_process_string);
+  if (address_to_process_string.length > 18)
     throw new MyException(
         "Erreur ! l'adresse entrée comporte trop de caractères",
-        addressToProcess);
+        address_to_process_string);
   RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+/[0-9]+");
-  if (exp.firstMatch(addressToProcess) == null) {
-    throw new MyException("Erreur REGEXP à l'adresse :", addressToProcess);
+  if (exp.firstMatch(address_to_process_string) == null) {
+    throw new MyException("Erreur REGEXP à l'adresse :", address_to_process_string);
   } else {
     print("passe regexp");
-    return addressToProcess;
+    return address_to_process_string;
   }
 }
 
@@ -118,14 +118,14 @@ List<String> string_to_list_strings(String adresseString) {
 }
 
 // Tests the numbers of the address
-void tests_numbers_in_list(List<String> adresseList) {
-  int suffixe = int.parse(adresseList[4]);
+void tests_numbers_in_list(List<String> address_list_string) {
+  int suffixe = int.parse(address_list_string[4]);
   if (suffixe < 0 || suffixe > 32) {
-    throw new MyException("Erreur ! suffixe incorrect ", "");
+    throw new MyException("Erreur ! suffixe incorrect ", address_list_string.toString());
   }
   for (int i = 0; i < 4; ++i) {
-    if (int.parse(adresseList[i]) < 0 || int.parse(adresseList[i]) > 255) {
-      throw new MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres.", "");
+    if (int.parse(address_list_string[i]) < 0 || int.parse(address_list_string[i]) > 255) {
+      throw new MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres.", address_list_string.toString());
     }
   }
 }
@@ -189,8 +189,8 @@ List<String> address_shift(List<String> address, int step) {
     address[i] = (int.parse(address[i]) + step).toString();
     return address;
   }
-  String addressString = list_to_string_dots(address);
-  throw new MyException ("Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ", addressString);
+  String address_string = list_to_string_dots(address);
+  throw new MyException ("Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ", address_string);
 }
 
 List<String> list_strings_binary_to_decimal(List<String> address) {
