@@ -142,11 +142,16 @@ String list_strings_decimal_to_string_binary(List<String> addressListShort) {
 
 // Casts a binary string into a string of 4 decimals separated by dots
 String string_binary_to_string_decimal_dots(String chaine) {
-  String chaineDecimale = "";
+  /* String chaineDecimale = "";
   for (int i = 0; i < 32; i += 8) {
     chaineDecimale +=
         (int.parse(chaine.substring(i, i + 8), radix: 2)).toString();
     if (i != 24) chaineDecimale += ".";
+  }*/
+
+  String chaineDecimale = (int.parse(chaine.substring(0, 8), radix: 2)).toString();
+  for (int i = 8; i < 32; i += 8) {
+    chaineDecimale += "." + (int.parse(chaine.substring(i, i + 8), radix: 2)).toString();
   }
   return chaineDecimale;
 }
