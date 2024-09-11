@@ -11,7 +11,7 @@ void main() {
   print("Première adresse réseau : " + adresse.address_available_first_one.toString());
   print("Dernière adresse réseau : " + adresse.address_available_last_one.toString());
   print("Nombre d'adresses : " + thousand_spaces(adresse.number_available_addresses));
-  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.number_available_addresses-2));
+  print("Nombre d'adresses utilisables : " + thousand_spaces(adresse.number_available_addresses - 2));
   print("Adresse binaire : " + adresse.address_only_string);
   print("Adresse list : " + adresse.address_list.toString());
 }
@@ -94,10 +94,7 @@ class Adresse {
 String regexp_process(String address_to_process_string) {
   address_to_process_string = address_to_process_string.replaceAll(" ", "");
   print(address_to_process_string);
-  if (address_to_process_string.length > 18)
-    throw new MyException(
-        "Erreur ! l'adresse entrée comporte trop de caractères",
-        address_to_process_string);
+  if (address_to_process_string.length > 18) throw new MyException("Erreur ! l'adresse entrée comporte trop de caractères", address_to_process_string);
   RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+/[0-9]+");
   if (exp.firstMatch(address_to_process_string) == null) {
     throw new MyException("Erreur REGEXP à l'adresse :", address_to_process_string);
@@ -134,19 +131,16 @@ void tests_numbers_in_list(List<String> address_list_string) {
 String list_strings_decimal_to_string_binary(List<String> addressListShort) {
   for (int i = 0; i < 4; ++i) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
-    int longueur = addressListShort[i].length;
-    addressListShort[i] = "0" * (8 - longueur) + addressListShort[i];
+    addressListShort[i] = "0" * (8 - addressListShort[i].length) + addressListShort[i];
   }
   return addressListShort.join("");
 }
 
 // Casts a binary string into a string of 4 decimals separated by dots
 String string_binary_to_string_decimal_dots(String chaine) {
-  String chaineDecimale = "";
-  for (int i = 0; i < 32; i += 8) {
-    chaineDecimale +=
-        (int.parse(chaine.substring(i, i + 8), radix: 2)).toString();
-    if (i != 24) chaineDecimale += ".";
+  String chaineDecimale = (int.parse(chaine.substring(0, 8), radix: 2)).toString();
+  for (int i = 8; i < 32; i += 8) {
+    chaineDecimale += "." + (int.parse(chaine.substring(i, i + 8), radix: 2)).toString();
   }
   return chaineDecimale;
 }
@@ -156,21 +150,19 @@ List<String> string_dots_to_list(String chaine) {
   return chaine.split(".");
 }
 
-// Casts a List into a dot-separated String 
+// Casts a List into a dot-separated String
 String list_to_string_dots(List list) {
   return list.join(".");
 }
 
 // Counts the number of available addresses among a range
-int counts_available_addresses(
-    List<String> adresseReseauTableau, adresseDiffusionTableau) {
+int counts_available_addresses(List<String> adresseReseauTableau, adresseDiffusionTableau) {
   int nbAdressesDisponibles = 1, ecart = 0;
   for (int i = 0; i < 4; ++i) {
-    ecart = int.parse(adresseDiffusionTableau[i]) -
-        int.parse(adresseReseauTableau[i]);
+    ecart = int.parse(adresseDiffusionTableau[i]) - int.parse(adresseReseauTableau[i]);
     if (ecart != 0) {
-        nbAdressesDisponibles *= (ecart + 1);
-        }
+      nbAdressesDisponibles *= (ecart + 1);
+    }
   }
   return nbAdressesDisponibles;
 }
@@ -190,7 +182,7 @@ List<String> address_shift(List<String> address, int step) {
     return address;
   }
   String address_string = list_to_string_dots(address);
-  throw new MyException ("Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ", address_string);
+  throw new MyException("Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ", address_string);
 }
 
 List<String> list_strings_binary_to_decimal(List<String> address) {
@@ -200,11 +192,11 @@ List<String> list_strings_binary_to_decimal(List<String> address) {
   return address;
 }
 
-String thousand_spaces(int number){
+String thousand_spaces(int number) {
   String number_string = number.toString(), result = "";
   while (number_string.length > 3) {
-    result = number_string.substring(number_string.length-3) + " " + result;
-    number_string = number_string.substring(0, number_string.length-3);
+    result = number_string.substring(number_string.length - 3) + " " + result;
+    number_string = number_string.substring(0, number_string.length - 3);
   }
-return (number_string + " " + result).trimRight();
+  return (number_string + " " + result).trimRight();
 }
