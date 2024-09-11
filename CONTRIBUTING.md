@@ -1,0 +1,1 @@
+Ce dépôt n'accepte pas de contributions. Nous vous prions de ne pas soumettre de pull requests ni d'ouvrir d'issues. Merci pour votre compréhension.
