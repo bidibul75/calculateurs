@@ -9,5 +9,4 @@ Site de calculteurs.
 Convertisseurs de fichiers, calcul de prêt immobilier, etc.
 
 ### Technologies :
-HTML, CSS, JS, Bootstrap.
-Basculement progressif en Dart/Flutter.
+Dart/Flutter.
