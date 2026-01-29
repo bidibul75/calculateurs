@@ -1,0 +1,79 @@
+# =============================================
+# Line Ending Normalization (LF for all text files)
+# =============================================
+*               text=auto eol=lf
+
+# =============================================
+# Dart/Flutter Files
+# =============================================
+*.dart           text eol=lf
+*.yaml           text eol=lf
+*.yml            text eol=lf
+*.gradle         text eol=lf
+*.properties     text eol=lf
+*.md             text eol=lf
+LICENSE          text eol=lf
+README.md        text eol=lf
+CHANGELOG.md     text eol=lf
+.pubspec         text eol=lf
+pubspec.lock     text eol=lf
+.metadata        text eol=lf
+.flutter-plugins text eol=lf
+analysis_options.yaml text eol=lf
+
+# =============================================
+# Binary Files (do not convert)
+# =============================================
+*.png            binary
+*.jpg            binary
+*.jpeg           binary
+*.gif            binary
+*.webp           binary
+*.ico            binary
+*.ttf            binary
+*.otf            binary
+*.woff           binary
+*.woff2          binary
+*.jar            binary
+*.exe            binary
+*.dll            binary
+*.so             binary
+*.a              binary
+*.framework      binary
+*.xcframework    binary
+*.zip            binary
+*.tar            binary
+*.gz             binary
+
+# =============================================
+# Platform-Specific Files
+# =============================================
+# Android
+/android/gradle.properties text eol=lf
+/android/local.properties  text eol=lf
+/android/settings.gradle   text eol=lf
+
+# iOS
+/ios/Podfile       text eol=lf
+/ios/Podfile.lock  text eol=lf
+/ios/Flutter/AppFrameworkInfo.plist text eol=lf
+
+# Web
+/web/index.html    text eol=lf
+/web/manifest.json text eol=lf
+
+# =============================================
+# IDE Files (optional)
+# =============================================
+.idea/            -text
+.vscode/          -text
+*.iml             text eol=lf
+*.ipr             text eol=lf
+*.iws             text eol=lf
+
+# =============================================
+# Generated Files (if versioned)
+# =============================================
+*.g.dart          text eol=lf
+*.freezed.dart    text eol=lf
+*.mocks.dart      text eol=lf
