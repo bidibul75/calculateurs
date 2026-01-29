@@ -71,7 +71,14 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 .packages.generated
+.metadata
 
+/android/
+/ios/
+/linux/
+/macos/
+/web/
+/windows/
 # ========================================
 # Android related
 # ========================================
