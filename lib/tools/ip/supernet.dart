@@ -7,7 +7,9 @@ void main() {
     " 192.168.2. 0/2 4",
     "192.168.2.0/24",
     " 192.168.4.0/24",
-    "192.168.9.1/32"
+    "192.168.9.1/32",
+    " 192.168.4.0/24",
+    " 192.168.2. 0/2 4"
   ], addresses_list_uniques = addresses_list.sublist(0);
   List<Supernet> addresses_object = [], addresses_object_relations = [];
   List<Relation> relations =[];
@@ -31,18 +33,17 @@ void main() {
   // Tests if there are duplicate addresses and
   // if an address is inside another one
   for (int i = 0; i < addresses_object_relations.length; ++i) {
+    String addressA = addresses_object_relations[i].address_to_process;
+
     for (int j = i+1; j < addresses_object_relations.length; ++j) {
       bottom_address_A = addresses_object_relations[i].address_network_list;
       top_address_A = addresses_object_relations[i].address_broadcast_list;
       bottom_address_B = addresses_object_relations[j].address_network_list;
       top_address_B = addresses_object_relations[j].address_broadcast_list;
       result = Supernet.test_of_intersections(bottom_address_A, top_address_A, bottom_address_B, top_address_B);
-      print ("Result : " + result);
-      print(" Adresse A : bottom : " + bottom_address_A.toString() + " top : " + top_address_A.toString());
-      print(" Adresse B : bottom : " + bottom_address_B.toString() + " top : " + top_address_B.toString());
-      if (result == "equal"){
-        addresses_object_relations.removeAt(j);
-      }
+
+      String addressB = addresses_object_relations[j].address_to_process;
+
       relations.add(implementation_objet_relation(addresses_object[i].address_to_process, result, addresses_object[j].address_to_process));
     }
   }
@@ -62,15 +63,13 @@ void main() {
       supernetCalculation(addressCount, list_to_be_processed, supernetAddress = "");
   supernet_address_Suffix = supernetAddress.length;
   supernetAddress += "0" * (32 - supernet_address_Suffix);
-  supernetAddress = string_binary_to_string_decimal_dots(supernetAddress) +
-      "/" +
-      supernet_address_Suffix.toString();
-  print("L'adresse supernet est : " + supernetAddress);
+  supernetAddress = "${string_binary_to_string_decimal_dots(supernetAddress)}/$supernet_address_Suffix";
+  print("L'adresse supernet est : $supernetAddress");
 
   // Prints the relations object
   print("relations object : ");
   for (int i = 0; i < relations.length; ++i){
-    print(relations[i].address_A+" "+relations[i].relation_AB+" "+relations[i].address_B);
+    print("${relations[i].address_A} ${relations[i].relation_AB} ${relations[i].address_B}");
   }
 }
 
@@ -91,8 +90,9 @@ String supernetCalculation(
     for (int addressNumber = 0;
         addressNumber < addressCount - 1;
         ++addressNumber) {
-      if (list[addressNumber][i] != list[addressNumber + 1][i])
+      if (list[addressNumber][i] != list[addressNumber + 1][i]) {
         return supernetAddress;
+      }
     }
     supernetAddress += list[0][i];
   }
@@ -102,7 +102,7 @@ String supernetCalculation(
 class Supernet extends Adresse {
   String address_temp;
 
-  Supernet(this.address_temp) : super(address_temp, "supernet") {}
+  Supernet(this.address_temp) : super(address_temp, "supernet");
 
   static List<String> regexp_list(List<String> list_to_process){
     for (int i = 0; i < list_to_process.length; ++i){
@@ -121,6 +121,7 @@ class Supernet extends Adresse {
           case "lower":
             return "B_inside_A";
         }
+        break;
       case "higher":
         switch (testPosition(bottomAddressA, topAddressB)){
           case "equal":
@@ -137,6 +138,7 @@ class Supernet extends Adresse {
                 return "B_inside_A";
             }
         }
+        break;
       case "lower":
         switch (testPosition(topAddressA, bottomAddressB)){
           case "equal":
@@ -150,6 +152,7 @@ class Supernet extends Adresse {
               case "lower":
                 return "intersecting";
             };
+            break;
           case "lower":
             return "outside";
         }
@@ -166,13 +169,19 @@ class Supernet extends Adresse {
     }
 
   static List<String> process_duplicate_addresses(List<String> list_to_process, List<Relation> relations){
+    int duplicates;
     for (int i = 0; i < list_to_process.length; ++i){
+      duplicates = 1;
       for (int j = 0; j < list_to_process.length; ++j){
         if (i == j) continue;
         if (list_to_process[i] == list_to_process[j]){
+          duplicates++;
           relations.add(implementation_objet_relation(list_to_process[i], "equal", list_to_process[j]));
           list_to_process.removeAt(j);
         }
+      }
+      if (duplicates > 1){
+        print("${list_to_process[i]} is duplicated $duplicates times - removing duplicates");
       }
     }
     return list_to_process;
