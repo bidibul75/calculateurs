@@ -19,11 +19,12 @@ void main() {
   addresses_list_uniques = Supernet.regexp_list(addresses_list_uniques);
   addresses_list_uniques = Supernet.process_duplicate_addresses (addresses_list_uniques, relations);
 
-  int addressCount = addresses_list_uniques.length, supernet_address_Suffix = 0;
+  int addressCount = addresses_list_uniques.length;
+  int supernet_address_Suffix = 0;
 
   // Creates a list of objects
-  for (int i = 0; i < addresses_list_uniques.length; ++i) {
-    addresses_object.add(implementation_object_supernet(addresses_list_uniques[i]));
+  for (String address in addresses_list_uniques) {
+    addresses_object.add(implementation_object_supernet(address));
   }
 
   // Hard copy this list to use it for relations
@@ -33,28 +34,23 @@ void main() {
   // Tests if there are duplicate addresses and
   // if an address is inside another one
   for (int i = 0; i < addresses_object_relations.length; ++i) {
-    String addressA = addresses_object_relations[i].address_to_process;
-
     for (int j = i+1; j < addresses_object_relations.length; ++j) {
       bottom_address_A = addresses_object_relations[i].address_network_list;
       top_address_A = addresses_object_relations[i].address_broadcast_list;
       bottom_address_B = addresses_object_relations[j].address_network_list;
       top_address_B = addresses_object_relations[j].address_broadcast_list;
       result = Supernet.test_of_intersections(bottom_address_A, top_address_A, bottom_address_B, top_address_B);
-
-      String addressB = addresses_object_relations[j].address_to_process;
-
       relations.add(implementation_objet_relation(addresses_object[i].address_to_process, result, addresses_object[j].address_to_process));
     }
   }
 
 // Creation of the list to submit to calculation of the supernet
-  for (int i = 0; i < addresses_object.length; ++i) {
-    if (addresses_object[i].suffix == 32) {
-      list_to_be_processed.add(addresses_object[i].address_only_string);
+  for (Supernet address in addresses_object) {
+    if (address.suffix == 32) {
+      list_to_be_processed.add(address.address_only_string);
     } else {
-      list_to_be_processed.add(addresses_object[i].address_network_string_binary);
-      list_to_be_processed.add(addresses_object[i].address_broadcast_string_binary);
+      list_to_be_processed.add(address.address_network_string_binary);
+      list_to_be_processed.add(address.address_broadcast_string_binary);
     }
   }
 
@@ -67,9 +63,9 @@ void main() {
   print("L'adresse supernet est : $supernetAddress");
 
   // Prints the relations object
-  print("relations object : ");
-  for (int i = 0; i < relations.length; ++i){
-    print("${relations[i].address_A} ${relations[i].relation_AB} ${relations[i].address_B}");
+  print("\nRelations object : ");
+  for (Relation relation in relations){
+    print("${relation.address_A} ${relation.relation_AB} ${relation.address_B}");
   }
 }
 
@@ -87,9 +83,7 @@ Relation implementation_objet_relation (String address_A, relation_AB, address_B
 String supernetCalculation(
     int addressCount, List<String> list, String supernetAddress) {
   for (int i = 0; i < 32; ++i) {
-    for (int addressNumber = 0;
-        addressNumber < addressCount - 1;
-        ++addressNumber) {
+    for (int addressNumber = 0; addressNumber < addressCount - 1; ++addressNumber) {
       if (list[addressNumber][i] != list[addressNumber + 1][i]) {
         return supernetAddress;
       }
@@ -125,7 +119,7 @@ class Supernet extends Adresse {
       case "higher":
         switch (testPosition(bottomAddressA, topAddressB)){
           case "equal":
-            return "intersecting";
+            return "overlaps";
           case "higher":
             return "outside";
           case "lower":
@@ -133,7 +127,7 @@ class Supernet extends Adresse {
               case "equal":
                 return "B_inside_A";
               case "higher":
-                return "intersecting";
+                return "overlaps";
               case "lower":
                 return "B_inside_A";
             }
@@ -181,7 +175,7 @@ class Supernet extends Adresse {
         }
       }
       if (duplicates > 1){
-        print("${list_to_process[i]} is duplicated $duplicates times - removing duplicates");
+        print("Warning ! Duplicate IP range detected : ${list_to_process[i]} is duplicated $duplicates times - removed duplicates");
       }
     }
     return list_to_process;

@@ -64,19 +64,14 @@ class Adresse {
     );
 
     for (int i = 0; i < 32; ++i) {
-      address_network +=
-          (int.parse(address_only_string[i]) & int.parse(mask[i])).toString();
-      address_broadcast +=
-          (int.parse(address_only_string[i]) | int.parse(wildcard_mask[i]))
-              .toString();
+      address_network += (int.parse(address_only_string[i]) & int.parse(mask[i])).toString();
+      address_broadcast += (int.parse(address_only_string[i]) | int.parse(wildcard_mask[i])).toString();
     }
 
     // Network address processing
     address_network = string_binary_to_string_decimal_dots(address_network);
     address_network_list = string_dots_to_list(address_network);
-    address_network_string_binary = list_strings_decimal_to_string_binary(
-      address_network_list,
-    );
+    address_network_string_binary = list_strings_decimal_to_string_binary(address_network_list);
     address_network_list = list_strings_binary_to_decimal(address_network_list);
     // List's hard copy
     address_available_first_one = address_network_list.sublist(0);
@@ -84,28 +79,15 @@ class Adresse {
     // Broadcast address processing
     address_broadcast = string_binary_to_string_decimal_dots(address_broadcast);
     address_broadcast_list = string_dots_to_list(address_broadcast);
-    address_broadcast_string_binary = list_strings_decimal_to_string_binary(
-      address_broadcast_list,
-    );
-    address_broadcast_list = list_strings_binary_to_decimal(
-      address_broadcast_list,
-    );
+    address_broadcast_string_binary = list_strings_decimal_to_string_binary(address_broadcast_list);
+    address_broadcast_list = list_strings_binary_to_decimal(address_broadcast_list);
     // List's hard copy
     address_available_last_one = address_broadcast_list.sublist(0);
 
     if (suffix < 32) {
-      address_available_first_one = address_shift(
-        address_available_first_one,
-        1,
-      );
-      address_available_last_one = address_shift(
-        address_available_last_one,
-        -1,
-      );
-      number_available_addresses = counts_available_addresses(
-        address_network_list,
-        address_broadcast_list,
-      );
+      address_available_first_one = address_shift(address_available_first_one, 1);
+      address_available_last_one = address_shift(address_available_last_one, -1);
+      number_available_addresses = counts_available_addresses(address_network_list, address_broadcast_list);
     } else {
       number_available_addresses = 1;
     }
@@ -117,17 +99,13 @@ class Adresse {
 
 String regexp_process(String address_to_process_string) {
   address_to_process_string = address_to_process_string.replaceAll(" ", "");
-  print(address_to_process_string);
-  if (address_to_process_string.length > 18)
-    throw MyException(
-      "Erreur ! l'adresse entrée comporte trop de caractères",
-      address_to_process_string,
-    );
+  if (address_to_process_string.length > 18) {
+    throw MyException("Erreur ! l'adresse entrée comporte trop de caractères", address_to_process_string);
+  }
   RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+/[0-9]+");
   if (exp.firstMatch(address_to_process_string) == null) {
     throw MyException("Erreur REGEXP à l'adresse :", address_to_process_string);
   } else {
-    print("passe regexp");
     return address_to_process_string;
   }
 }
@@ -146,18 +124,12 @@ List<String> string_to_list_strings(String adresseString) {
 void tests_numbers_in_list(List<String> address_list_string) {
   int suffixe = int.parse(address_list_string[4]);
   if (suffixe < 0 || suffixe > 32) {
-    throw MyException(
-      "Erreur ! suffixe incorrect ",
-      address_list_string.toString(),
-    );
+    throw MyException("Erreur ! suffixe incorrect ", address_list_string.toString());
   }
   for (int i = 0; i < 4; ++i) {
     if (int.parse(address_list_string[i]) < 0 ||
         int.parse(address_list_string[i]) > 255) {
-      throw MyException(
-        "Erreur : L'adresse comporte une erreur sur un(des) nombres.",
-        address_list_string.toString(),
-      );
+      throw MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres", address_list_string.toString());
     }
   }
 }
@@ -166,18 +138,14 @@ void tests_numbers_in_list(List<String> address_list_string) {
 String list_strings_decimal_to_string_binary(List<String> addressListShort) {
   for (int i = 0; i < 4; ++i) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
-    addressListShort[i] =
-        "0" * (8 - addressListShort[i].length) + addressListShort[i];
+    addressListShort[i] = "0" * (8 - addressListShort[i].length) + addressListShort[i];
   }
   return addressListShort.join("");
 }
 
 // Casts a binary string into a string of 4 decimals separated by dots
 String string_binary_to_string_decimal_dots(String chaine) {
-  String chaineDecimale = (int.parse(
-    chaine.substring(0, 8),
-    radix: 2,
-  )).toString();
+  String chaineDecimale = (int.parse(chaine.substring(0, 8), radix: 2)).toString();
   for (int i = 8; i < 32; i += 8) {
     chaineDecimale += ".${int.parse(chaine.substring(i, i + 8), radix: 2)}";
   }
@@ -226,10 +194,7 @@ List<String> address_shift(List<String> address, int step) {
     return address;
   }
   String address_string = list_to_string_dots(address);
-  throw MyException(
-    "Erreur : décalage impossible car en dehors de la plage 0.0.0.0 / 255.255.255.255 de l'adresse ",
-    address_string,
-  );
+  throw MyException("Erreur : décalage impossible car en dehors plage 0.0.0.0 / 255.255.255.255 de l'adresse ", address_string);
 }
 
 List<String> list_strings_binary_to_decimal(List<String> address) {
