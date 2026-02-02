@@ -2,3 +2,4 @@
 // Barrel file
 
 export 'string_extensions.dart';
+export 'double_extensions.dart';

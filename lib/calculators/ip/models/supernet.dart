@@ -1,5 +1,5 @@
 import 'adresse.dart';
-import 'relation.dart';
+import '../relation.dart';
 
 void main() {
   List<String> addresses_list = [

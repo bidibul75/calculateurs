@@ -7,7 +7,7 @@ void main() {
 }
 
 class Bmi {
-  var messagesBMI = {
+  Map <String, Map<String, String>> messagesBMI = {
     "english": {
       "undernutrition": "undernutrition",
       "underweight": "underweight",
