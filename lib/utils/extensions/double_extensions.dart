@@ -27,7 +27,8 @@ extension DoubleExtensions on double {
   /// 123.456.toCurrency(symbol: '\ $ '); // Returns "123.46 \ $ "
   /// ```
   String toCurrency({String symbol = '€'}) {
-    return '${roundTo(2).toStringAsFixed(2)} $symbol';
+    if (symbol == "CHF" || symbol == "JPY") return '${((roundForCurrency(symbol)).truncate()).toString()} $symbol';
+    return '${roundForCurrency(symbol).toString()} $symbol';
   }
 
   /// Converts the double to a percentage string.
@@ -85,6 +86,7 @@ extension DoubleExtensions on double {
   }
 
   double power(double base, int decimals) {
+    if (decimals == 0) return 1.0;
     double result = base;
     for (int i = 1; i < decimals; ++i) {
       result *= base;
