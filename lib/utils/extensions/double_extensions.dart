@@ -87,7 +87,7 @@ extension DoubleExtensions on double {
   double power(double base, int decimals) {
     double result = base;
     for (int i = 1; i < decimals; ++i) {
-      result *= result;
+      result *= base;
     }
     return result;
   }
