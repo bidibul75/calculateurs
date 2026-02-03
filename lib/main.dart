@@ -35,6 +35,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String _operation = "";
   String _history = "";
   String _memo = "0";
+  String _memory = "";
 
   void _buttonPressed(String buttonText) {
     setState(() {
@@ -93,10 +94,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             if (buttonText == "M-") {
               _memo = (double.parse(_memo) - double.parse(_currentInput))
                   .toString();
+              _memory = "M";
             }
             if (buttonText == "M+") {
               _memo = (double.parse(_memo) + double.parse(_currentInput))
                   .toString();
+              _memory = "M";
+
             }
           }
           break;
@@ -109,6 +113,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
         case "MC":
           _memo = "0";
+          _memory = "";
           break;
 
         case "⌫":
@@ -182,16 +187,31 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       ),
       body: Column(
         children: <Widget>[
-          // Affichage de l'historique
-          Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-            child: Text(
-              _history,
-              style: const TextStyle(fontSize: 20, color: Colors.grey),
-            ),
+          // Memory
+          Row(
+            children: [
+              // Memory
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+                child: Text(
+                  _memory,
+                  style: const TextStyle(fontSize: 20, color: Colors.grey),
+                ),
+              ),
+              // History
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+                  child: Text(
+                    _history,
+                    style: const TextStyle(fontSize: 20, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ],
           ),
-          // Affichage principal
+          // Main line
           Container(
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),

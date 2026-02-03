@@ -226,3 +226,5 @@ out/
 # Temporary files
 *.tmp
 *.temp
+
+test.dart

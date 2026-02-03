@@ -1,6 +1,6 @@
 // IPV4 mask calculator
 // erreur nombre d'adresses
-import '../MyException.dart';
+import 'MyException.dart';
 
 void main() {
   Adresse adresse = Adresse(" 90.16.84.82/22", "adresse");
