@@ -16,7 +16,7 @@ extension DoubleExtensions on double {
     if (decimals < 0) {
       throw ArgumentError('Decimals must be a non-negative integer.');
     }
-    final factor = power(10, decimals);
+    final factor = (10.0).power(decimals);
     return (this * factor).round() / factor;
   }
 
@@ -56,7 +56,7 @@ extension DoubleExtensions on double {
     if (decimals < 0) {
       throw ArgumentError('Decimals must be a non-negative integer.');
     }
-    final factor = power(10, decimals);
+    final double factor = (10.0).power(decimals);
     final scaled = this * factor;
 
     switch (strategy) {
@@ -85,13 +85,26 @@ extension DoubleExtensions on double {
     }
   }
 
-  double power(double base, int decimals) {
+  double power(int decimals) {
+    bool decimalPositive = true;
     if (decimals == 0) return 1.0;
-    double result = base;
-    for (int i = 1; i < decimals; ++i) {
-      result *= base;
+    if (decimals.isNegative) {
+      if (this == 0) {
+        throw "Error : divide by 0";
+      }
+      decimals = -decimals;
+      decimalPositive = false;
     }
-    return result;
+
+    double result = this;
+    for (int i = 1; i < decimals; ++i) {
+      result *= this;
+    }
+    return decimalPositive ? result : 1 / result;
+  }
+
+  bool isInteger() {
+    return !isNaN && !isInfinite && this == toInt();
   }
 }
 

@@ -22,7 +22,7 @@ extension StringExtensions on String {
   /// Checks if the string is a valid IPv6 address
   bool get isValidIPv6 {
     final regex = RegExp(
-        r'^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})$'
+      r'^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})$',
     );
     return regex.hasMatch(this);
   }
@@ -37,5 +37,13 @@ extension StringExtensions on String {
   String truncate(int maxLength, {String suffix = '...'}) {
     if (length <= maxLength) return this;
     return '${substring(0, maxLength)}$suffix';
+  }
+
+  // 3.0 -> 3
+  String cleanPointZero() {
+    if (isNotEmpty && length > 2) {
+      if (substring(length - 2) == ".0") return substring(0, length - 2);
+    }
+    return this;
   }
 }
