@@ -106,6 +106,11 @@ extension DoubleExtensions on double {
   bool isInteger() {
     return !isNaN && !isInfinite && this == toInt();
   }
+
+  // Suppress the .0 end of double numbers
+  num cleanDouble() {
+    return isInteger() ? toInt() : this;
+  }
 }
 
 /// Rounding strategies for numerical operations.
