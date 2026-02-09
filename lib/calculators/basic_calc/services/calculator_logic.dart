@@ -1,5 +1,4 @@
-import '../../../utils/extensions/double_extensions.dart';
-import '../../../utils/extensions/string_extensions.dart';
+import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
   static String calculateResult({required double num1, required double num2, required String operation}) {

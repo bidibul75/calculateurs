@@ -1,9 +1,10 @@
 import 'package:calculators/calculators/basic_calc/models/calculator_state.dart';
+import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
+import 'package:calculators/calculators/basic_calc/widgets/calc_button.dart';
+import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../../../utils/extensions/extensions.dart';
-import '../widgets/calc_button.dart';
-import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
+
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -100,7 +101,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 currentInput: result,
               );
             } else {
-              _state = _state.copyWith(output: "Erreur", history: "√ négatif impossible");
+              _state = _state.copyWith(output: "Error", history: "negative √ not allowed");
             }
           }
           break;
@@ -163,7 +164,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Calculatrice Flutter')),
+      appBar: AppBar(title: const Text('Basic calculator')),
       body: Column(
         children: [
           buildDisplay(),
