@@ -226,3 +226,7 @@ out/
 # Temporary files
 *.tmp
 *.temp
+
+# Personal stuff
+test.dart
+misc
