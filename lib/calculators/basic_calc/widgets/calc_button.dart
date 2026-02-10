@@ -15,13 +15,13 @@ class CalcButton extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: color ?? Colors.grey[200],
-            foregroundColor: textColor ?? Colors.black,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: color ?? Colors.grey[400],
+            foregroundColor: textColor ?? Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
             padding: const EdgeInsets.all(24),
           ),
           onPressed: onPressed,
-          child: Text(text, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          child: Text(text, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         ),
       ),
     );

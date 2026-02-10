@@ -5,7 +5,6 @@ import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
 
@@ -141,15 +140,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
         default:
           String current = _state.currentInput;
+          if (buttonText == "00" && (current == "" || current == "0")) return;
           if (_state.history.contains("=")) {
+            if (buttonText == "00") return;
+            if (buttonText == ".") buttonText = "0.";
             _state = _state.copyWith(currentInput: buttonText, output: buttonText, history: "", num1: 0, operation: "");
           } else {
             if (current == "0" && buttonText != ".") {
               current = buttonText;
             } else {
               // to avoid double points
-              if (buttonText == "." && current.contains(".")) {
-                return;
+              if (buttonText == ".") {
+                if (current.contains(".")) return;
+                if (current == "") current = "0";
               }
               current += buttonText;
             }
@@ -178,7 +181,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 buildButtonRow(["7", "8", "9", "x"]),
                 buildButtonRow(["4", "5", "6", "-"]),
                 buildButtonRow(["1", "2", "3", "+"]),
-                buildButtonRow(["0", ".", "="]),
+                buildButtonRow(["0", "00", ".", "="]),
               ],
             ),
           ),
@@ -195,12 +198,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           Color? bgColor;
           Color? txtColor;
           if (isMemory) {
-            bgColor = Colors.green[50];
-            txtColor = Colors.green[900];
+            bgColor = Colors.green[400];
+            txtColor = Colors.white;
           } else if (label == "=") {
-            bgColor = Colors.blue[200];
+            bgColor = Colors.blue[400];
+            txtColor = Colors.white;
           } else if (["C", "⌫"].contains(label)) {
-            bgColor = Colors.red[50];
+            bgColor = Colors.red[400];
+            txtColor = Colors.white;
+          } else if (isSpecial || ["x", "-", "+"].contains(label)) {
+            bgColor = Colors.amber[400];
+            txtColor = Colors.white;
           }
           return CalcButton(text: label, color: bgColor, textColor: txtColor, onPressed: () => _buttonPressed(label));
         }).toList(),
