@@ -14,6 +14,7 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   CalculatorState _state = CalculatorState();
+  String op = "";
 
   void _buttonPressed(String buttonText) {
     double memo;
@@ -31,13 +32,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "x^y":
           if (_state.currentInput.isNotEmpty) {
             double n1 = double.parse(_state.currentInput);
-            String op = (buttonText == "x^y") ? "^" : buttonText;
+            op = (buttonText == "x^y") ? "^" : buttonText;
             _state = _state.copyWith(
               num1: n1,
               operation: op,
               currentInput: "",
               history: CalculatorLogic.updateHistory(_state.history, op, n1),
             );
+          } else if (_state.operation.isNotEmpty) {
+            double n1 = _state.num1;
+            op = (buttonText == "x^y") ? "^" : buttonText;
+            _state = _state.copyWith(operation: op, history: CalculatorLogic.updateHistory(_state.history, op, n1));
           }
           break;
 
