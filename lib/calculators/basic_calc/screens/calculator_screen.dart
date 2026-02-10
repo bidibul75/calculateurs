@@ -173,24 +173,28 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('Basic calculator')),
-      body: Column(
-        children: [
-          buildDisplay(),
-          const Divider(height: 1),
-          Expanded(
-            child: Column(
-              children: [
-                buildButtonRow(["MC", "MR", "M-", "M+"], isMemory: true),
-                buildButtonRow(["x²", "√", "x^y", "1/x"], isSpecial: true),
-                buildButtonRow(["C", "⌫", "+/-", "÷"], isSpecial: true),
-                buildButtonRow(["7", "8", "9", "x"]),
-                buildButtonRow(["4", "5", "6", "-"]),
-                buildButtonRow(["1", "2", "3", "+"]),
-                buildButtonRow(["0", "00", ".", "="]),
-              ],
+      body: SafeArea(
+        // 20 pixels padding minimum at the bottom of the screen :
+        minimum: const EdgeInsets.only(bottom: 50),
+        child: Column(
+          children: [
+            buildDisplay(),
+            const Divider(height: 1),
+            Expanded(
+              child: Column(
+                children: [
+                  buildButtonRow(["MC", "MR", "M-", "M+"], isMemory: true),
+                  buildButtonRow(["x²", "√", "x^y", "1/x"], isSpecial: true),
+                  buildButtonRow(["C", "⌫", "+/-", "÷"], isSpecial: true),
+                  buildButtonRow(["7", "8", "9", "x"]),
+                  buildButtonRow(["4", "5", "6", "-"]),
+                  buildButtonRow(["1", "2", "3", "+"]),
+                  buildButtonRow(["0", "00", ".", "="]),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
