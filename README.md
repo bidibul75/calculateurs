@@ -4,21 +4,18 @@
 
 Il s'agit d'un projet personnel en Flutter en cours de développement de calculateurs en ligne ( [www.calculation.center](https://www.calculation.center) ) et sur Android.
 
-Le but à terme est d'ajouter des calculateurs dans différents domaines (immobilier, conversion de fichiers et d'unités, etc.).
+Le but à terme est d'ajouter des calculateurs dans différents domaines (calculatrice standard, immobilier, conversion de fichiers et d'unités, etc.).
 
 ## Contenu
 
-Dans un premier temps le calcul de sous-réseaux et de supernet a été privilégié, et seule la partie back-end en Dart est aboutie.
+Dans un premier temps le calcul de sous-réseaux et de supernet a été privilégié, dont seule la logique est aboutie.
 
 Mis en place :
 * regex,
 * cohérence des adresses,
 * calcul des éléments du sous-réseau (adresse réseau, adresse de diffusion, nombre d'adresses disponibles, etc.) et calcul de supernet à partir de plusieurs adresses.
 
-## En projet
-
-Finalisation du front-end.
-Ajout de convertisseurs de fichiers, calcul de prêt immobilier, etc.
+Dans un second temps la création de la calculatrice d'"accueil", une calculatrice standard, a été développée. Le design est à peaufiner, et des fonctionnalités supplémentaires sont à intégrer. La précision des résultats a été améliorée en ayant recours aux librairies Rational et Decimal.
 
 ## Technologies
 
