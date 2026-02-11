@@ -62,7 +62,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               if (buttonText == "M-") memo -= double.parse(result);
               _state = _state.copyWith(
                 output: result,
-                history: CalculatorLogic.updateHistory(_state.history, _state.operation, _state.num1, n2, result),
+                history: CalculatorLogic.updateHistory(_state.history, _state.operation, _state.num1, n2, result, true),
                 currentInput: result,
                 operation: "",
                 memory: memo,

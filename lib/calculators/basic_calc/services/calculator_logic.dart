@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
@@ -37,8 +36,7 @@ class CalculatorLogic {
           return "0";
       }
 
-      // Ici, on transforme le Rational en Decimal pour l'affichage
-      // On utilise toFormatString() ou toString() du Decimal
+      // Here we convert Rational to Decimal for display
       return result.toDecimal(scaleOnInfinitePrecision: 10).toString().cleanPointZero();
     } catch (e) {
       return "Error";
@@ -74,14 +72,35 @@ class CalculatorLogic {
     }
   }
 
-  static String updateHistory(String currentHistory, String operation, double num1, [double? num2, String? output]) {
+  static String updateHistory(
+    String currentHistory,
+    String operation,
+    double num1, [
+    double? num2,
+    String? output,
+    bool parentheses = false,
+  ]) {
     String h = "";
     // Clean convert
     String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
     if (currentHistory == "") {
       h = format(num1);
     } else {
-      h = currentHistory.split("=")[0].trim().split(operation)[0];
+      if (["+", "-", "*", "÷", "^"].contains(operation)) {
+        // Doesn't add parentheses if it's a number
+        if (currentHistory.split("=")[0].trim().endsWith(operation)) {
+          currentHistory = currentHistory.trim().substring(0, currentHistory.trim().length - 1);
+        }
+        if (currentHistory.length > 1) {
+          if (currentHistory.trim().isNotANumber() && parentheses) {
+            h = "(${currentHistory.split("=")[0].trim()})";
+          } else {
+            h = currentHistory.split("=")[0].trim();
+          }
+        } else {
+          h = currentHistory.split("=")[0].trim();
+        }
+      }
     }
     if (operation.isNotEmpty) h += " $operation ";
     if (num2 != null) h += "${format(num2)} = \n";

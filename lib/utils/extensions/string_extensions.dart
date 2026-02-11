@@ -46,4 +46,14 @@ extension StringExtensions on String {
     }
     return this;
   }
+
+  bool isANumber() {
+    if (double.tryParse(this) == null) return false;
+    return true;
+  }
+
+  bool isNotANumber(){
+    if (isANumber()) return false;
+    return true;
+  }
 }
