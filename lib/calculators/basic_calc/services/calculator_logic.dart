@@ -1,13 +1,10 @@
+import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
-  static String calculateResult({
-    required double num1,
-    required double num2,
-    required String operation
-  }) {
+  static String calculateResult({required double num1, required double num2, required String operation}) {
     final r1 = Rational.parse(num1.toString());
     final r2 = Rational.parse(num2.toString());
 
@@ -39,24 +36,90 @@ class CalculatorLogic {
           return "0";
       }
 
-      // Ici, on transforme le Rational en Decimal pour l'affichage
-      // On utilise toFormatString() ou toString() du Decimal
+      // Here we convert Rational to Decimal for display
       return result.toDecimal(scaleOnInfinitePrecision: 10).toString().cleanPointZero();
-
     } catch (e) {
       return "Error";
     }
   }
 
-  static String updateHistory(String currentHistory, String operation, double num1, [double? num2, String? output]) {
-    // Conversion propre pour l'historique aussi
-    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
+  static String calculateUnary({required double input, required String operation}) {
+    final r = Rational.parse(input.toString());
+    Rational result;
 
-    String h = format(num1);
+    try {
+      switch (operation) {
+        case "x²":
+          result = r * r;
+          break;
+        case "1/x":
+          if (r == Rational.zero) return "Error div. by 0";
+          result = Rational.one / r;
+          break;
+        case "√":
+          if (input < 0) return "Error negative root";
+          // use of double for sqrt
+          double root = math.sqrt(input);
+          result = Rational.parse(root.toString());
+          break;
+        default:
+          return "0";
+      }
+      return result.toDecimal(scaleOnInfinitePrecision: 10).toString();
+    } catch (e) {
+      print(e);
+      return "Error";
+    }
+  }
+
+  static String updateHistory(
+    String currentHistory,
+    String operation,
+    double num1, [
+    double? num2,
+    String? output,
+    bool parentheses = false,
+  ]) {
+    String h = "";
+    // Clean convert
+    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
+    if (currentHistory == "") {
+      h = format(num1);
+    } else {
+      if (["+", "-", "*", "÷", "^"].contains(operation)) {
+        // Doesn't add parentheses if it's a number
+        if (currentHistory.split("=")[0].trim().endsWith(operation)) {
+          currentHistory = currentHistory.trim().substring(0, currentHistory.trim().length - 1);
+        }
+        if (currentHistory.length > 1) {
+          if (currentHistory.trim().isNotANumber() && parentheses) {
+            h = "(${currentHistory.split("=")[0].trim()})";
+          } else {
+            h = currentHistory.split("=")[0].trim();
+          }
+        } else {
+          h = currentHistory.split("=")[0].trim();
+        }
+      }
+    }
     if (operation.isNotEmpty) h += " $operation ";
-    if (num2 != null) h += "${format(num2)} = ";
+    if (num2 != null) h += "${format(num2)} = \n";
     if (output != null) h += output;
 
     return h;
+  }
+
+  static String updateHistoryUnary(double val, String operation, String result, String lastHistory) {
+    String historyTemp = "";
+    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
+    if (lastHistory == "") {
+      historyTemp = format(val);
+    } else {
+      historyTemp = "(${lastHistory.split("=")[0].trim()})";
+    }
+    if (operation == "x²") return "$historyTemp² =\n$result";
+    if (operation == "1/x") return "1/$historyTemp =\n$result";
+    if (operation == "√") return "√$historyTemp =\n$result";
+    return "Error";
   }
 }

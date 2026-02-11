@@ -3,7 +3,6 @@ import 'package:calculators/calculators/basic_calc/services/calculator_logic.dar
 import 'package:calculators/calculators/basic_calc/widgets/calc_button.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -15,6 +14,11 @@ class CalculatorScreen extends StatefulWidget {
 class _CalculatorScreenState extends State<CalculatorScreen> {
   CalculatorState _state = CalculatorState();
   String op = "";
+  String result = "";
+  String history = "";
+  String lastHistory = "";
+  double n1 = 0.0;
+  double n2 = 0.0;
 
   void _buttonPressed(String buttonText) {
     double memo;
@@ -30,9 +34,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "x":
         case "÷":
         case "x^y":
+          op = (buttonText == "x^y") ? "^" : buttonText;
           if (_state.currentInput.isNotEmpty) {
-            double n1 = double.parse(_state.currentInput);
-            op = (buttonText == "x^y") ? "^" : buttonText;
+            n1 = double.parse(_state.currentInput);
             _state = _state.copyWith(
               num1: n1,
               operation: op,
@@ -40,8 +44,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               history: CalculatorLogic.updateHistory(_state.history, op, n1),
             );
           } else if (_state.operation.isNotEmpty) {
-            double n1 = _state.num1;
-            op = (buttonText == "x^y") ? "^" : buttonText;
+            n1 = _state.num1;
             _state = _state.copyWith(operation: op, history: CalculatorLogic.updateHistory(_state.history, op, n1));
           }
           break;
@@ -51,15 +54,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "M-":
           memo = _state.memory;
           if (_state.currentInput.isNotEmpty) {
-            double n2 = double.parse(_state.currentInput);
+            n2 = double.parse(_state.currentInput);
 
             if (_state.operation.isNotEmpty) {
-              String result = CalculatorLogic.calculateResult(num1: _state.num1, num2: n2, operation: _state.operation);
+              result = CalculatorLogic.calculateResult(num1: _state.num1, num2: n2, operation: _state.operation);
               if (buttonText == "M+") memo += double.parse(result);
               if (buttonText == "M-") memo -= double.parse(result);
               _state = _state.copyWith(
                 output: result,
-                history: CalculatorLogic.updateHistory(_state.history, _state.operation, _state.num1, n2, result),
+                history: CalculatorLogic.updateHistory(_state.history, _state.operation, _state.num1, n2, result, true),
                 currentInput: result,
                 operation: "",
                 memory: memo,
@@ -86,29 +89,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           _state = _state.copyWith(memory: 0);
           break;
 
-        case "x²":
-          if (_state.currentInput.isNotEmpty) {
-            double val = double.parse(_state.currentInput);
-            String result = val.power(2).toString().cleanPointZero();
-            _state = _state.copyWith(output: result, history: "${val.cleanDouble()}² = $result", currentInput: result);
-          }
-          break;
-
-        case "√":
-          if (_state.currentInput.isNotEmpty) {
-            double val = double.parse(_state.currentInput);
-            if (val >= 0) {
-              String result = sqrt(val).toString().cleanPointZero();
-              _state = _state.copyWith(
-                output: result,
-                history: "√(${val.cleanDouble()}) = $result",
-                currentInput: result,
-              );
-            } else {
-              _state = _state.copyWith(output: "Error", history: "negative √ not allowed");
-            }
-          }
-          break;
+        // case "%":
+        //   if (_state.currentInput.isNotEmpty) {
+        //     double val = double.parse(_state.currentInput);
+        //     result = val.power(2).toString().cleanPointZero();
+        //     _state = _state.copyWith(output: result, history: "${val.cleanDouble()}² = $result", currentInput: result);
+        //   }
+        //   break;
 
         case "+/-":
           if (_state.currentInput.isNotEmpty) {
@@ -119,19 +106,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           }
           break;
 
+        case "x²":
         case "1/x":
+        case "√":
           if (_state.currentInput.isNotEmpty) {
             double val = double.parse(_state.currentInput);
-            if (val != 0) {
-              String result = (1 / val).toString().cleanPointZero();
-              _state = _state.copyWith(
-                currentInput: result,
-                output: result,
-                history: "1/${val.cleanDouble()} = $result",
-              );
-            } else {
-              _state = _state.copyWith(output: "Error : div by 0", history: "1/0");
-            }
+            result = CalculatorLogic.calculateUnary(input: val, operation: buttonText);
+            history = CalculatorLogic.updateHistoryUnary(val, buttonText, result, _state.history);
+            _state = _state.copyWith(currentInput: result, output: result, history: history);
           }
           break;
 
@@ -173,24 +155,28 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('Basic calculator')),
-      body: Column(
-        children: [
-          buildDisplay(),
-          const Divider(height: 1),
-          Expanded(
-            child: Column(
-              children: [
-                buildButtonRow(["MC", "MR", "M-", "M+"], isMemory: true),
-                buildButtonRow(["x²", "√", "x^y", "1/x"], isSpecial: true),
-                buildButtonRow(["C", "⌫", "+/-", "÷"], isSpecial: true),
-                buildButtonRow(["7", "8", "9", "x"]),
-                buildButtonRow(["4", "5", "6", "-"]),
-                buildButtonRow(["1", "2", "3", "+"]),
-                buildButtonRow(["0", "00", ".", "="]),
-              ],
+      body: SafeArea(
+        // 20 pixels padding minimum at the bottom of the screen :
+        minimum: const EdgeInsets.only(bottom: 50),
+        child: Column(
+          children: [
+            buildDisplay(),
+            const Divider(height: 2),
+            Expanded(
+              child: Column(
+                children: [
+                  buildButtonRow(["MC", "MR", "M-", "M+"], isMemory: true),
+                  buildButtonRow(["x²", "√", "x^y", "1/x"], isSpecial: true),
+                  buildButtonRow(["C", "⌫", "+/-", "÷"], isSpecial: true),
+                  buildButtonRow(["7", "8", "9", "x"]),
+                  buildButtonRow(["4", "5", "6", "-"]),
+                  buildButtonRow(["1", "2", "3", "+"]),
+                  buildButtonRow(["0", "00", ".", "="]),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
