@@ -75,10 +75,14 @@ class CalculatorLogic {
   }
 
   static String updateHistory(String currentHistory, String operation, double num1, [double? num2, String? output]) {
+    String h = "";
     // Clean convert
     String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
-
-    String h = format(num1);
+    if (currentHistory == "") {
+      h = format(num1);
+    } else {
+      h = currentHistory.split("=")[0].trim().split(operation)[0];
+    }
     if (operation.isNotEmpty) h += " $operation ";
     if (num2 != null) h += "${format(num2)} = \n";
     if (output != null) h += output;
@@ -88,8 +92,8 @@ class CalculatorLogic {
 
   static String updateHistoryUnary(double val, String operation, String result, String lastHistory) {
     String historyTemp = "";
+    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
     if (lastHistory == "") {
-      String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
       historyTemp = format(val);
     } else {
       historyTemp = "(${lastHistory.split("=")[0].trim()})";
