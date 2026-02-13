@@ -87,4 +87,18 @@ extension StringExtensions on String {
     }
     return false;
   }
+
+  bool isAGlobalSquared() {
+    if (trim().endsWith("²") && hasAGlobalOperator()) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isAGlobalSQR() {
+    if (trim().startsWith("√") && hasAGlobalOperator()) {
+      return true;
+    }
+    return false;
+  }
 }
