@@ -115,7 +115,13 @@ class CalculatorLogic {
     if (lastHistory == "") {
       historyTemp = format(val);
     } else {
-      historyTemp = "(${lastHistory.split("=")[0].trim()})";
+      if (lastHistory.trim().endsWith("=")) {
+        historyTemp = "(${lastHistory.split("=")[0].trim()})";
+      } else if (lastHistory.trim().isNotANumber()) {
+        if (operation == "x²") return "$lastHistory $val²";
+        if (operation == "1/x") return "$lastHistory 1/$val";
+        if (operation == "√") return "$lastHistory √$val";
+      }
     }
     if (operation == "x²") return "$historyTemp² =\n$result";
     if (operation == "1/x") return "1/$historyTemp =\n$result";

@@ -19,6 +19,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String lastHistory = "";
   double n1 = 0.0;
   double n2 = 0.0;
+  bool lastOperationIsUnary = false;
 
   void _buttonPressed(String buttonText) {
     double memo;
@@ -35,6 +36,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "÷":
         case "x^y":
           op = (buttonText == "x^y") ? "^" : buttonText;
+          lastOperationIsUnary = false;
           if (_state.currentInput.isNotEmpty) {
             n1 = double.parse(_state.currentInput);
             _state = _state.copyWith(
@@ -60,9 +62,21 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               result = CalculatorLogic.calculateResult(num1: _state.num1, num2: n2, operation: _state.operation);
               if (buttonText == "M+") memo += double.parse(result);
               if (buttonText == "M-") memo -= double.parse(result);
+              if (lastOperationIsUnary) {
+                history = "${_state.history} =\n$result";
+              } else {
+                history = CalculatorLogic.updateHistory(
+                  _state.history,
+                  _state.operation,
+                  _state.num1,
+                  n2,
+                  result,
+                  true,
+                );
+              }
               _state = _state.copyWith(
                 output: result,
-                history: CalculatorLogic.updateHistory(_state.history, _state.operation, _state.num1, n2, result, true),
+                history: history,
                 currentInput: result,
                 operation: "",
                 memory: memo,
@@ -89,14 +103,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           _state = _state.copyWith(memory: 0);
           break;
 
-        // case "%":
-        //   if (_state.currentInput.isNotEmpty) {
-        //     double val = double.parse(_state.currentInput);
-        //     result = val.power(2).toString().cleanPointZero();
-        //     _state = _state.copyWith(output: result, history: "${val.cleanDouble()}² = $result", currentInput: result);
-        //   }
-        //   break;
-
         case "+/-":
           if (_state.currentInput.isNotEmpty) {
             String newVal = _state.currentInput.startsWith("-")
@@ -109,6 +115,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "x²":
         case "1/x":
         case "√":
+          lastOperationIsUnary = true;
           if (_state.currentInput.isNotEmpty) {
             double val = double.parse(_state.currentInput);
             result = CalculatorLogic.calculateUnary(input: val, operation: buttonText);
