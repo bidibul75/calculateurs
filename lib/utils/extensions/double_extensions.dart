@@ -85,6 +85,7 @@ extension DoubleExtensions on double {
     }
   }
 
+  /// Calculates a double raised to the power of decimals
   double power(int decimals) {
     bool decimalPositive = true;
     if (decimals == 0) return 1.0;
@@ -103,11 +104,12 @@ extension DoubleExtensions on double {
     return decimalPositive ? result : 1 / result;
   }
 
+  /// Determines if a string represents an integer
   bool isInteger() {
     return !isNaN && !isInfinite && this == toInt();
   }
 
-  // Suppress the .0 end of double numbers
+  /// Suppress the .0 end of double numbers
   num cleanDouble() {
     return isInteger() ? toInt() : this;
   }

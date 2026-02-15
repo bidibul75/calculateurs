@@ -118,11 +118,17 @@ class CalculatorLogic {
       if (lastHistory.trim().endsWith("=")) {
         historyTemp = "(${lastHistory.split("=")[0].trim()})";
       } else if (lastHistory.trim().isNotANumber()) {
-        if (operation == "x²") return "$lastHistory $val²";
-        if (operation == "1/x") return "$lastHistory 1/$val";
-        if (operation == "√") return "$lastHistory √$val";
+        if (lastHistory.contains("=")) {
+          if (operation == "x²") return "${val.cleanDouble()}² =";
+          if (operation == "1/x") return "1/(${val.cleanDouble()}) =";
+          if (operation == "√") return "√${val.cleanDouble()} =";
+        }
+        if (operation == "x²") return "$lastHistory ${val.cleanDouble()}²";
+        if (operation == "1/x") return "$lastHistory 1/${val.cleanDouble()}";
+        if (operation == "√") return "$lastHistory √${val.cleanDouble()}";
       }
     }
+
     if (operation == "x²") return "$historyTemp² =\n$result";
     if (operation == "1/x") return "1/$historyTemp =\n$result";
     if (operation == "√") return "√$historyTemp =\n$result";
