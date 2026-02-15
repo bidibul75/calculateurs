@@ -47,8 +47,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               history: CalculatorLogic.updateHistory(_state.history, op, n1, true),
             );
           } else if (_state.operation.isNotEmpty) {
-            n1 = _state.num1;
-            _state = _state.copyWith(operation: op, history: CalculatorLogic.updateHistory(_state.history, op, n1, true));
+            history = _state.history.trim();
+            history = "${history.substring(0, history.length - 2)} $op ";
+            _state = _state.copyWith(operation: op, history: history);
           }
           break;
 

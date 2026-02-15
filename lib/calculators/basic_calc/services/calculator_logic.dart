@@ -76,10 +76,9 @@ class CalculatorLogic {
     String currentHistory,
     String operation,
     double num1, [
-        bool parentheses = false,
-        double? num2,
+    bool parentheses = false,
+    double? num2,
     String? output,
-
   ]) {
     String h = "";
     // Clean convert
