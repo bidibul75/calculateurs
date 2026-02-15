@@ -36,6 +36,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         case "÷":
         case "x^y":
           op = (buttonText == "x^y") ? "^" : buttonText;
+          // Resets the variable that indicates if the last operation was a unary one (², √, 1/x)
           lastOperationIsUnary = false;
           if (_state.currentInput.isNotEmpty) {
             n1 = double.parse(_state.currentInput);
@@ -43,11 +44,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               num1: n1,
               operation: op,
               currentInput: "",
-              history: CalculatorLogic.updateHistory(_state.history, op, n1),
+              history: CalculatorLogic.updateHistory(_state.history, op, n1, true),
             );
           } else if (_state.operation.isNotEmpty) {
             n1 = _state.num1;
-            _state = _state.copyWith(operation: op, history: CalculatorLogic.updateHistory(_state.history, op, n1));
+            _state = _state.copyWith(operation: op, history: CalculatorLogic.updateHistory(_state.history, op, n1, true));
           }
           break;
 
@@ -69,9 +70,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   _state.history,
                   _state.operation,
                   _state.num1,
+                  false,
                   n2,
                   result,
-                  true,
                 );
               }
               _state = _state.copyWith(
