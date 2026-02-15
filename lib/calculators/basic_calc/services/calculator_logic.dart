@@ -86,7 +86,7 @@ class CalculatorLogic {
     if (currentHistory == "") {
       h = format(num1);
     } else {
-      if (["+", "-", "*", "÷", "^"].contains(operation)) {
+      if (["+", "-", "x", "÷", "^"].contains(operation)) {
         // Doesn't add parentheses if it's a number
         if (currentHistory.split("=")[0].trim().endsWith(operation)) {
           currentHistory = currentHistory.trim().substring(0, currentHistory.trim().length - 1);
