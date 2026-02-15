@@ -52,8 +52,53 @@ extension StringExtensions on String {
     return true;
   }
 
-  bool isNotANumber(){
+  bool isNotANumber() {
     if (isANumber()) return false;
     return true;
+  }
+
+  // Designed to verify only √ and ² global operators
+  bool hasAGlobalOperator() {
+    String operation = trim();
+    if (!operation.startsWith("√") && !operation.endsWith("²")) {
+      return false;
+    }
+    if (operation.startsWith("√")) operation = operation.substring(1);
+    if (operation.endsWith("²")) operation = operation.substring(0, operation.length - 1);
+    operation = operation.trim();
+    if (operation.isANumber()) {
+      return true;
+    }
+    if (!operation.startsWith("(")) return false;
+
+    int count = 0;
+    for (int i = 0; i < operation.length; ++i) {
+      if (operation[i] == "(") count++;
+      if (operation[i] == ")") {
+        count--;
+        if (count == 0) {
+          if (i == (operation.length - 1)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool isAGlobalSquared() {
+    if (trim().endsWith("²") && hasAGlobalOperator()) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isAGlobalSQR() {
+    if (trim().startsWith("√") && hasAGlobalOperator()) {
+      return true;
+    }
+    return false;
   }
 }
