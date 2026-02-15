@@ -39,7 +39,7 @@ extension StringExtensions on String {
     return '${substring(0, maxLength)}$suffix';
   }
 
-  // 3.0 -> 3
+  /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
   String cleanPointZero() {
     if (isNotEmpty && length > 2) {
       if (substring(length - 2) == ".0") return substring(0, length - 2);
@@ -57,7 +57,7 @@ extension StringExtensions on String {
     return true;
   }
 
-  // Designed to verify only √ and ² global operators
+  /// Designed to verify only √ and ² global operators
   bool hasAGlobalOperator() {
     String operation = trim();
     if (!operation.startsWith("√") && !operation.endsWith("²")) {
@@ -100,5 +100,19 @@ extension StringExtensions on String {
       return true;
     }
     return false;
+  }
+
+  /// Replaces the last occurrence of a pattern in a string.
+  String replaceLast (String from, [String to = ""]){
+    if (isEmpty || length<from.length) return this;
+    String resultTemp="";
+    for (int i = length-from.length;i>-1;--i){
+      if (substring(i, i+from.length)==from){
+        resultTemp= substring(0,i)+to;
+        resultTemp +=(i+from.length>=length-1)?"":substring(i+from.length);
+        return resultTemp;
+      }
+    }
+    return this;
   }
 }
