@@ -119,4 +119,9 @@ extension StringExtensions on String {
     }
     return this;
   }
+
+  /// Returns the last character of a string
+  String lastCharacter() {
+    return isEmpty ? "" : this[length - 1];
+  }
 }
