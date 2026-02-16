@@ -33,10 +33,13 @@ extension StringExtensions on String {
     return '${this[0].toUpperCase()}${substring(1)}';
   }
 
-  /// Truncates the string if it exceeds maxLength
+  /// Truncates the string if it exceeds maxLength AND it represents a double
   String truncate(int maxLength, {String suffix = '...'}) {
     if (length <= maxLength) return this;
-    return '${substring(0, maxLength)}$suffix';
+    if (isADouble()) {
+      return '${substring(0, maxLength)}$suffix';
+    }
+    return this;
   }
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
@@ -51,6 +54,13 @@ extension StringExtensions on String {
   bool isANumber() {
     if (double.tryParse(this) == null) return false;
     return true;
+  }
+
+  /// Determines if a string represents a double (.0 excluded)
+  bool isADouble() {
+    String temp = trim().cleanPointZero();
+    if (isANumber() && temp.contains(".")) return true;
+    return false;
   }
 
   /// Determines if a String does NOT represents a number

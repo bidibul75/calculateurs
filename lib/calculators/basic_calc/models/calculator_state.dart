@@ -5,6 +5,7 @@ class CalculatorState {
   final double num1; // first number of the operation
   final String operation; // the selected operator
   final double memory; // the value stocked in memory (M keys)
+  final bool lastOperationIsUnary;
 
   CalculatorState({
     this.output = "0",
@@ -13,6 +14,7 @@ class CalculatorState {
     this.num1 = 0,
     this.operation = "",
     this.memory = 0,
+    this.lastOperationIsUnary = false,
   });
 
   // a method to copy state
@@ -23,6 +25,7 @@ class CalculatorState {
     double? num1,
     String? operation,
     double? memory,
+    bool? lastOperationIsUnary,
   }) {
     return CalculatorState(
       output: output ?? this.output,
@@ -31,6 +34,7 @@ class CalculatorState {
       num1: num1 ?? this.num1,
       operation: operation ?? this.operation,
       memory: memory ?? this.memory,
+      lastOperationIsUnary: lastOperationIsUnary ?? this.lastOperationIsUnary,
     );
   }
 }

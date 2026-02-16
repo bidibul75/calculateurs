@@ -103,7 +103,7 @@ class CalculatorLogic {
       }
     }
     if (operation.isNotEmpty) h += " $operation ";
-    if (num2 != null) h += "${format(num2)} = \n";
+    if (num2 != null) h += "${format(num2)} = ";
     if (output != null) h += output;
 
     return h;
@@ -129,9 +129,9 @@ class CalculatorLogic {
       }
     }
 
-    if (operation == "x²") return "$historyTemp² =\n$result";
-    if (operation == "1/x") return "1/$historyTemp =\n$result";
-    if (operation == "√") return "√$historyTemp =\n$result";
+    if (operation == "x²") return "$historyTemp² = ${result.truncate(10)}";
+    if (operation == "1/x") return "1/$historyTemp = ${result.truncate(10)}";
+    if (operation == "√") return "√$historyTemp = ${result.truncate(10)}";
     return "Error";
   }
 }
