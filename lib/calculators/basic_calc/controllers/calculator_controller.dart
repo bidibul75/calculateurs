@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:rational/rational.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
 
@@ -12,7 +13,14 @@ class CalculatorController extends ChangeNotifier {
   void onButtonPressed(String buttonText) {
     switch (buttonText) {
       case "C":
-        _state = CalculatorState(); // Full reset
+        // Clear only the current input and operation, preserve memory and history
+        _state = _state.copyWith(
+          output: "0",
+          currentInput: "",
+          num1: "0",
+          operation: "",
+          lastOperationIsUnary: false,
+        );
         break;
 
       case "+":
@@ -30,18 +38,21 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "MR":
-        if (_state.memory != 0) {
+        if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
-          String memVal = Decimal.parse(_state.memory.toString()).toPreciseFormattedString();
+          String memVal = _state.memory
+              .toDecimal(scaleOnInfinitePrecision: 10)
+              .toPreciseFormattedString();
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString(), // Clean for internal calculation
+              lastOperationIsUnary: true
           );
         }
         break;
 
       case "MC":
-        _state = _state.copyWith(memory: 0.0);
+        _state = _state.copyWith(memory: Rational.zero);
         break;
 
       case "+/-":
@@ -100,7 +111,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleEqualOrMemory(String buttonText) {
-    double memo = _state.memory;
+    Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
 
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty) {
@@ -113,10 +124,10 @@ class CalculatorController extends ChangeNotifier {
 
       // Handle M+ / M- memory on the result
       if (buttonText == "M+" || buttonText == "M-") {
-        // Clean the formatted result (e.g. "1 000,50") to get a double
-        double resDouble = double.tryParse(result.toCleanMathString()) ?? 0.0;
-        if (buttonText == "M+") memo += resDouble;
-        if (buttonText == "M-") memo -= resDouble;
+        // Keep the same precision as result
+        Rational resRational = Rational.parse(result.toCleanMathString());
+        if (buttonText == "M+") memo += resRational;
+        if (buttonText == "M-") memo -= resRational;
       }
 
       // Update history
@@ -141,7 +152,7 @@ class CalculatorController extends ChangeNotifier {
     }
     // Direct memory handling (if no active operation: e.g. "5 M+")
     else if (buttonText.startsWith("M") && currentInputClean.isNotEmpty) {
-      double val = double.tryParse(currentInputClean) ?? 0.0;
+      Rational val = Rational.parse(currentInputClean);
       if (buttonText == "M+") memo += val;
       if (buttonText == "M-") memo -= val;
       _state = _state.copyWith(memory: memo);
@@ -214,7 +225,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   String memoryDisplay() {
-    if (_state.memory == 0) return "";
+    if (_state.memory == Rational.zero) return "";
     return "M = ${Decimal.parse(_state.memory.toString()).toPreciseFormattedString()}";
   }
 }
