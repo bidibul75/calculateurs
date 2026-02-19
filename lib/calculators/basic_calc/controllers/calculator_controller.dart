@@ -12,7 +12,7 @@ class CalculatorController extends ChangeNotifier {
   void onButtonPressed(String buttonText) {
     switch (buttonText) {
       case "C":
-        _state = CalculatorState(); // Reset complet
+        _state = CalculatorState(); // Full reset
         break;
 
       case "+":
@@ -31,11 +31,11 @@ class CalculatorController extends ChangeNotifier {
 
       case "MR":
         if (_state.memory != 0) {
-          // On récupère la mémoire formatée
+          // Retrieve the formatted memory
           String memVal = Decimal.parse(_state.memory.toString()).toPreciseFormattedString();
           _state = _state.copyWith(
             output: memVal,
-            currentInput: memVal.toCleanMathString(), // On nettoie pour le calcul interne
+            currentInput: memVal.toCleanMathString(), // Clean for internal calculation
           );
         }
         break;
@@ -58,20 +58,20 @@ class CalculatorController extends ChangeNotifier {
         _handleBackspace();
         break;
 
-      default: // Chiffres et point
+      default: // Digits and dot
         _handleNumber(buttonText);
     }
     notifyListeners();
   }
 
-  // --- Logiques Privées ---
+  // --- Private Logic ---
 
   void _handleOperator(String label) {
-    // Conversion label interface -> symbole mathématique
+    // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
     if (_state.currentInput.isNotEmpty) {
-      // On stocke le premier nombre (num1)
+      // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString();
 
       _state = _state.copyWith(
@@ -79,19 +79,19 @@ class CalculatorController extends ChangeNotifier {
         operation: op,
         currentInput: "",
         lastOperationIsUnary: false,
-        // On met à jour l'historique : "1 000 +"
+        // Update history: "1 000 +"
         history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
       );
     } else if (_state.operation.isNotEmpty) {
-      // Si on change d'opérateur sans avoir tapé de nouveau chiffre (ex: tape + puis change pour x)
-      // On modifie juste l'opérateur dans l'historique
+      // If we change operator without typing a new number (e.g. press + then change to x)
+      // Only change the operator in the history
       String currentHist = _state.history.trim();
-      // On enlève le dernier opérateur et on met le nouveau
+      // Remove the last operator and apply the new one
       if (currentHist.isNotEmpty) {
-        // Regex simple pour remplacer le dernier caractère si c'est un opérateur
-        // Ou reconstruction simplifiée :
-        String base = _state.num1; // On reprend le num1 stocké
-        // On reformate num1 pour l'affichage
+        // Simple regex to replace the last character if it is an operator
+        // Or simplified rebuild:
+        String base = _state.num1; // Reuse stored num1
+        // Reformat num1 for display
         String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString() ?? base;
         String newHistory = "$formattedBase $op ";
         _state = _state.copyWith(operation: op, history: newHistory);
@@ -104,22 +104,22 @@ class CalculatorController extends ChangeNotifier {
     String currentInputClean = _state.currentInput.toCleanMathString();
 
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty) {
-      // 1. Calculer le résultat
+      // 1. Compute the result
       String result = CalculatorLogic.calculateResult(
           num1: _state.num1,
           num2: currentInputClean,
           operation: _state.operation
       );
 
-      // Gestion Mémoire M+ / M- sur le résultat
+      // Handle M+ / M- memory on the result
       if (buttonText == "M+" || buttonText == "M-") {
-        // On nettoie le résultat formaté (ex: "1 000,50") pour avoir un double
+        // Clean the formatted result (e.g. "1 000,50") to get a double
         double resDouble = double.tryParse(result.toCleanMathString()) ?? 0.0;
         if (buttonText == "M+") memo += resDouble;
         if (buttonText == "M-") memo -= resDouble;
       }
 
-      // Mise à jour historique
+      // Update history
       String history = _state.lastOperationIsUnary
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
@@ -132,14 +132,14 @@ class CalculatorController extends ChangeNotifier {
       );
 
       _state = _state.copyWith(
-        output: result, // result est déjà formaté par la Logic
+        output: result, // result is already formatted by the logic
         history: history,
-        currentInput: result, // On garde le résultat comme input pour la suite
-        operation: "", // Reset opération
+        currentInput: result, // Keep result as input for the next operation
+        operation: "", // Reset operation
         memory: memo,
       );
     }
-    // Gestion Mémoire directe (si pas d'opération en cours : ex: "5 M+")
+    // Direct memory handling (if no active operation: e.g. "5 M+")
     else if (buttonText.startsWith("M") && currentInputClean.isNotEmpty) {
       double val = double.tryParse(currentInputClean) ?? 0.0;
       if (buttonText == "M+") memo += val;
@@ -168,7 +168,7 @@ class CalculatorController extends ChangeNotifier {
   void _handlePlusMinus() {
     if (_state.currentInput.isNotEmpty) {
       String current = _state.currentInput;
-      // Gestion intelligente du signe négatif selon le format
+      // Smart handling of the negative sign depending on the format
       if (current.startsWith("-")) {
         current = current.substring(1);
       } else {
@@ -187,13 +187,13 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleNumber(String buttonText) {
-    // Récupération du séparateur décimal local (virgule ou point) via vos extensions ou Intl
-    // Pour simplifier ici, on suppose que l'UI envoie "." et qu'on affiche "."
-    // Si vous voulez gérer la virgule à la saisie, remplacez "." par "," ici.
+    // Get the local decimal separator (comma or dot) via extensions or Intl
+    // To simplify, assume the UI sends "." and we display "."
+    // If you want to handle comma input, replace "." with "," here.
 
     String current = _state.currentInput;
 
-    // Si on tape un chiffre après avoir obtenu un résultat (=), on repart à zéro
+    // If a digit is typed after a result (=), start over
     if (_state.history.contains("=") && _state.operation.isEmpty && !_state.lastOperationIsUnary) {
       if (buttonText == "00") return;
       String val = (buttonText == ".") ? "0." : buttonText;

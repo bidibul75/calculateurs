@@ -69,23 +69,48 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
               alignment: Alignment.bottomRight,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
-                  Text(state.history, style: TextStyle(color: Colors.grey[400], fontSize: 24)),
-                  const SizedBox(height: 10),
-                  Text(
-                    state.output,
-                    style: const TextStyle(color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              // Add a ScrollView to prevent overflow when the history is long
+              child: SingleChildScrollView(
+                reverse: true, // Keep the content pinned to the bottom
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Memory display
+                    if (_controller.memoryDisplay().isNotEmpty)
+                      Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
+
+                    // History display
+                    Text(
+                      state.history,
+                      style: TextStyle(color: Colors.grey[400], fontSize: 24),
+                      textAlign: TextAlign.right,
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // FittedBox shrinks the font size if the text is too long
+                    FittedBox(
+                      fit: BoxFit.scaleDown, // Only shrinks, does not grow
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        state.output,
+                        // Force a single line to trigger shrinking
+                        maxLines: 1,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 50, // We can even increase the base size
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Grille de boutons
+          // Button grid
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 40, 8, 40),
             child: Column(
