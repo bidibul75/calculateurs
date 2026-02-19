@@ -1,16 +1,24 @@
 import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
+// Importez votre fichier barrel qui contient l'extension toPreciseFormattedString
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
-  static String calculateResult({required double num1, required double num2, required String operation}) {
-    final r1 = Rational.parse(num1.toString());
-    final r2 = Rational.parse(num2.toString());
 
-    Rational result;
-
+  /// Calcule le résultat d'une opération binaire (+, -, *, /)
+  static String calculateResult({
+    required String num1,
+    required String num2,
+    required String operation
+  }) {
     try {
+      // Conversion des Strings "propres" (1000.5) en Rational
+      final r1 = Rational.parse(num1);
+      final r2 = Rational.parse(num2);
+
+      Rational result;
+
       switch (operation) {
         case "+":
           result = r1 + r2;
@@ -22,116 +30,142 @@ class CalculatorLogic {
           result = r1 * r2;
           break;
         case "÷":
-          if (r2 == Rational.zero) return "Error : divide by 0";
+          if (r2 == Rational.zero) return "Error";
           result = r1 / r2;
           break;
         case "^":
-          if (num2.isInteger()) {
-            result = r1.pow(num2.toInt());
-          } else {
-            return "Error : exponent must be integer";
+        case "x^y":
+        // Rational.pow attend un int.
+        // Si l'exposant est décimal (ex: 2.5), on devrait utiliser des log/exp en double
+        // Ici on tronque à l'entier pour rester dans Rational
+          try {
+            int exponent = r2.toBigInt().toInt();
+            result = r1.pow(exponent);
+          } catch (e) {
+            return "Error";
           }
           break;
         default:
-          return "0";
+          return "Error";
       }
 
-      // Here we convert Rational to Decimal for display
-      return result.toDecimal(scaleOnInfinitePrecision: 10).toString().cleanPointZero();
+      // On convertit en Decimal avec précision, puis en String formatée
+      return result
+          .toDecimal(scaleOnInfinitePrecision: 10)
+          .toPreciseFormattedString();
+
     } catch (e) {
       return "Error";
     }
   }
 
-  static String calculateUnary({required double input, required String operation}) {
-    final r = Rational.parse(input.toString());
-    Rational result;
-
+  /// Calcule le résultat d'une opération unaire (racine, carré, inverse)
+  static String calculateUnary({
+    required String input,
+    required String operation
+  }) {
     try {
+      final r = Rational.parse(input);
+      Rational result;
+
       switch (operation) {
         case "x²":
           result = r * r;
           break;
         case "1/x":
-          if (r == Rational.zero) return "Error div. by 0";
+          if (r == Rational.zero) return "Error";
           result = Rational.one / r;
           break;
         case "√":
-          if (input < 0) return "Error negative root";
-          // use of double for sqrt
-          double root = math.sqrt(input);
+        // Rational ne gère pas les racines carrées irrationnelles.
+        // On passe par double.
+          double val = r.toDouble();
+          if (val < 0) return "Error";
+          double root = math.sqrt(val);
+          // On repasse en String pour le parsing Rational (pour garder la chaine cohérente)
           result = Rational.parse(root.toString());
           break;
         default:
-          return "0";
+          return "Error";
       }
-      return result.toDecimal(scaleOnInfinitePrecision: 10).toString();
+
+      return result
+          .toDecimal(scaleOnInfinitePrecision: 10)
+          .toPreciseFormattedString();
+
     } catch (e) {
-      print(e);
       return "Error";
     }
   }
 
+  /// Met à jour la chaîne de l'historique (ex: "1 000 + 500 =")
   static String updateHistory(
-    String currentHistory,
-    String operation,
-    double num1, [
-    bool parentheses = false,
-    double? num2,
-    String? output,
-  ]) {
-    String h = "";
-    // Clean convert
-    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
-    if (currentHistory == "") {
-      h = format(num1);
-    } else {
-      if (["+", "-", "x", "÷", "^"].contains(operation)) {
-        // Doesn't add parentheses if it's a number
-        if (currentHistory.split("=")[0].trim().endsWith(operation)) {
-          currentHistory = currentHistory.trim().substring(0, currentHistory.trim().length - 1);
-        }
-        if (currentHistory.length > 1) {
-          if (currentHistory.trim().isNotANumber() && parentheses) {
-            h = "(${currentHistory.split("=")[0].trim()})";
-          } else {
-            h = currentHistory.split("=")[0].trim();
-          }
-        } else {
-          h = currentHistory.split("=")[0].trim();
-        }
+      String currentHistory,
+      String operation,
+      String num1, // String "propre" (mathématique)
+      [
+        bool isOperatorChain = false, // Vrai si on vient de cliquer sur +, -, etc.
+        String? num2, // String "propre"
+        String? output, // Résultat déjà formaté
+      ]) {
+
+    // Fonction locale pour formater un nombre brut (ex: "1000.5" -> "1 000,5")
+    String format(String n) {
+      try {
+        if (n == "Error") return n;
+        return Rational.parse(n)
+            .toDecimal(scaleOnInfinitePrecision: 10)
+            .toPreciseFormattedString();
+      } catch (e) {
+        return n;
       }
     }
-    if (operation.isNotEmpty) h += " $operation ";
-    if (num2 != null) h += "${format(num2)} = ";
-    if (output != null) h += output;
 
-    return h;
+    String formattedNum1 = format(num1);
+
+    // Cas 1 : On vient de cliquer sur un opérateur (+, -, x...)
+    if (isOperatorChain && num2 == null) {
+      return "$formattedNum1 $operation ";
+    }
+
+    // Cas 2 : On vient de cliquer sur Égal (=)
+    if (num2 != null) {
+      String formattedNum2 = format(num2);
+      // output est déjà formaté par calculateResult
+      return "$formattedNum1 $operation $formattedNum2 =";
+    }
+
+    return currentHistory;
   }
 
-  static String updateHistoryUnary(double val, String operation, String result, String lastHistory) {
-    String historyTemp = "";
-    String format(double n) => Rational.parse(n.toString()).toDecimal().toString().cleanPointZero();
-    if (lastHistory == "") {
-      historyTemp = format(val);
-    } else {
-      if (lastHistory.trim().endsWith("=")) {
-        historyTemp = "(${lastHistory.split("=")[0].trim()})";
-      } else if (lastHistory.trim().isNotANumber()) {
-        if (lastHistory.contains("=")) {
-          if (operation == "x²") return "${val.cleanDouble()}² =";
-          if (operation == "1/x") return "1/(${val.cleanDouble()}) =";
-          if (operation == "√") return "√${val.cleanDouble()} =";
-        }
-        if (operation == "x²") return "$lastHistory ${val.cleanDouble()}²";
-        if (operation == "1/x") return "$lastHistory 1/${val.cleanDouble()}";
-        if (operation == "√") return "$lastHistory √${val.cleanDouble()}";
+  static String updateHistoryUnary(
+      String inputVal,
+      String operation,
+      String resultFormatted,
+      String currentHistory
+      ) {
+    String format(String n) {
+      try {
+        return Rational.parse(n)
+            .toDecimal(scaleOnInfinitePrecision: 10)
+            .toPreciseFormattedString();
+      } catch (e) {
+        return n;
       }
     }
 
-    if (operation == "x²") return "$historyTemp² = ${result.truncate(10)}";
-    if (operation == "1/x") return "1/$historyTemp = ${result.truncate(10)}";
-    if (operation == "√") return "√$historyTemp = ${result.truncate(10)}";
-    return "Error";
+    String formattedInput = format(inputVal);
+
+    // Construction mathématique jolie
+    switch (operation) {
+      case "x²":
+        return "sqr($formattedInput) =";
+      case "1/x":
+        return "1/($formattedInput) =";
+      case "√":
+        return "√($formattedInput) =";
+      default:
+        return "$operation($formattedInput) =";
+    }
   }
 }

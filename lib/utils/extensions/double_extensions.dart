@@ -89,7 +89,7 @@ extension DoubleExtensions on double {
   double power(int decimals) {
     bool decimalPositive = true;
     if (decimals == 0) return 1.0;
-    if (decimals.isNegative) {
+    if (decimals<0) {
       if (this == 0) {
         throw "Error : divide by 0";
       }

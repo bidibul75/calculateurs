@@ -1,28 +1,30 @@
 class CalculatorState {
-  final String output; // big font on screen
-  final String history; // current or last calculation
-  final String currentInput; // input buffer
-  final double num1; // first number of the operation
-  final String operation; // the selected operator
-  final double memory; // the value stocked in memory (M keys)
+  final String output;
+  final String history;
+  final String currentInput;
+
+  // CHANGEMENT ICI : String au lieu de double pour garder la précision
+  final String num1;
+
+  final String operation;
+  final double memory; // On peut garder double pour l'instant ou passer en String plus tard
   final bool lastOperationIsUnary;
 
   CalculatorState({
     this.output = "0",
     this.history = "",
     this.currentInput = "",
-    this.num1 = 0,
+    this.num1 = "0", // Initialisation String
     this.operation = "",
-    this.memory = 0,
+    this.memory = 0.0,
     this.lastOperationIsUnary = false,
   });
 
-  // a method to copy state
   CalculatorState copyWith({
     String? output,
     String? history,
     String? currentInput,
-    double? num1,
+    String? num1, // Changement de signature
     String? operation,
     double? memory,
     bool? lastOperationIsUnary,

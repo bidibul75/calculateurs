@@ -1,5 +1,10 @@
 // lib/utils/extensions/string_extensions.dart
 
+import 'package:intl/intl.dart';
+import 'package:intl/number_symbols.dart';
+import 'package:intl/number_symbols_data.dart';
+import 'package:rational/rational.dart';
+
 /// Utility extensions for the String class
 extension StringExtensions on String {
   /// Counts the number of occurrences of a pattern in the string
@@ -15,7 +20,9 @@ extension StringExtensions on String {
       return split(pattern).length - 1;
     } else {
       final regex = RegExp(RegExp.escape(pattern), caseSensitive: false);
-      return regex.allMatches(this).length;
+      return regex
+          .allMatches(this)
+          .length;
     }
   }
 
@@ -134,4 +141,42 @@ extension StringExtensions on String {
   String lastCharacter() {
     return isEmpty ? "" : this[length - 1];
   }
+
+  /// Converts a formatted String (e.g: "10 000,50") into a Rational
+  Rational toRationalFromLocale({String? locale}) {
+    final String effectiveLocale = locale ?? Intl.getCurrentLocale();
+    final NumberSymbols symbols = numberFormatSymbols[effectiveLocale]
+        ?? numberFormatSymbols['en_US']!;
+
+    // 1. Clean the string:
+    // - Remove thousand separators (e.g: non-breaking spaces or regular spaces)
+    // - Replace local decimal separator (e.g: comma) with standard dot
+    String cleanString = replaceAll(symbols.GROUP_SEP, '') // Remove spaces/separators
+        .replaceAll(symbols.DECIMAL_SEP, '.'); // Replace comma with dot
+
+    // Note: Sometimes the thousand separator is a non-breaking space (\u00A0)
+    // It's prudent to also clean regular spaces just in case
+    cleanString = cleanString.replaceAll(' ', '');
+
+    // 2. Parse properly
+    return Rational.parse(cleanString);
+  }
+  /// Nettoie une chaîne formatée (ex: "1 000,50") pour en faire une chaîne mathématique standard (ex: "1000.50")
+  String toCleanMathString() {
+    final String locale = Intl.getCurrentLocale();
+    final NumberSymbols symbols = numberFormatSymbols[locale]
+        ?? numberFormatSymbols['en_US']!;
+
+    // 1. Enlever les séparateurs de milliers (espaces)
+    String s = replaceAll(symbols.GROUP_SEP, '');
+    // Attention aux espaces insécables parfois utilisés par Intl
+    s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
+
+    // 2. Remplacer la virgule par un point
+    s = s.replaceAll(symbols.DECIMAL_SEP, '.');
+
+    return s;
+  }
+
+
 }
