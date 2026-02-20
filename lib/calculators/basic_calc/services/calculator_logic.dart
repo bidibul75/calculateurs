@@ -1,19 +1,18 @@
 import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
-// Importez votre fichier barrel qui contient l'extension toPreciseFormattedString
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
 
-  /// Calcule le résultat d'une opération binaire (+, -, *, /)
+  /// Calculates the result of a binary operation (+, -, *, /)
   static String calculateResult({
     required String num1,
     required String num2,
     required String operation
   }) {
     try {
-      // Conversion des Strings "propres" (1000.5) en Rational
+      // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
       final r2 = Rational.parse(num2);
 
@@ -35,9 +34,9 @@ class CalculatorLogic {
           break;
         case "^":
         case "x^y":
-        // Rational.pow attend un int.
-        // Si l'exposant est décimal (ex: 2.5), on devrait utiliser des log/exp en double
-        // Ici on tronque à l'entier pour rester dans Rational
+        // Rational.pow expects an int.
+        // If the exponent is decimal (e.g., 2.5), we should use log/exp in double
+        // Here we truncate to int to stay within Rational
           try {
             int exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
@@ -49,7 +48,7 @@ class CalculatorLogic {
           return "Error";
       }
 
-      // On convertit en Decimal avec précision, puis en String formatée
+      // Convert to Decimal with precision, then to formatted String
       return result
           .toDecimal(scaleOnInfinitePrecision: 10)
           .toPreciseFormattedString();
@@ -59,7 +58,7 @@ class CalculatorLogic {
     }
   }
 
-  /// Calcule le résultat d'une opération unaire (racine, carré, inverse)
+  /// Calculates the result of a unary operation (square root, square, reciprocal)
   static String calculateUnary({
     required String input,
     required String operation
@@ -77,12 +76,12 @@ class CalculatorLogic {
           result = Rational.one / r;
           break;
         case "√":
-        // Rational ne gère pas les racines carrées irrationnelles.
-        // On passe par double.
+        // Rational does not handle irrational square roots.
+        // We use double instead.
           double val = r.toDouble();
           if (val < 0) return "Error";
           double root = math.sqrt(val);
-          // On repasse en String pour le parsing Rational (pour garder la chaine cohérente)
+          // Convert back to String for Rational parsing (to keep the string consistent)
           result = Rational.parse(root.toString());
           break;
         default:
@@ -98,18 +97,18 @@ class CalculatorLogic {
     }
   }
 
-  /// Met à jour la chaîne de l'historique (ex: "1 000 + 500 =")
+  /// Updates the history string (e.g: "1 000 + 500 =")
   static String updateHistory(
       String currentHistory,
       String operation,
-      String num1, // String "propre" (mathématique)
+      String num1, // clean String (mathematical)
       [
-        bool isOperatorChain = false, // Vrai si on vient de cliquer sur +, -, etc.
-        String? num2, // String "propre"
-        String? output, // Résultat déjà formaté
+        bool isOperatorChain = false, // True if we just clicked on +, -, etc.
+        String? num2, // clean String
+        String? output, // Result already formatted
       ]) {
 
-    // Fonction locale pour formater un nombre brut (ex: "1000.5" -> "1 000,5")
+    // Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
     String format(String n) {
       try {
         if (n == "Error") return n;
@@ -123,16 +122,16 @@ class CalculatorLogic {
 
     String formattedNum1 = format(num1);
 
-    // Cas 1 : On vient de cliquer sur un opérateur (+, -, x...)
+    // Case 1: We just clicked on an operator (+, -, x...)
     if (isOperatorChain && num2 == null) {
       return "$formattedNum1 $operation ";
     }
 
-    // Cas 2 : On vient de cliquer sur Égal (=)
+    // Case 2: We just clicked on equal (=)
     if (num2 != null) {
       String formattedNum2 = format(num2);
-      // output est déjà formaté par calculateResult
-      return "$formattedNum1 $operation $formattedNum2 =";
+      // output is already formatted by calculateResult
+      return "$formattedNum1 $operation $formattedNum2 = ${output??""}";
     }
 
     return currentHistory;
@@ -156,10 +155,9 @@ class CalculatorLogic {
 
     String formattedInput = format(inputVal);
 
-    // Construction mathématique jolie
     switch (operation) {
       case "x²":
-        return "sqr($formattedInput) =";
+        return "($formattedInput)² =";
       case "1/x":
         return "1/($formattedInput) =";
       case "√":

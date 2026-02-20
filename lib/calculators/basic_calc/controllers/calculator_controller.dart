@@ -19,6 +19,7 @@ class CalculatorController extends ChangeNotifier {
           currentInput: "",
           num1: "0",
           operation: "",
+          history: _state.history,
           lastOperationIsUnary: false,
         );
         break;
@@ -170,7 +171,7 @@ class CalculatorController extends ChangeNotifier {
       _state = _state.copyWith(
         currentInput: result,
         output: result,
-        history: history,
+        history: "$history $result",
         lastOperationIsUnary: true,
       );
     }
@@ -204,15 +205,14 @@ class CalculatorController extends ChangeNotifier {
 
     String current = _state.currentInput;
 
+    if (buttonText == "00" && (current == "" || current == "0")) return;
+
     // If a digit is typed after a result (=), start over
     if (_state.history.contains("=") && _state.operation.isEmpty && !_state.lastOperationIsUnary) {
-      if (buttonText == "00") return;
       String val = (buttonText == ".") ? "0." : buttonText;
-      _state = CalculatorState(currentInput: val, output: val);
+      _state = CalculatorState(currentInput: current+val, output: current+val, history: _state.history, memory: _state.memory);
       return;
     }
-
-    if (buttonText == "00" && (current == "" || current == "0")) return;
 
     if (current == "0" && buttonText != ".") {
       current = buttonText;
@@ -226,6 +226,6 @@ class CalculatorController extends ChangeNotifier {
 
   String memoryDisplay() {
     if (_state.memory == Rational.zero) return "";
-    return "M = ${Decimal.parse(_state.memory.toString()).toPreciseFormattedString()}";
+    return "M = ${Decimal.parse(_state.memory.toDecimal().toString()).toPreciseFormattedString()}";
   }
 }

@@ -161,18 +161,18 @@ extension StringExtensions on String {
     // 2. Parse properly
     return Rational.parse(cleanString);
   }
-  /// Nettoie une chaîne formatée (ex: "1 000,50") pour en faire une chaîne mathématique standard (ex: "1000.50")
+  /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
   String toCleanMathString() {
     final String locale = Intl.getCurrentLocale();
     final NumberSymbols symbols = numberFormatSymbols[locale]
         ?? numberFormatSymbols['en_US']!;
 
-    // 1. Enlever les séparateurs de milliers (espaces)
+    // 1. Remove thousand separators (spaces)
     String s = replaceAll(symbols.GROUP_SEP, '');
-    // Attention aux espaces insécables parfois utilisés par Intl
+    // Beware of non-breaking spaces sometimes used by Intl
     s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
 
-    // 2. Remplacer la virgule par un point
+    // 2. Replace comma with dot
     s = s.replaceAll(symbols.DECIMAL_SEP, '.');
 
     return s;
