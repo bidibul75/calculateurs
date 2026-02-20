@@ -1,8 +1,5 @@
-import 'package:calculators/calculators/basic_calc/models/calculator_state.dart';
-import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
-import 'package:calculators/calculators/basic_calc/widgets/calc_button.dart';
-import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import '../controllers/calculator_controller.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -12,236 +9,121 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
-  CalculatorState _state = CalculatorState();
-  String op = "";
-  String result = "";
-  String history = "";
-  String lastHistory = "";
-  double n1 = 0.0;
-  double n2 = 0.0;
-  bool lastOperationIsUnary = false;
+  final CalculatorController _controller = CalculatorController();
 
-  void _buttonPressed(String buttonText) {
-    double memo;
-
-    setState(() {
-      switch (buttonText) {
-        case "C":
-          _state = _state.copyWith(output: "0", history: "", currentInput: "", num1: 0, operation: "");
-          break;
-
-        case "+":
-        case "-":
-        case "x":
-        case "÷":
-        case "x^y":
-          op = (buttonText == "x^y") ? "^" : buttonText;
-          // Resets the variable that indicates if the last operation was a unary one (², √, 1/x)
-          lastOperationIsUnary = false;
-          if (_state.currentInput.isNotEmpty) {
-            n1 = double.parse(_state.currentInput);
-            _state = _state.copyWith(
-              num1: n1,
-              operation: op,
-              currentInput: "",
-              history: CalculatorLogic.updateHistory(_state.history, op, n1, true),
-            );
-          } else if (_state.operation.isNotEmpty) {
-            history = _state.history.trim();
-            history = "${history.substring(0, history.length - 2)} $op ";
-            _state = _state.copyWith(operation: op, history: history);
-          }
-          break;
-
-        case "=":
-        case "M+":
-        case "M-":
-          memo = _state.memory;
-          if (_state.currentInput.isNotEmpty) {
-            n2 = double.parse(_state.currentInput);
-
-            if (_state.operation.isNotEmpty) {
-              result = CalculatorLogic.calculateResult(num1: _state.num1, num2: n2, operation: _state.operation);
-              if (buttonText == "M+") memo += double.parse(result);
-              if (buttonText == "M-") memo -= double.parse(result);
-              if (lastOperationIsUnary) {
-                history = "${_state.history} =\n$result";
-              } else {
-                history = CalculatorLogic.updateHistory(
-                  _state.history,
-                  _state.operation,
-                  _state.num1,
-                  false,
-                  n2,
-                  result,
-                );
-              }
-              _state = _state.copyWith(
-                output: result,
-                history: history,
-                currentInput: result,
-                operation: "",
-                memory: memo,
-              );
-            } else {
-              if (buttonText == "M+" || buttonText == "M-") {
-                if (buttonText == "M+") memo += n2;
-                if (buttonText == "M-") memo -= n2;
-                _state = _state.copyWith(memory: memo);
-              }
-            }
-          }
-          break;
-
-        case "MR":
-          memo = _state.memory;
-          _state = _state.copyWith(
-            output: memo.toString().cleanPointZero(),
-            currentInput: memo.toString().cleanPointZero(),
-          );
-          break;
-
-        case "MC":
-          _state = _state.copyWith(memory: 0);
-          break;
-
-        case "+/-":
-          if (_state.currentInput.isNotEmpty) {
-            String newVal = _state.currentInput.startsWith("-")
-                ? _state.currentInput.substring(1)
-                : "-${_state.currentInput}";
-            _state = _state.copyWith(currentInput: newVal, output: newVal);
-          }
-          break;
-
-        case "x²":
-        case "1/x":
-        case "√":
-          lastOperationIsUnary = true;
-          if (_state.currentInput.isNotEmpty) {
-            double val = double.parse(_state.currentInput);
-            result = CalculatorLogic.calculateUnary(input: val, operation: buttonText);
-            history = CalculatorLogic.updateHistoryUnary(val, buttonText, result, _state.history);
-            _state = _state.copyWith(currentInput: result, output: result, history: history);
-          }
-          break;
-
-        case "⌫":
-          if (_state.currentInput.isNotEmpty) {
-            String newVal = _state.currentInput.substring(0, _state.currentInput.length - 1);
-            if (newVal.isEmpty || newVal == "-") newVal = "0";
-            _state = _state.copyWith(currentInput: newVal, output: newVal);
-          }
-          break;
-
-        default:
-          String current = _state.currentInput;
-          if (buttonText == "00" && (current == "" || current == "0")) return;
-          if (_state.history.contains("=")) {
-            if (buttonText == "00") return;
-            if (buttonText == ".") buttonText = "0.";
-            _state = _state.copyWith(currentInput: buttonText, output: buttonText, history: "", num1: 0, operation: "");
-          } else {
-            if (current == "0" && buttonText != ".") {
-              current = buttonText;
-            } else {
-              // to avoid double points
-              if (buttonText == ".") {
-                if (current.contains(".")) return;
-                if (current == "") current = "0";
-              }
-              current += buttonText;
-            }
-            // state update with the new string
-            _state = _state.copyWith(currentInput: current, output: current);
-          }
-      }
-    });
+  @override
+  void initState() {
+    super.initState();
+    // We listen to shifts of the controller to update UI
+    _controller.addListener(_updateUI);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Basic calculator')),
-      body: SafeArea(
-        // 20 pixels padding minimum at the bottom of the screen :
-        minimum: const EdgeInsets.only(bottom: 50),
-        child: Column(
-          children: [
-            buildDisplay(),
-            const Divider(height: 2),
-            Expanded(
-              child: Column(
-                children: [
-                  buildButtonRow(["MC", "MR", "M-", "M+"], isMemory: true),
-                  buildButtonRow(["x²", "√", "x^y", "1/x"], isSpecial: true),
-                  buildButtonRow(["C", "⌫", "+/-", "÷"], isSpecial: true),
-                  buildButtonRow(["7", "8", "9", "x"]),
-                  buildButtonRow(["4", "5", "6", "-"]),
-                  buildButtonRow(["1", "2", "3", "+"]),
-                  buildButtonRow(["0", "00", ".", "="]),
-                ],
-              ),
-            ),
-          ],
+  void dispose() {
+    _controller.removeListener(_updateUI);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _updateUI() {
+    setState(() {});
+  }
+
+  /// Determines button color amongst text
+  Color _getButtonColor(String label) {
+    if (label == 'C' || label == "⌫") return Colors.redAccent;
+    if (['MC', 'MR', 'M+', 'M-'].contains(label)) return Colors.blueGrey;
+    if (['÷', 'x', '-', '+', '='].contains(label)) return Colors.orange;
+    return Colors.grey[850]!;
+  }
+
+  /// Builds an individual button
+  Widget _buildButton(String label) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _getButtonColor(label),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          onPressed: () => _controller.onButtonPressed(label),
+          child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
       ),
     );
   }
 
-  Widget buildButtonRow(List<String> labels, {bool isMemory = false, bool isSpecial = false}) {
-    return Expanded(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: labels.map((label) {
-          Color? bgColor;
-          Color? txtColor;
-          if (isMemory) {
-            bgColor = Colors.green[400];
-            txtColor = Colors.white;
-          } else if (label == "=") {
-            bgColor = Colors.blue[400];
-            txtColor = Colors.white;
-          } else if (["C", "⌫"].contains(label)) {
-            bgColor = Colors.red[400];
-            txtColor = Colors.white;
-          } else if (isSpecial || ["x", "-", "+"].contains(label)) {
-            bgColor = Colors.amber[400];
-            txtColor = Colors.white;
-          }
-          return CalcButton(text: label, color: bgColor, textColor: txtColor, onPressed: () => _buttonPressed(label));
-        }).toList(),
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    final state = _controller.state;
 
-  Widget buildDisplay() {
-    final String memoryDisplay = _state.memory != 0.0 ? "M = ${_state.memory.toString().cleanPointZero()}" : "";
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 40, 16, 20),
-      width: double.infinity,
-      color: Colors.grey[50],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Calculatrice'), backgroundColor: Colors.transparent, elevation: 0),
+      body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                memoryDisplay,
-                style: TextStyle(fontSize: 16, color: Colors.green[700], fontWeight: FontWeight.bold),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+              alignment: Alignment.bottomRight,
+              // Add a ScrollView to prevent overflow when the history is long
+              child: SingleChildScrollView(
+                reverse: true, // Keep the content pinned to the bottom
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Memory display
+                    if (_controller.memoryDisplay().isNotEmpty)
+                      Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
+
+                    // History display
+                    Text(
+                      state.history,
+                      style: TextStyle(color: Colors.grey[400], fontSize: 24),
+                      textAlign: TextAlign.right,
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // FittedBox shrinks the font size if the text is too long
+                    FittedBox(
+                      fit: BoxFit.scaleDown, // Only shrinks, does not grow
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        state.output,
+                        // Force a single line to trigger shrinking
+                        maxLines: 1,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 50, // We can even increase the base size
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Text(_state.history, style: const TextStyle(fontSize: 18, color: Colors.grey)),
-            ],
+            ),
           ),
-          const SizedBox(height: 15),
-          Text(
-            _state.output,
-            style: const TextStyle(fontSize: 54, fontWeight: FontWeight.bold),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+
+          // Button grid
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 40, 8, 40),
+            child: Column(
+              children: [
+                Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
+                Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
+                Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
+                Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
+                Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
+                Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
+                Row(children: [_buildButton('0'), _buildButton('00'), _buildButton('.'), _buildButton('=')]),
+              ],
+            ),
           ),
         ],
       ),

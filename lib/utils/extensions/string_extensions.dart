@@ -1,5 +1,10 @@
 // lib/utils/extensions/string_extensions.dart
 
+import 'package:intl/intl.dart';
+import 'package:intl/number_symbols.dart';
+import 'package:intl/number_symbols_data.dart';
+import 'package:rational/rational.dart';
+
 /// Utility extensions for the String class
 extension StringExtensions on String {
   /// Counts the number of occurrences of a pattern in the string
@@ -15,7 +20,9 @@ extension StringExtensions on String {
       return split(pattern).length - 1;
     } else {
       final regex = RegExp(RegExp.escape(pattern), caseSensitive: false);
-      return regex.allMatches(this).length;
+      return regex
+          .allMatches(this)
+          .length;
     }
   }
 
@@ -33,10 +40,13 @@ extension StringExtensions on String {
     return '${this[0].toUpperCase()}${substring(1)}';
   }
 
-  /// Truncates the string if it exceeds maxLength
+  /// Truncates the string if it exceeds maxLength AND it represents a double
   String truncate(int maxLength, {String suffix = '...'}) {
     if (length <= maxLength) return this;
-    return '${substring(0, maxLength)}$suffix';
+    if (isADouble()) {
+      return '${substring(0, maxLength)}$suffix';
+    }
+    return this;
   }
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
@@ -47,17 +57,26 @@ extension StringExtensions on String {
     return this;
   }
 
+  /// Determines if a String represents a number
   bool isANumber() {
     if (double.tryParse(this) == null) return false;
     return true;
   }
 
+  /// Determines if a string represents a double (.0 excluded)
+  bool isADouble() {
+    String temp = trim().cleanPointZero();
+    if (isANumber() && temp.contains(".")) return true;
+    return false;
+  }
+
+  /// Determines if a String does NOT represents a number
   bool isNotANumber() {
     if (isANumber()) return false;
     return true;
   }
 
-  /// Designed to verify only √ and ² global operators
+  /// Determines if the string represents a number or a single expression with a single operator ( for instance 3² or √(1+2) ).
   bool hasAGlobalOperator() {
     String operation = trim();
     if (!operation.startsWith("√") && !operation.endsWith("²")) {
@@ -88,6 +107,7 @@ extension StringExtensions on String {
     return false;
   }
 
+  /// Determines if the string represents a squared number or a squared expression as a whole.
   bool isAGlobalSquared() {
     if (trim().endsWith("²") && hasAGlobalOperator()) {
       return true;
@@ -95,6 +115,7 @@ extension StringExtensions on String {
     return false;
   }
 
+  /// Determines if the string represents a number inside a square root or an entire expression inside a square root.
   bool isAGlobalSQR() {
     if (trim().startsWith("√") && hasAGlobalOperator()) {
       return true;
@@ -103,16 +124,59 @@ extension StringExtensions on String {
   }
 
   /// Replaces the last occurrence of a pattern in a string.
-  String replaceLast (String from, [String to = ""]){
-    if (isEmpty || length<from.length) return this;
-    String resultTemp="";
-    for (int i = length-from.length;i>-1;--i){
-      if (substring(i, i+from.length)==from){
-        resultTemp= substring(0,i)+to;
-        resultTemp +=(i+from.length>=length-1)?"":substring(i+from.length);
+  String replaceLast(String from, [String to = ""]) {
+    if (isEmpty || length < from.length) return this;
+    String resultTemp = "";
+    for (int i = length - from.length; i > -1; --i) {
+      if (substring(i, i + from.length) == from) {
+        resultTemp = substring(0, i) + to;
+        resultTemp += (i + from.length >= length - 1) ? "" : substring(i + from.length);
         return resultTemp;
       }
     }
     return this;
   }
+
+  /// Returns the last character of a string
+  String lastCharacter() {
+    return isEmpty ? "" : this[length - 1];
+  }
+
+  /// Converts a formatted String (e.g: "10 000,50") into a Rational
+  Rational toRationalFromLocale({String? locale}) {
+    final String effectiveLocale = locale ?? Intl.getCurrentLocale();
+    final NumberSymbols symbols = numberFormatSymbols[effectiveLocale]
+        ?? numberFormatSymbols['en_US']!;
+
+    // 1. Clean the string:
+    // - Remove thousand separators (e.g: non-breaking spaces or regular spaces)
+    // - Replace local decimal separator (e.g: comma) with standard dot
+    String cleanString = replaceAll(symbols.GROUP_SEP, '') // Remove spaces/separators
+        .replaceAll(symbols.DECIMAL_SEP, '.'); // Replace comma with dot
+
+    // Note: Sometimes the thousand separator is a non-breaking space (\u00A0)
+    // It's prudent to also clean regular spaces just in case
+    cleanString = cleanString.replaceAll(' ', '');
+
+    // 2. Parse properly
+    return Rational.parse(cleanString);
+  }
+  /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
+  String toCleanMathString() {
+    final String locale = Intl.getCurrentLocale();
+    final NumberSymbols symbols = numberFormatSymbols[locale]
+        ?? numberFormatSymbols['en_US']!;
+
+    // 1. Remove thousand separators (spaces)
+    String s = replaceAll(symbols.GROUP_SEP, '');
+    // Beware of non-breaking spaces sometimes used by Intl
+    s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
+
+    // 2. Replace comma with dot
+    s = s.replaceAll(symbols.DECIMAL_SEP, '.');
+
+    return s;
+  }
+
+
 }

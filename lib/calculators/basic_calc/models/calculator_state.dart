@@ -1,28 +1,32 @@
+import 'package:rational/rational.dart';
+
 class CalculatorState {
-  final String output; // big font on screen
-  final String history; // current or last calculation
-  final String currentInput; // input buffer
-  final double num1; // first number of the operation
-  final String operation; // the selected operator
-  final double memory; // the value stocked in memory (M keys)
+  final String output;
+  final String history;
+  final String currentInput;
+  final String num1;
+  final String operation;
+  final Rational memory;
+  final bool lastOperationIsUnary;
 
   CalculatorState({
     this.output = "0",
     this.history = "",
     this.currentInput = "",
-    this.num1 = 0,
+    this.num1 = "0",
     this.operation = "",
-    this.memory = 0,
-  });
+    Rational? memory,
+    this.lastOperationIsUnary = false,
+  }) : memory = memory ?? Rational.zero;
 
-  // a method to copy state
   CalculatorState copyWith({
     String? output,
     String? history,
     String? currentInput,
-    double? num1,
+    String? num1,
     String? operation,
-    double? memory,
+    Rational? memory,
+    bool? lastOperationIsUnary,
   }) {
     return CalculatorState(
       output: output ?? this.output,
@@ -31,6 +35,7 @@ class CalculatorState {
       num1: num1 ?? this.num1,
       operation: operation ?? this.operation,
       memory: memory ?? this.memory,
+      lastOperationIsUnary: lastOperationIsUnary ?? this.lastOperationIsUnary,
     );
   }
 }
