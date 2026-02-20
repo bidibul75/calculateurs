@@ -171,6 +171,9 @@ app.*.symbols
 # IDEs: IntelliJ IDEA / Android Studio / VS Code
 # ========================================
 
+# DevTools configuration (user-specific)
+devtools_options.yaml
+
 # IntelliJ IDEA / Android Studio
 .idea/
 *.iml
