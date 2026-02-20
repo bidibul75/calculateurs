@@ -17,7 +17,7 @@ class CalculatorState {
     this.operation = "",
     Rational? memory,
     this.lastOperationIsUnary = false,
-  }): memory = memory ?? Rational.zero;
+  }) : memory = memory ?? Rational.zero;
 
   CalculatorState copyWith({
     String? output,

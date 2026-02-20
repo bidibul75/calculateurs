@@ -41,13 +41,11 @@ class CalculatorController extends ChangeNotifier {
       case "MR":
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
-          String memVal = _state.memory
-              .toDecimal(scaleOnInfinitePrecision: 10)
-              .toPreciseFormattedString();
+          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString(), // Clean for internal calculation
-              lastOperationIsUnary: true
+            lastOperationIsUnary: true,
           );
         }
         break;
@@ -118,9 +116,9 @@ class CalculatorController extends ChangeNotifier {
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty) {
       // 1. Compute the result
       String result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
-          num2: currentInputClean,
-          operation: _state.operation
+        num1: _state.num1,
+        num2: currentInputClean,
+        operation: _state.operation,
       );
 
       // Handle M+ / M- memory on the result
@@ -135,19 +133,22 @@ class CalculatorController extends ChangeNotifier {
       String history = _state.lastOperationIsUnary
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
-          _state.history,
-          _state.operation,
-          _state.num1,
-          false,
-          currentInputClean,
-          result
-      );
+              _state.history,
+              _state.operation,
+              _state.num1,
+              false,
+              currentInputClean,
+              result,
+            );
 
       _state = _state.copyWith(
-        output: result, // result is already formatted by the logic
+        output: result,
+        // result is already formatted by the logic
         history: history,
-        currentInput: result, // Keep result as input for the next operation
-        operation: "", // Reset operation
+        currentInput: result,
+        // Keep result as input for the next operation
+        operation: "",
+        // Reset operation
         memory: memo,
       );
     }
@@ -210,7 +211,12 @@ class CalculatorController extends ChangeNotifier {
     // If a digit is typed after a result (=), start over
     if (_state.history.contains("=") && _state.operation.isEmpty && !_state.lastOperationIsUnary) {
       String val = (buttonText == ".") ? "0." : buttonText;
-      _state = CalculatorState(currentInput: current+val, output: current+val, history: _state.history, memory: _state.memory);
+      _state = CalculatorState(
+        currentInput: current + val,
+        output: current + val,
+        history: _state.history,
+        memory: _state.memory,
+      );
       return;
     }
 
@@ -218,8 +224,7 @@ class CalculatorController extends ChangeNotifier {
       current = buttonText;
     } else {
       if (buttonText == "." && current.contains(".")) return;
-      if (buttonText == "." && current.isEmpty) current = "0.";
-      current += buttonText;
+      (buttonText == "." && current.isEmpty) ? current = "0." : current += buttonText;
     }
     _state = _state.copyWith(currentInput: current, output: current);
   }
