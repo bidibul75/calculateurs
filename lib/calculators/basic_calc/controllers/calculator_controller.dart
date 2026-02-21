@@ -9,20 +9,34 @@ class CalculatorController extends ChangeNotifier {
   CalculatorState _state = CalculatorState();
 
   CalculatorState get state => _state;
+  bool isLastClicClear = false;
 
   void onButtonPressed(String buttonText) {
     switch (buttonText) {
       case "C":
-        // Clear only the current input and operation, preserve memory and history
-        _state = _state.copyWith(
-          output: "0",
-          currentInput: "",
-          num1: "0",
-          operation: "",
-          history: _state.history.contains("=") ? _state.history : "",
-          // Clear history only if no result is displayed
-          lastOperationIsUnary: false,
-        );
+        if (isLastClicClear) {
+          isLastClicClear = false;
+          _state = _state.copyWith(
+            output: "0",
+            currentInput: "",
+            num1: "0",
+            operation: "",
+            history: "",
+            lastOperationIsUnary: false,
+          );
+        } else {
+          isLastClicClear = true;
+          // Clear only the current input and operation, preserve memory and history
+          _state = _state.copyWith(
+            output: "0",
+            currentInput: "",
+            num1: "0",
+            operation: "",
+            // If the history already contains a result (=), keep it for reference, otherwise clear it
+            history: _state.history.contains("=") ? _state.history : "",
+            lastOperationIsUnary: false,
+          );
+        }
         break;
 
       case "+":
@@ -30,16 +44,19 @@ class CalculatorController extends ChangeNotifier {
       case "x":
       case "÷":
       case "x^y":
+        isLastClicClear = false;
         _handleOperator(buttonText);
         break;
 
       case "=":
       case "M+":
       case "M-":
+        isLastClicClear = false;
         _handleEqualOrMemory(buttonText);
         break;
 
       case "MR":
+        isLastClicClear = false;
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
           String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
@@ -52,24 +69,29 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "MC":
+        isLastClicClear = false;
         _state = _state.copyWith(memory: Rational.zero);
         break;
 
       case "+/-":
+        isLastClicClear = false;
         _handlePlusMinus();
         break;
 
       case "x²":
       case "1/x":
       case "√":
+        isLastClicClear = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
+        isLastClicClear = false;
         _handleBackspace();
         break;
 
       default: // Digits and dot
+        isLastClicClear = false;
         _handleNumber(buttonText);
     }
     notifyListeners();
