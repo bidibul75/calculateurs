@@ -19,7 +19,8 @@ class CalculatorController extends ChangeNotifier {
           currentInput: "",
           num1: "0",
           operation: "",
-          history: _state.history,
+          history: _state.history.contains("=") ? _state.history : "",
+          // Clear history only if no result is displayed
           lastOperationIsUnary: false,
         );
         break;
@@ -84,14 +85,42 @@ class CalculatorController extends ChangeNotifier {
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString();
 
-      _state = _state.copyWith(
-        num1: inputClean,
-        operation: op,
-        currentInput: "",
-        lastOperationIsUnary: false,
-        // Update history: "1 000 +"
-        history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
-      );
+      if (_state.operation.isNotEmpty) {
+        // If there's already an operation pending, compute it first before setting the new operator
+        String intermediateResult = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: inputClean,
+          operation: _state.operation,
+        );
+
+        // Update history with the intermediate result
+        String history = CalculatorLogic.updateHistory(
+          _state.history,
+          _state.operation,
+          _state.num1,
+          false,
+          inputClean,
+          intermediateResult,
+        );
+
+        // Set the intermediate result as the new num1 for the next operation
+        _state = _state.copyWith(
+          num1: intermediateResult.toCleanMathString(),
+          operation: op,
+          currentInput: "",
+          lastOperationIsUnary: false,
+          history: history,
+        );
+      } else {
+        _state = _state.copyWith(
+          num1: inputClean,
+          operation: op,
+          currentInput: "",
+          lastOperationIsUnary: false,
+          // Update history: "1 000 +"
+          history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
+        );
+      }
     } else if (_state.operation.isNotEmpty) {
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
