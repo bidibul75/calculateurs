@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../controllers/calculator_controller.dart';
+import 'theme/theme_manager.dart';
+import 'menu_drawer.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -10,18 +12,22 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
+  final ThemeManager _themeManager = ThemeManager();
 
   @override
   void initState() {
     super.initState();
     // We listen to shifts of the controller to update UI
     _controller.addListener(_updateUI);
+    _themeManager.addListener(_updateUI);
   }
 
   @override
   void dispose() {
     _controller.removeListener(_updateUI);
+    _themeManager.removeListener(_updateUI);
     _controller.dispose();
+    _themeManager.dispose();
     super.dispose();
   }
 
@@ -34,7 +40,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (label == 'C' || label == "⌫") return Colors.redAccent;
     if (['MC', 'MR', 'M+', 'M-'].contains(label)) return Colors.blueGrey;
     if (['÷', 'x', '-', '+', '='].contains(label)) return Colors.orange;
-    return Colors.grey[850]!;
+    return _themeManager.buttonGroupColor;
   }
 
   /// Builds an individual button
@@ -61,8 +67,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final state = _controller.state;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Calculatrice'), backgroundColor: Colors.transparent, elevation: 0),
+      backgroundColor: _themeManager.backgroundColor,
+      appBar: AppBar(
+        title: const Text('Basic calculator'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: MenuDrawer(themeManager: _themeManager),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -74,17 +85,23 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 reverse: true, // Keep the content pinned to the bottom
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Memory display
+                    // Memory display (aligned to the left)
                     if (_controller.memoryDisplay().isNotEmpty)
-                      Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
+                      ),
 
                     // History display
-                    Text(
-                      state.history,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 24),
-                      textAlign: TextAlign.right,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        state.history,
+                        style: TextStyle(color: Colors.grey[400], fontSize: 24),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
 
                     const SizedBox(height: 10),
