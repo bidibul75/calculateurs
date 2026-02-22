@@ -1,13 +1,13 @@
+// lib/utils/extensions/decimal_extensions.dart
+
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:decimal/decimal.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/number_symbols.dart';
-import 'package:intl/number_symbols_data.dart';
+import 'package:get_it/get_it.dart';
 
 extension DecimalFormatting on Decimal {
   String toPreciseFormattedString() {
     // 1. Get the locale (e.g., "fr_FR" or "en_US")
-    final String locale = Intl.getCurrentLocale();
-    final NumberSymbols symbols = numberFormatSymbols[locale] ?? numberFormatSymbols['en_US']!;
+    final symbols = GetIt.I<LocalNumberSymbols>();
 
     // 2. Convert the Decimal to a raw String (e.g., "1234.5000")
     String val = toString();
@@ -30,12 +30,12 @@ extension DecimalFormatting on Decimal {
     // Magic regex to insert separators every 3 digits
     final regex = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
     integerPart = integerPart.replaceAllMapped(regex, (Match m) {
-      return '${m[1]}${symbols.GROUP_SEP}';
+      return '${m[1]}${symbols.thousandsSep}';
     });
 
     // 6. Recombine with the locale decimal separator (comma or dot)
     if (decimalPart != null) {
-      return '$integerPart${symbols.DECIMAL_SEP}$decimalPart';
+      return '$integerPart${symbols.decimalSep}$decimalPart';
     }
 
     return integerPart;

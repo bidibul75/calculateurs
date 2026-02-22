@@ -1,7 +1,7 @@
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
 import 'calculators/basic_calc/screens/calculator_screen.dart';
+import 'package:get_it/get_it.dart';
 
 void main() async {
   // // 1. Mandatory to execute code before runApp
@@ -12,6 +12,9 @@ void main() async {
   //
   // // 3. Defines the default locale globally for all the intl package
   // Intl.defaultLocale = systemLocale;
+
+  // Records the unique instance at startup, so it can be used everywhere in the app with GetIt.I
+  GetIt.I.registerSingleton<LocalNumberSymbols>(LocalNumberSymbols());
 
   runApp(const CalculatorApp());
 }

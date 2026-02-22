@@ -1,4 +1,6 @@
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../controllers/calculator_controller.dart';
 import 'theme/theme_manager.dart';
 import 'menu_drawer.dart';
@@ -13,6 +15,8 @@ class CalculatorScreen extends StatefulWidget {
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
   final ThemeManager _themeManager = ThemeManager();
+  final symbols = GetIt.I<LocalNumberSymbols>();
+
 
   @override
   void initState() {
@@ -138,7 +142,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
                 Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
                 Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                Row(children: [_buildButton('0'), _buildButton('00'), _buildButton('.'), _buildButton('=')]),
+                Row(children: [_buildButton('0'), _buildButton('00'), _buildButton(symbols.decimalSep), _buildButton('=')]),
               ],
             ),
           ),

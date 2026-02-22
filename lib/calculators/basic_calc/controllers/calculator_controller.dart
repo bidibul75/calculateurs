@@ -1,6 +1,8 @@
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
@@ -10,10 +12,13 @@ class CalculatorController extends ChangeNotifier {
 
   CalculatorState get state => _state;
   bool isLastClicClear = false;
+  bool isLastClicEqualOrMemo = false;
+  final symbols = GetIt.I<LocalNumberSymbols>();
 
   void onButtonPressed(String buttonText) {
     switch (buttonText) {
       case "C":
+        isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
           isLastClicClear = false;
           _state = _state.copyWith(
@@ -45,6 +50,7 @@ class CalculatorController extends ChangeNotifier {
       case "÷":
       case "x^y":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
         break;
 
@@ -52,11 +58,13 @@ class CalculatorController extends ChangeNotifier {
       case "M+":
       case "M-":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = true;
         _handleEqualOrMemory(buttonText);
         break;
 
       case "MR":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = true;
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
           String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
@@ -70,11 +78,13 @@ class CalculatorController extends ChangeNotifier {
 
       case "MC":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _state = _state.copyWith(memory: Rational.zero);
         break;
 
       case "+/-":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handlePlusMinus();
         break;
 
@@ -82,11 +92,13 @@ class CalculatorController extends ChangeNotifier {
       case "1/x":
       case "√":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
         isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleBackspace();
         break;
 
@@ -260,22 +272,20 @@ class CalculatorController extends ChangeNotifier {
     if (buttonText == "00" && (current == "" || current == "0")) return;
 
     // If a digit is typed after a result (=), start over
-    if (_state.history.contains("=") && _state.operation.isEmpty && !_state.lastOperationIsUnary) {
-      String val = (buttonText == ".") ? "0." : buttonText;
-      _state = CalculatorState(
-        currentInput: current + val,
-        output: current + val,
-        history: _state.history,
-        memory: _state.memory,
-      );
+    if (isLastClicEqualOrMemo) {
+      isLastClicEqualOrMemo = false;
+      String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
+      _state = CalculatorState(currentInput: val, output: val, history: _state.history, memory: _state.memory);
       return;
     }
 
-    if (current == "0" && buttonText != ".") {
+    if (current == "0" && buttonText != symbols.decimalSep) {
       current = buttonText;
     } else {
-      if (buttonText == "." && current.contains(".")) return;
-      (buttonText == "." && current.isEmpty) ? current = "0." : current += buttonText;
+      if (buttonText == symbols.decimalSep && current.contains(symbols.decimalSep)) return;
+      (buttonText == symbols.decimalSep && current.isEmpty)
+          ? current = "0${symbols.decimalSep}"
+          : current += buttonText;
     }
     _state = _state.copyWith(currentInput: current, output: current);
   }
