@@ -27,10 +27,7 @@ void showWhoAmIDialog(BuildContext context) {
                 onTap: () => _launchUrl('mailto:dev@calculation.center'),
                 child: const Text(
                   '📧 dev@calculation.center',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
+                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                 ),
               ),
               const SizedBox(height: 8),
@@ -39,17 +36,11 @@ void showWhoAmIDialog(BuildContext context) {
                 onTap: () => _launchUrl('https://www.linkedin.com/in/LINKEDIN_PROFILE/'),
                 child: const Text(
                   '🔗 LinkedIn Profile',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
+                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Donations welcome!',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              const Text('Donations welcome!', style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -92,11 +83,7 @@ void showDonateDialog(BuildContext context) {
                   SizedBox(width: 8),
                   Text(
                     'Donate via PayPal',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 16),
                   ),
                 ],
               ),

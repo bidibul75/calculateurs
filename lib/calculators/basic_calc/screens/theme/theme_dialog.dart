@@ -79,12 +79,7 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
             ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
+        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close'))],
       );
     },
   );
@@ -97,12 +92,7 @@ class _ColorOption extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _ColorOption({
-    required this.color,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _ColorOption({required this.color, required this.label, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -113,18 +103,11 @@ class _ColorOption extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(
-            color: isSelected ? Colors.black : Colors.grey,
-            width: isSelected ? 3 : 1,
-          ),
+          border: Border.all(color: isSelected ? Colors.black : Colors.grey, width: isSelected ? 3 : 1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 10),
-          ),
+          child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)),
         ),
       ),
     );
@@ -154,10 +137,7 @@ class _ButtonGroupColorOption extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(
-            color: isSelected ? Colors.white : Colors.grey,
-            width: isSelected ? 3 : 1,
-          ),
+          border: Border.all(color: isSelected ? Colors.white : Colors.grey, width: isSelected ? 3 : 1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
@@ -171,4 +151,3 @@ class _ButtonGroupColorOption extends StatelessWidget {
     );
   }
 }
-

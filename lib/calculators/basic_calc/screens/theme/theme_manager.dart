@@ -6,6 +6,7 @@ class ThemeManager extends ChangeNotifier {
   Color _buttonGroupColor = Colors.grey[850]!;
 
   Color get backgroundColor => _backgroundColor;
+
   Color get buttonGroupColor => _buttonGroupColor;
 
   void setBackgroundColor(Color color) {
@@ -18,4 +19,3 @@ class ThemeManager extends ChangeNotifier {
     notifyListeners();
   }
 }
-
