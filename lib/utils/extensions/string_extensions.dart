@@ -33,7 +33,7 @@ extension StringExtensions on String {
   /// Capitalizes the first letter
   String get capitalize {
     if (isEmpty) return this;
-    return '${this[0].toUpperCase()}${substring(1)}';
+    return '${this[0].toUpperCase()}${length > 1 ? substring(1) : ""}';
   }
 
   /// Truncates the string if it exceeds maxLength AND it represents a double
@@ -47,6 +47,7 @@ extension StringExtensions on String {
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
   String cleanPointZero() {
+    if (this == ".0") return "0";
     if (isNotEmpty && length > 2) {
       if (substring(length - 2) == ".0") return substring(0, length - 2);
     }
