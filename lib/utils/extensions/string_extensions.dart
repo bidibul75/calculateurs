@@ -153,4 +153,9 @@ extension StringExtensions on String {
 
     return s;
   }
+
+  /// Determines if the string contains an operator (+, -, *, ÷)
+  bool containsOperator() {
+    return RegExp(r'[+\-*÷]').hasMatch(this);
+  }
 }
