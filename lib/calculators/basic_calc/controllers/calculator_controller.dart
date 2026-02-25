@@ -1,6 +1,8 @@
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
@@ -9,19 +11,38 @@ class CalculatorController extends ChangeNotifier {
   CalculatorState _state = CalculatorState();
 
   CalculatorState get state => _state;
+  bool isLastClicClear = false;
+  bool isLastClicEqualOrMemo = false;
+  bool isLastClicNumber = false;
+  final symbols = GetIt.I<LocalNumberSymbols>();
 
   void onButtonPressed(String buttonText) {
     switch (buttonText) {
       case "C":
-        // Clear only the current input and operation, preserve memory and history
-        _state = _state.copyWith(
-          output: "0",
-          currentInput: "",
-          num1: "0",
-          operation: "",
-          history: _state.history,
-          lastOperationIsUnary: false,
-        );
+        isLastClicEqualOrMemo = false;
+        if (isLastClicClear) {
+          isLastClicClear = false;
+          _state = _state.copyWith(
+            output: "0",
+            currentInput: "",
+            num1: "0",
+            operation: "",
+            history: "",
+            lastOperationIsUnary: false,
+          );
+        } else {
+          isLastClicClear = true;
+          // Clear only the current input and operation, preserve memory and history
+          _state = _state.copyWith(
+            output: "0",
+            currentInput: "",
+            num1: "0",
+            operation: "",
+            // If the history already contains a result (=), keep it for reference, otherwise clear it
+            history: _state.history.contains("=") ? _state.history : "",
+            lastOperationIsUnary: false,
+          );
+        }
         break;
 
       case "+":
@@ -29,16 +50,22 @@ class CalculatorController extends ChangeNotifier {
       case "x":
       case "÷":
       case "x^y":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
         break;
 
       case "=":
       case "M+":
       case "M-":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = true;
         _handleEqualOrMemory(buttonText);
         break;
 
       case "MR":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = true;
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
           String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
@@ -51,24 +78,33 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "MC":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _state = _state.copyWith(memory: Rational.zero);
         break;
 
       case "+/-":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handlePlusMinus();
         break;
 
       case "x²":
       case "1/x":
       case "√":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
+        isLastClicClear = false;
+        isLastClicEqualOrMemo = false;
         _handleBackspace();
         break;
 
       default: // Digits and dot
+        isLastClicClear = false;
         _handleNumber(buttonText);
     }
     notifyListeners();
@@ -77,6 +113,7 @@ class CalculatorController extends ChangeNotifier {
   // --- Private Logic ---
 
   void _handleOperator(String label) {
+    _state = _state.copyWith(lastOperationIsUnary: false);
     // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
@@ -84,14 +121,36 @@ class CalculatorController extends ChangeNotifier {
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString();
 
-      _state = _state.copyWith(
-        num1: inputClean,
-        operation: op,
-        currentInput: "",
-        lastOperationIsUnary: false,
-        // Update history: "1 000 +"
-        history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
-      );
+      if (_state.operation.isNotEmpty) {
+        // If there's already an operation pending, compute it first before setting the new operator
+        String intermediateResult = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: inputClean,
+          operation: _state.operation,
+        );
+
+        // Update history with the intermediate result
+        String history = "$intermediateResult $op";
+
+        // Set the intermediate result as the new num1 for the next operation
+        _state = _state.copyWith(
+          num1: intermediateResult.toCleanMathString(),
+          operation: op,
+          currentInput: "",
+          output: "",
+          lastOperationIsUnary: false,
+          history: history,
+        );
+      } else {
+        _state = _state.copyWith(
+          num1: inputClean,
+          operation: op,
+          currentInput: "",
+          lastOperationIsUnary: false,
+          // Update history: "1 000 +"
+          history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
+        );
+      }
     } else if (_state.operation.isNotEmpty) {
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
@@ -112,8 +171,7 @@ class CalculatorController extends ChangeNotifier {
   void _handleEqualOrMemory(String buttonText) {
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
-
-    if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty) {
+    if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
       // 1. Compute the result
       String result = CalculatorLogic.calculateResult(
         num1: _state.num1,
@@ -128,9 +186,8 @@ class CalculatorController extends ChangeNotifier {
         if (buttonText == "M+") memo += resRational;
         if (buttonText == "M-") memo -= resRational;
       }
-
       // Update history
-      String history = _state.lastOperationIsUnary
+      String history = _state.history.contains("=")
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
               _state.history,
@@ -162,20 +219,27 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleUnary(String op) {
-    if (_state.currentInput.isNotEmpty) {
-      String inputClean = _state.currentInput.toCleanMathString();
+    String history = "";
+    if (_state.output.isNotEmpty) {
+      String inputClean = _state.output.toCleanMathString();
 
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
-      String history = CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history);
-
-      _state = _state.copyWith(
-        currentInput: result,
-        output: result,
-        history: "$history $result",
-        lastOperationIsUnary: true,
-      );
+      if (_state.history.containsOperator() && !_state.history.contains("=")) {
+        result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
+      }
+      // If we already have a history with an operator (e.g: "1 000 + 500") and we apply a unary operation on the result,
+      // we want to keep the history and just update the last part (e.g: "1 000 + (500)² = 250 000").
+      // But if we don't have an operator in the history, we just want to show the unary operation (e.g: "√(500) = 22,36").
+      if (_state.history.contains("=")) {
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
+        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: false);
+      } else {
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
+        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: true);
+      }
     }
+    isLastClicEqualOrMemo = true;
   }
 
   void _handlePlusMinus() {
@@ -206,25 +270,27 @@ class CalculatorController extends ChangeNotifier {
 
     String current = _state.currentInput;
 
-    if (buttonText == "00" && (current == "" || current == "0")) return;
+    if (!isLastClicNumber) {
+      if (buttonText == "00") return;
+    } else {
+      isLastClicNumber = true;
+    }
 
     // If a digit is typed after a result (=), start over
-    if (_state.history.contains("=") && _state.operation.isEmpty && !_state.lastOperationIsUnary) {
-      String val = (buttonText == ".") ? "0." : buttonText;
-      _state = CalculatorState(
-        currentInput: current + val,
-        output: current + val,
-        history: _state.history,
-        memory: _state.memory,
-      );
+    if (isLastClicEqualOrMemo) {
+      isLastClicEqualOrMemo = false;
+      String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
+      _state = CalculatorState(currentInput: val, output: val, history: _state.history, memory: _state.memory);
       return;
     }
 
-    if (current == "0" && buttonText != ".") {
+    if (current == "0" && buttonText != symbols.decimalSep) {
       current = buttonText;
     } else {
-      if (buttonText == "." && current.contains(".")) return;
-      (buttonText == "." && current.isEmpty) ? current = "0." : current += buttonText;
+      if (buttonText == symbols.decimalSep && current.contains(symbols.decimalSep)) return;
+      (buttonText == symbols.decimalSep && current.isEmpty)
+          ? current = "0${symbols.decimalSep}"
+          : current += buttonText;
     }
     _state = _state.copyWith(currentInput: current, output: current);
   }

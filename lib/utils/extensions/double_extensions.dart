@@ -89,7 +89,7 @@ extension DoubleExtensions on double {
   double power(int decimals) {
     bool decimalPositive = true;
     if (decimals == 0) return 1.0;
-    if (decimals<0) {
+    if (decimals < 0) {
       if (this == 0) {
         throw "Error : divide by 0";
       }
@@ -110,6 +110,7 @@ extension DoubleExtensions on double {
   }
 
   /// Suppress the .0 end of double numbers
+  /// Beware that this method returns a num, which can be either an int or a double depending on the value.
   num cleanDouble() {
     return isInteger() ? toInt() : this;
   }

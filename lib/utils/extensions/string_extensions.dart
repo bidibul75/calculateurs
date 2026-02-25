@@ -1,9 +1,7 @@
 // lib/utils/extensions/string_extensions.dart
 
-import 'package:intl/intl.dart';
-import 'package:intl/number_symbols.dart';
-import 'package:intl/number_symbols_data.dart';
-import 'package:rational/rational.dart';
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
+import 'package:get_it/get_it.dart';
 
 /// Utility extensions for the String class
 extension StringExtensions on String {
@@ -37,7 +35,7 @@ extension StringExtensions on String {
   /// Capitalizes the first letter
   String get capitalize {
     if (isEmpty) return this;
-    return '${this[0].toUpperCase()}${substring(1)}';
+    return '${this[0].toUpperCase()}${length > 1 ? substring(1) : ""}';
   }
 
   /// Truncates the string if it exceeds maxLength AND it represents a double
@@ -51,6 +49,7 @@ extension StringExtensions on String {
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
   String cleanPointZero() {
+    if (this == ".0") return "0";
     if (isNotEmpty && length > 2) {
       if (substring(length - 2) == ".0") return substring(0, length - 2);
     }
@@ -142,41 +141,23 @@ extension StringExtensions on String {
     return isEmpty ? "" : this[length - 1];
   }
 
-  /// Converts a formatted String (e.g: "10 000,50") into a Rational
-  Rational toRationalFromLocale({String? locale}) {
-    final String effectiveLocale = locale ?? Intl.getCurrentLocale();
-    final NumberSymbols symbols = numberFormatSymbols[effectiveLocale]
-        ?? numberFormatSymbols['en_US']!;
-
-    // 1. Clean the string:
-    // - Remove thousand separators (e.g: non-breaking spaces or regular spaces)
-    // - Replace local decimal separator (e.g: comma) with standard dot
-    String cleanString = replaceAll(symbols.GROUP_SEP, '') // Remove spaces/separators
-        .replaceAll(symbols.DECIMAL_SEP, '.'); // Replace comma with dot
-
-    // Note: Sometimes the thousand separator is a non-breaking space (\u00A0)
-    // It's prudent to also clean regular spaces just in case
-    cleanString = cleanString.replaceAll(' ', '');
-
-    // 2. Parse properly
-    return Rational.parse(cleanString);
-  }
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
   String toCleanMathString() {
-    final String locale = Intl.getCurrentLocale();
-    final NumberSymbols symbols = numberFormatSymbols[locale]
-        ?? numberFormatSymbols['en_US']!;
+    final symbols = GetIt.I<LocalNumberSymbols>();
 
     // 1. Remove thousand separators (spaces)
-    String s = replaceAll(symbols.GROUP_SEP, '');
+    String s = replaceAll(symbols.thousandsSep, '');
     // Beware of non-breaking spaces sometimes used by Intl
     s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
 
     // 2. Replace comma with dot
-    s = s.replaceAll(symbols.DECIMAL_SEP, '.');
+    s = s.replaceAll(symbols.decimalSep, '.');
 
     return s;
   }
 
-
+  /// Determines if the string contains an operator (+, -, *, ÷)
+  bool containsOperator() {
+    return RegExp(r'[+\-*÷]').hasMatch(this);
+  }
 }
