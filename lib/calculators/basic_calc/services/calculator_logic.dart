@@ -105,10 +105,10 @@ class CalculatorLogic {
     String formattedNum1 = format(num1);
 
     // Case 1: We just clicked on an operator (+, -, x...)
+    print("isOperatorChain : $isOperatorChain num2 : $num2");
     if (isOperatorChain && num2 == null) {
       return "$formattedNum1 $operation ";
     }
-
     // Case 2: We just clicked on equal (=)
     if (num2 != null) {
       String formattedNum2 = format(num2);
@@ -119,7 +119,12 @@ class CalculatorLogic {
     return currentHistory;
   }
 
-  static String updateHistoryUnary(String inputVal, String operation, String resultFormatted, String currentHistory) {
+  static String updateHistoryUnary(
+    String inputVal,
+    String operation,
+    String resultFormatted, [
+    String currentHistory = "",
+  ]) {
     String format(String n) {
       try {
         return Rational.parse(n).toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
@@ -132,11 +137,11 @@ class CalculatorLogic {
 
     switch (operation) {
       case "x²":
-        return "($formattedInput)² =";
+        return "${currentHistory == "" ? "" : currentHistory}($formattedInput)² =";
       case "1/x":
-        return "1/($formattedInput) =";
+        return "${currentHistory == "" ? "" : currentHistory}1/($formattedInput) =";
       case "√":
-        return "√($formattedInput) =";
+        return "${currentHistory == "" ? "" : currentHistory}√($formattedInput) =";
       default:
         return "$operation($formattedInput) =";
     }

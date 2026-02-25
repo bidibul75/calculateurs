@@ -113,6 +113,7 @@ class CalculatorController extends ChangeNotifier {
   // --- Private Logic ---
 
   void _handleOperator(String label) {
+    _state = _state.copyWith(lastOperationIsUnary: false);
     // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
@@ -170,8 +171,7 @@ class CalculatorController extends ChangeNotifier {
   void _handleEqualOrMemory(String buttonText) {
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
-
-    if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty) {
+    if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
       // 1. Compute the result
       String result = CalculatorLogic.calculateResult(
         num1: _state.num1,
@@ -186,9 +186,8 @@ class CalculatorController extends ChangeNotifier {
         if (buttonText == "M+") memo += resRational;
         if (buttonText == "M-") memo -= resRational;
       }
-
       // Update history
-      String history = _state.lastOperationIsUnary
+      String history = _state.history.contains("=")
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
               _state.history,
@@ -226,13 +225,15 @@ class CalculatorController extends ChangeNotifier {
 
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
+      if (_state.history.containsOperator() && !_state.history.contains("=")) {
+        result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
+      }
       // If we already have a history with an operator (e.g: "1 000 + 500") and we apply a unary operation on the result,
       // we want to keep the history and just update the last part (e.g: "1 000 + (500)² = 250 000").
       // But if we don't have an operator in the history, we just want to show the unary operation (e.g: "√(500) = 22,36").
-      if (_state.history.containsOperator() && !_state.lastOperationIsUnary) {
-        String result2 = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
-        history = "${_state.history} $result = $result2";
-        _state = _state.copyWith(currentInput: result, output: result2, history: history, lastOperationIsUnary: true);
+      if (_state.history.contains("=")) {
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
+        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: false);
       } else {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
         _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: true);
@@ -269,8 +270,8 @@ class CalculatorController extends ChangeNotifier {
 
     String current = _state.currentInput;
 
-    if (!isLastClicNumber){
-      if (buttonText=="00") return;
+    if (!isLastClicNumber) {
+      if (buttonText == "00") return;
     } else {
       isLastClicNumber = true;
     }
