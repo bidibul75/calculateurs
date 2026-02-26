@@ -39,6 +39,7 @@ extension StringExtensions on String {
   }
 
   /// Truncates the string if it exceeds maxLength AND it represents a double
+  /// Beware ! works fine only with unformatted numbers
   String truncate(int maxLength, {String suffix = '...'}) {
     if (length <= maxLength) return this;
     if (isADouble()) {
@@ -48,6 +49,7 @@ extension StringExtensions on String {
   }
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
+  /// Beware ! works fine only with unformatted numbers
   String cleanPointZero() {
     if (this == ".0") return "0";
     if (isNotEmpty && length > 2) {
@@ -57,12 +59,14 @@ extension StringExtensions on String {
   }
 
   /// Determines if a String represents a number
+  /// Beware ! works fine only with unformatted numbers
   bool isANumber() {
     if (double.tryParse(this) == null) return false;
     return true;
   }
 
   /// Determines if a string represents a double (.0 excluded)
+  /// Beware ! works fine only with unformatted numbers
   bool isADouble() {
     String temp = trim().cleanPointZero();
     if (isANumber() && temp.contains(".")) return true;
@@ -70,6 +74,7 @@ extension StringExtensions on String {
   }
 
   /// Determines if a String does NOT represents a number
+  /// Beware ! works fine only with unformatted numbers
   bool isNotANumber() {
     if (isANumber()) return false;
     return true;

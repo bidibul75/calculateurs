@@ -3,6 +3,7 @@
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rational/rational.dart';
 
 extension DecimalFormatting on Decimal {
   String toPreciseFormattedString() {

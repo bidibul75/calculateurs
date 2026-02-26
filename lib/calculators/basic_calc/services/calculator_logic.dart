@@ -56,6 +56,31 @@ class CalculatorLogic {
       final r = Rational.parse(input);
       Rational result;
 
+      Decimal sqrtDecimal(Decimal value, {int scale = 30, int maxIterations = 50}) {
+        if (value == Decimal.zero) return Decimal.zero;
+        if (value < Decimal.zero) throw Exception("Negative sqrt");
+
+        Decimal absDecimal(Decimal v) => v < Decimal.zero ? -v : v;
+        Decimal divDecimal(Decimal a, Decimal b) => (a / b).toDecimal(scaleOnInfinitePrecision: scale);
+
+        final two = Decimal.fromInt(2);
+        Decimal x = divDecimal(value, two);
+        if (x == Decimal.zero) {
+          x = Decimal.one;
+        }
+
+        final Decimal epsilon = Decimal.parse("1e-$scale");
+
+        for (int i = 0; i < maxIterations; i++) {
+          final next = divDecimal(x + divDecimal(value, x), two);
+          final diff = absDecimal(next - x);
+          if (diff < epsilon) return next;
+          x = next;
+        }
+
+        return x;
+      }
+
       switch (operation) {
         case "x²":
           result = r * r;
@@ -65,14 +90,34 @@ class CalculatorLogic {
           result = Rational.one / r;
           break;
         case "√":
-          // Rational does not handle irrational square roots.
-          // We use double instead.
-          double val = r.toDouble();
-          if (val < 0) return "Error";
-          double root = math.sqrt(val);
-          // Convert back to String for Rational parsing (to keep the string consistent)
-          result = Rational.parse(root.toString());
-          break;
+          // Try to use built-in sqrt first for rational results.
+          // If input is irrational, fall back to Newton-Raphson for precision.
+          final Decimal inputDecimal = Decimal.parse(input);
+          final double inputDouble = double.parse(input);
+
+          if (inputDouble >= 0) {
+            final double sqrtDouble = math.sqrt(inputDouble);
+
+            // Check if sqrt is finite and rational (perfect result)
+            if (sqrtDouble.isFinite) {
+              // Test if sqrtDouble is exactly representable as a rational with limited denominator
+              // We test if (sqrt * 10^6) is close to an integer (rational with max 6 decimals)
+              final scaled = sqrtDouble * 1e6;
+              final roundedScaled = scaled.round();
+              if ((scaled - roundedScaled).abs() < 1e-9 &&
+                  (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
+                // Rational result: use the double result converted to Decimal
+                // This handles both integers (√9 = 3) and decimals (√6.25 = 2.5)
+                return Decimal.parse(sqrtDouble.toString()).toPreciseFormattedString();
+              }
+            }
+          } else {
+            return 'Error: SQRT of a negative number';
+          }
+
+          // Fall back to Newton-Raphson for irrational/complex cases
+          final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
+          return sqrtResult.toPreciseFormattedString();
         default:
           return "Error";
       }
@@ -95,7 +140,7 @@ class CalculatorLogic {
     // Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
     String format(String n) {
       try {
-        if (n == "Error") return n;
+        if (n.isNotANumber()) return n;
         return Rational.parse(n).toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
       } catch (e) {
         return n;
