@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/services/calculator_logic.dart
+
 import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
@@ -104,8 +106,7 @@ class CalculatorLogic {
               // We test if (sqrt * 10^6) is close to an integer (rational with max 6 decimals)
               final scaled = sqrtDouble * 1e6;
               final roundedScaled = scaled.round();
-              if ((scaled - roundedScaled).abs() < 1e-9 &&
-                  (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
+              if ((scaled - roundedScaled).abs() < 1e-9 && (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
                 // Rational result: use the double result converted to Decimal
                 // This handles both integers (√9 = 3) and decimals (√6.25 = 2.5)
                 return Decimal.parse(sqrtDouble.toString()).toPreciseFormattedString();
@@ -128,7 +129,7 @@ class CalculatorLogic {
     }
   }
 
-  /// Updates the history string (e.g: "1 000 + 500 =")
+  /// Returns a formatted history (e.g: "1 000 + 500 =")
   static String updateHistory(
     String currentHistory,
     String operation,
@@ -164,6 +165,7 @@ class CalculatorLogic {
     return currentHistory;
   }
 
+  /// Returns the history when a unary operator is used
   static String updateHistoryUnary(
     String inputVal,
     String operation,

@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/controllers/calculator_controller.dart
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
@@ -22,14 +24,7 @@ class CalculatorController extends ChangeNotifier {
         isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
           isLastClicClear = false;
-          _state = _state.copyWith(
-            output: "0",
-            currentInput: "",
-            num1: "0",
-            operation: "",
-            history: "",
-            lastOperationIsUnary: false,
-          );
+          _state = _state.copyWith(output: "0", currentInput: "", num1: "0", operation: "", history: "");
         } else {
           isLastClicClear = true;
           // Clear only the current input and operation, preserve memory and history
@@ -40,7 +35,6 @@ class CalculatorController extends ChangeNotifier {
             operation: "",
             // If the history already contains a result (=), keep it for reference, otherwise clear it
             history: _state.history.contains("=") ? _state.history : "",
-            lastOperationIsUnary: false,
           );
         }
         break;
@@ -75,7 +69,6 @@ class CalculatorController extends ChangeNotifier {
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString(), // Clean for internal calculation
-            lastOperationIsUnary: true,
           );
         }
         break;
@@ -119,7 +112,6 @@ class CalculatorController extends ChangeNotifier {
   // --- Private Logic ---
 
   void _handleOperator(String label) {
-    _state = _state.copyWith(lastOperationIsUnary: false);
     // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
@@ -144,7 +136,6 @@ class CalculatorController extends ChangeNotifier {
           operation: op,
           currentInput: "",
           output: "",
-          lastOperationIsUnary: false,
           history: history,
         );
       } else {
@@ -152,7 +143,6 @@ class CalculatorController extends ChangeNotifier {
           num1: inputClean,
           operation: op,
           currentInput: "",
-          lastOperationIsUnary: false,
           // Update history: "1 000 +"
           history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
         );
@@ -229,8 +219,10 @@ class CalculatorController extends ChangeNotifier {
     if (_state.output.isNotEmpty) {
       String inputClean = _state.output.toCleanMathString();
 
+      // Calculates the unary operation
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
+      // If there's a first operand, does the operation after the second operand is calculated
       if (_state.history.containsOperator() && !_state.history.contains("=")) {
         result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
       }
@@ -239,10 +231,10 @@ class CalculatorController extends ChangeNotifier {
       // But if we don't have an operator in the history, we just want to show the unary operation (e.g: "√(500) = 22,36").
       if (_state.history.contains("=")) {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
-        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: false);
+        _state = _state.copyWith(currentInput: result, output: result, history: history);
       } else {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
-        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: true);
+        _state = _state.copyWith(currentInput: result, output: result, history: history);
       }
     }
     isLastClicEqualOrMemo = true;
