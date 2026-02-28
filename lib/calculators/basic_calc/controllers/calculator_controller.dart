@@ -120,31 +120,43 @@ class CalculatorController extends ChangeNotifier {
       String inputClean = _state.currentInput.toCleanMathString();
 
       if (_state.operation.isNotEmpty) {
-        // If there's already an operation pending, compute it first before setting the new operator
-        String intermediateResult = CalculatorLogic.calculateResult(
-          num1: _state.num1,
-          num2: inputClean,
-          operation: _state.operation,
-        );
+        if (op!="^"){
 
-        // Update history with the intermediate result
-        String history = "$intermediateResult $op";
+          // If there's already an operation pending, compute it first before setting the new operator
+          String intermediateResult = CalculatorLogic.calculateResult(
+            num1: _state.num1,
+            num2: inputClean,
+            operation: _state.operation,
+          );
 
-        // Set the intermediate result as the new num1 for the next operation
-        _state = _state.copyWith(
-          num1: intermediateResult.toCleanMathString(),
-          operation: op,
-          currentInput: "",
-          output: "",
-          history: history,
-        );
+          // Update history with the intermediate result
+          String history = "$intermediateResult $op";
+
+          // Set the intermediate result as the new num1 for the next operation
+          _state = _state.copyWith(
+            num1: intermediateResult.toCleanMathString(),
+            operation: op,
+            currentInput: "",
+            output: "",
+            history: history,
+          );
+        } else{
+          _state = _state.copyWith(
+            currentInput: "",
+            num2 :inputClean,
+            operation2: op,
+            // Update history: "1 000 x^y"
+            history: CalculatorLogic.updateHistory(_state.history, "", "", inputClean, "", "^"),
+          );
+        }
+
       } else {
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
           currentInput: "",
           // Update history: "1 000 +"
-          history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
+          history: CalculatorLogic.updateHistory(_state.history, op, inputClean),
         );
       }
     } else if (_state.operation.isNotEmpty) {
@@ -168,12 +180,32 @@ class CalculatorController extends ChangeNotifier {
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
+      String result;
+      String secondOperandForHistory = currentInputClean; // Store the original second operand for display
+
       // 1. Compute the result
-      String result = CalculatorLogic.calculateResult(
-        num1: _state.num1,
-        num2: currentInputClean,
-        operation: _state.operation,
-      );
+      if (_state.num2 == "") {
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: currentInputClean,
+          operation: _state.operation,
+        );
+      } else {
+        // x^y case: num2 is the base, currentInputClean is the exponent
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: _state.num2,
+          num3: currentInputClean,
+          operation: _state.operation,
+          operation2: "^"
+        );
+        // For history display: show the computed second operand (num2^num3)
+        secondOperandForHistory = CalculatorLogic.calculateResult(
+          num1: _state.num2,
+          num2: currentInputClean,
+          operation: "^",
+        );
+      }
 
       // Handle M+ / M- memory on the result
       if (buttonText == "M+" || buttonText == "M-") {
@@ -189,8 +221,7 @@ class CalculatorController extends ChangeNotifier {
               _state.history,
               _state.operation,
               _state.num1,
-              false,
-              currentInputClean,
+              secondOperandForHistory,
               result,
             );
 
@@ -202,6 +233,12 @@ class CalculatorController extends ChangeNotifier {
         // Keep result as input for the next operation
         operation: "",
         // Reset operation
+        num1: "0",
+        // Reset num1 for next calculation
+        num2: "",
+        // Reset num2
+        operation2: "",
+        // Reset operation2
         memory: memo,
       );
     }
