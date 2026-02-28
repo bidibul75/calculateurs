@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/services/calculator_logic.dart
+
 import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
@@ -5,11 +7,17 @@ import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
   /// Calculates the result of a binary operation (+, -, *, /)
-  static String calculateResult({required String num1, required String num2, required String operation}) {
+  static String calculateResult({required String num1, required String num2, required String operation, String num3="", String operation2=""}) {
     try {
       // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
-      final r2 = Rational.parse(num2);
+      Rational r2 = Rational.parse(num2);
+
+      // Handle case when num3 and operation2 are provided (x^y as second operand)
+      if (num3 != "" && operation2 == "^") {
+        final r3 = Rational.parse(num3);
+        r2 = r2.pow(r3.toBigInt().toInt());
+      }
 
       Rational result;
 
@@ -30,8 +38,6 @@ class CalculatorLogic {
         case "^":
         case "x^y":
           // Rational.pow expects an int.
-          // If the exponent is decimal (e.g., 2.5), we should use log/exp in double
-          // Here we truncate to int to stay within Rational
           try {
             int exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
@@ -45,6 +51,7 @@ class CalculatorLogic {
 
       // Convert to Decimal with precision, then to formatted String
       return result.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
+
     } catch (e) {
       return "Error";
     }
@@ -90,8 +97,8 @@ class CalculatorLogic {
           result = Rational.one / r;
           break;
         case "√":
-          // Try to use built-in sqrt first for rational results.
-          // If input is irrational, fall back to Newton-Raphson for precision.
+        // Try to use built-in sqrt first for rational results.
+        // If input is irrational, fall back to Newton-Raphson for precision.
           final Decimal inputDecimal = Decimal.parse(input);
           final double inputDouble = double.parse(input);
 
@@ -104,8 +111,7 @@ class CalculatorLogic {
               // We test if (sqrt * 10^6) is close to an integer (rational with max 6 decimals)
               final scaled = sqrtDouble * 1e6;
               final roundedScaled = scaled.round();
-              if ((scaled - roundedScaled).abs() < 1e-9 &&
-                  (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
+              if ((scaled - roundedScaled).abs() < 1e-9 && (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
                 // Rational result: use the double result converted to Decimal
                 // This handles both integers (√9 = 3) and decimals (√6.25 = 2.5)
                 return Decimal.parse(sqrtDouble.toString()).toPreciseFormattedString();
@@ -128,15 +134,15 @@ class CalculatorLogic {
     }
   }
 
-  /// Updates the history string (e.g: "1 000 + 500 =")
-  static String updateHistory(
-    String currentHistory,
-    String operation,
-    String num1, [ // clean String (mathematical)
-    bool isOperatorChain = false, // True if we just clicked on +, -, etc.
-    String? num2, // clean String
-    String? output, // Result already formatted
-  ]) {
+  /// Returns a formatted history (e.g: "1 000 + 500 =")
+  /// Updates the history display when an operator is clicked or result is computed
+  static String updateHistory(String currentHistory,
+      String operation,
+      String num1, [
+        String? num2, // clean String
+        String? output, // Result already formatted
+        String? operation2 = ""
+      ]) {
     // Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
     String format(String n) {
       try {
@@ -149,27 +155,27 @@ class CalculatorLogic {
 
     String formattedNum1 = format(num1);
 
-    // Case 1: We just clicked on an operator (+, -, x...)
-    print("isOperatorChain : $isOperatorChain num2 : $num2");
-    if (isOperatorChain && num2 == null) {
-      return "$formattedNum1 $operation ";
-    }
-    // Case 2: We just clicked on equal (=)
+    // If num2 is provided, we're displaying the complete operation with result
     if (num2 != null) {
       String formattedNum2 = format(num2);
-      // output is already formatted by calculateResult
-      return "$formattedNum1 $operation $formattedNum2 = ${output ?? ""}";
+      if (operation2 != "") {
+        return "$currentHistory $formattedNum2 $operation2";
+      } else {
+        // output is already formatted by calculateResult
+        return "$formattedNum1 $operation $formattedNum2 = ${output ?? ""}";
+      }
     }
 
-    return currentHistory;
+    // If num2 is null, we just clicked an operator and display only the operator
+    return "$formattedNum1 $operation ";
   }
 
-  static String updateHistoryUnary(
-    String inputVal,
-    String operation,
-    String resultFormatted, [
-    String currentHistory = "",
-  ]) {
+  /// Returns the history when a unary operator is used
+  static String updateHistoryUnary(String inputVal,
+      String operation,
+      String resultFormatted, [
+        String currentHistory = "",
+      ]) {
     String format(String n) {
       try {
         return Rational.parse(n).toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();

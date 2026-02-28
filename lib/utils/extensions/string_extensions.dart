@@ -18,9 +18,7 @@ extension StringExtensions on String {
       return split(pattern).length - 1;
     } else {
       final regex = RegExp(RegExp.escape(pattern), caseSensitive: false);
-      return regex
-          .allMatches(this)
-          .length;
+      return regex.allMatches(this).length;
     }
   }
 

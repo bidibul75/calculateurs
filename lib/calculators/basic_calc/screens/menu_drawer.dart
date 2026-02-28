@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/sreens/menu_drawer.dart
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'theme/theme_dialog.dart';
@@ -23,6 +25,7 @@ void showWhoAmIDialog(BuildContext context) {
               ),
               const SizedBox(height: 8),
               // Email link
+              // TODO : verify if I want to use this email address
               InkWell(
                 onTap: () => _launchUrl('mailto:dev@calculation.center'),
                 child: const Text(
@@ -32,6 +35,7 @@ void showWhoAmIDialog(BuildContext context) {
               ),
               const SizedBox(height: 8),
               // LinkedIn link
+              // TODO : replace the link by the good one
               InkWell(
                 onTap: () => _launchUrl('https://www.linkedin.com/in/LINKEDIN_PROFILE/'),
                 child: const Text(
@@ -40,7 +44,20 @@ void showWhoAmIDialog(BuildContext context) {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Donations welcome!', style: TextStyle(fontWeight: FontWeight.bold)),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  showDonateDialog(context); // links to the donation dialog
+                },
+                child: const Text(
+                  'Donations welcome!',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -74,7 +91,8 @@ void showDonateDialog(BuildContext context) {
               'If you find this app useful and want to support its development, you can make a donation:\n',
             ),
             const SizedBox(height: 16),
-            // Donation link (you can replace with your actual donation link)
+            // Donation link
+            // TODO : replace the link by the good one
             InkWell(
               onTap: () => _launchUrl('https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID'),
               child: const Row(

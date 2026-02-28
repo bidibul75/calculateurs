@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/controllers/calculator_controller.dart
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
@@ -22,14 +24,7 @@ class CalculatorController extends ChangeNotifier {
         isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
           isLastClicClear = false;
-          _state = _state.copyWith(
-            output: "0",
-            currentInput: "",
-            num1: "0",
-            operation: "",
-            history: "",
-            lastOperationIsUnary: false,
-          );
+          _state = _state.copyWith(output: "0", currentInput: "", num1: "0", operation: "", history: "");
         } else {
           isLastClicClear = true;
           // Clear only the current input and operation, preserve memory and history
@@ -40,7 +35,6 @@ class CalculatorController extends ChangeNotifier {
             operation: "",
             // If the history already contains a result (=), keep it for reference, otherwise clear it
             history: _state.history.contains("=") ? _state.history : "",
-            lastOperationIsUnary: false,
           );
         }
         break;
@@ -75,7 +69,6 @@ class CalculatorController extends ChangeNotifier {
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString(), // Clean for internal calculation
-            lastOperationIsUnary: true,
           );
         }
         break;
@@ -119,7 +112,6 @@ class CalculatorController extends ChangeNotifier {
   // --- Private Logic ---
 
   void _handleOperator(String label) {
-    _state = _state.copyWith(lastOperationIsUnary: false);
     // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
@@ -128,33 +120,43 @@ class CalculatorController extends ChangeNotifier {
       String inputClean = _state.currentInput.toCleanMathString();
 
       if (_state.operation.isNotEmpty) {
-        // If there's already an operation pending, compute it first before setting the new operator
-        String intermediateResult = CalculatorLogic.calculateResult(
-          num1: _state.num1,
-          num2: inputClean,
-          operation: _state.operation,
-        );
+        if (op!="^"){
 
-        // Update history with the intermediate result
-        String history = "$intermediateResult $op";
+          // If there's already an operation pending, compute it first before setting the new operator
+          String intermediateResult = CalculatorLogic.calculateResult(
+            num1: _state.num1,
+            num2: inputClean,
+            operation: _state.operation,
+          );
 
-        // Set the intermediate result as the new num1 for the next operation
-        _state = _state.copyWith(
-          num1: intermediateResult.toCleanMathString(),
-          operation: op,
-          currentInput: "",
-          output: "",
-          lastOperationIsUnary: false,
-          history: history,
-        );
+          // Update history with the intermediate result
+          String history = "$intermediateResult $op";
+
+          // Set the intermediate result as the new num1 for the next operation
+          _state = _state.copyWith(
+            num1: intermediateResult.toCleanMathString(),
+            operation: op,
+            currentInput: "",
+            output: "",
+            history: history,
+          );
+        } else{
+          _state = _state.copyWith(
+            currentInput: "",
+            num2 :inputClean,
+            operation2: op,
+            // Update history: "1 000 x^y"
+            history: CalculatorLogic.updateHistory(_state.history, "", "", inputClean, "", "^"),
+          );
+        }
+
       } else {
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
           currentInput: "",
-          lastOperationIsUnary: false,
           // Update history: "1 000 +"
-          history: CalculatorLogic.updateHistory(_state.history, op, inputClean, true),
+          history: CalculatorLogic.updateHistory(_state.history, op, inputClean),
         );
       }
     } else if (_state.operation.isNotEmpty) {
@@ -178,12 +180,32 @@ class CalculatorController extends ChangeNotifier {
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
+      String result;
+      String secondOperandForHistory = currentInputClean; // Store the original second operand for display
+
       // 1. Compute the result
-      String result = CalculatorLogic.calculateResult(
-        num1: _state.num1,
-        num2: currentInputClean,
-        operation: _state.operation,
-      );
+      if (_state.num2 == "") {
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: currentInputClean,
+          operation: _state.operation,
+        );
+      } else {
+        // x^y case: num2 is the base, currentInputClean is the exponent
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: _state.num2,
+          num3: currentInputClean,
+          operation: _state.operation,
+          operation2: "^"
+        );
+        // For history display: show the computed second operand (num2^num3)
+        secondOperandForHistory = CalculatorLogic.calculateResult(
+          num1: _state.num2,
+          num2: currentInputClean,
+          operation: "^",
+        );
+      }
 
       // Handle M+ / M- memory on the result
       if (buttonText == "M+" || buttonText == "M-") {
@@ -199,8 +221,7 @@ class CalculatorController extends ChangeNotifier {
               _state.history,
               _state.operation,
               _state.num1,
-              false,
-              currentInputClean,
+              secondOperandForHistory,
               result,
             );
 
@@ -212,6 +233,12 @@ class CalculatorController extends ChangeNotifier {
         // Keep result as input for the next operation
         operation: "",
         // Reset operation
+        num1: "0",
+        // Reset num1 for next calculation
+        num2: "",
+        // Reset num2
+        operation2: "",
+        // Reset operation2
         memory: memo,
       );
     }
@@ -229,8 +256,10 @@ class CalculatorController extends ChangeNotifier {
     if (_state.output.isNotEmpty) {
       String inputClean = _state.output.toCleanMathString();
 
+      // Calculates the unary operation
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
+      // If there's a first operand, does the operation after the second operand is calculated
       if (_state.history.containsOperator() && !_state.history.contains("=")) {
         result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
       }
@@ -239,10 +268,10 @@ class CalculatorController extends ChangeNotifier {
       // But if we don't have an operator in the history, we just want to show the unary operation (e.g: "√(500) = 22,36").
       if (_state.history.contains("=")) {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
-        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: false);
+        _state = _state.copyWith(currentInput: result, output: result, history: history);
       } else {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
-        _state = _state.copyWith(currentInput: result, output: result, history: history, lastOperationIsUnary: true);
+        _state = _state.copyWith(currentInput: result, output: result, history: history);
       }
     }
     isLastClicEqualOrMemo = true;

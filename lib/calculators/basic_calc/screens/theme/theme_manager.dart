@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/sreens/theme/theme_manager.dart
+
 import 'package:flutter/material.dart';
 
 /// Manages the theme state for the calculator

@@ -1,3 +1,5 @@
+// lib/calculators/basic_calc/models/calculator_state.dart
+
 import 'package:rational/rational.dart';
 
 class CalculatorState {
@@ -6,8 +8,9 @@ class CalculatorState {
   final String currentInput;
   final String num1;
   final String operation;
+  final String num2;
+  final String operation2;
   final Rational memory;
-  final bool lastOperationIsUnary;
 
   CalculatorState({
     this.output = "0",
@@ -16,7 +19,8 @@ class CalculatorState {
     this.num1 = "0",
     this.operation = "",
     Rational? memory,
-    this.lastOperationIsUnary = false,
+    this.num2="",
+    this.operation2=""
   }) : memory = memory ?? Rational.zero;
 
   CalculatorState copyWith({
@@ -26,7 +30,8 @@ class CalculatorState {
     String? num1,
     String? operation,
     Rational? memory,
-    bool? lastOperationIsUnary,
+    String? num2,
+    String? operation2
   }) {
     return CalculatorState(
       output: output ?? this.output,
@@ -35,7 +40,8 @@ class CalculatorState {
       num1: num1 ?? this.num1,
       operation: operation ?? this.operation,
       memory: memory ?? this.memory,
-      lastOperationIsUnary: lastOperationIsUnary ?? this.lastOperationIsUnary,
+      num2: num2 ?? this.num2,
+      operation2: operation2 ?? this.operation2,
     );
   }
 }
