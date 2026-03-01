@@ -45,7 +45,7 @@ class CalculatorController extends ChangeNotifier {
       case "÷":
       case "x^y":
         // Avoid to use Error message with operators
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
@@ -54,7 +54,7 @@ class CalculatorController extends ChangeNotifier {
       case "=":
       case "M+":
       case "M-":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = true;
         _handleEqualOrMemory(buttonText);
@@ -80,7 +80,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "+/-":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handlePlusMinus();
@@ -89,14 +89,14 @@ class CalculatorController extends ChangeNotifier {
       case "x²":
       case "1/x":
       case "√":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleBackspace();
@@ -112,6 +112,7 @@ class CalculatorController extends ChangeNotifier {
   // --- Private Logic ---
 
   void _handleOperator(String label) {
+    isLastClicNumber = false;
     // Convert UI label -> math symbol
     String op = (label == "x^y") ? "^" : label;
 
@@ -120,8 +121,7 @@ class CalculatorController extends ChangeNotifier {
       String inputClean = _state.currentInput.toCleanMathString();
 
       if (_state.operation.isNotEmpty) {
-        if (op!="^"){
-
+        if (op != "^") {
           // If there's already an operation pending, compute it first before setting the new operator
           String intermediateResult = CalculatorLogic.calculateResult(
             num1: _state.num1,
@@ -140,16 +140,15 @@ class CalculatorController extends ChangeNotifier {
             output: "",
             history: history,
           );
-        } else{
+        } else {
           _state = _state.copyWith(
             currentInput: "",
-            num2 :inputClean,
+            num2: inputClean,
             operation2: op,
             // Update history: "1 000 x^y"
             history: CalculatorLogic.updateHistory(_state.history, "", "", inputClean, "", "^"),
           );
         }
-
       } else {
         _state = _state.copyWith(
           num1: inputClean,
@@ -177,6 +176,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleEqualOrMemory(String buttonText) {
+    isLastClicNumber = false;
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString();
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
@@ -197,7 +197,7 @@ class CalculatorController extends ChangeNotifier {
           num2: _state.num2,
           num3: currentInputClean,
           operation: _state.operation,
-          operation2: "^"
+          operation2: "^",
         );
         // For history display: show the computed second operand (num2^num3)
         secondOperandForHistory = CalculatorLogic.calculateResult(
@@ -307,8 +307,6 @@ class CalculatorController extends ChangeNotifier {
 
     if (!isLastClicNumber) {
       if (buttonText == "00") return;
-    } else {
-      isLastClicNumber = true;
     }
 
     // If a digit is typed after a result (=), start over
@@ -316,6 +314,7 @@ class CalculatorController extends ChangeNotifier {
       isLastClicEqualOrMemo = false;
       String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
       _state = CalculatorState(currentInput: val, output: val, history: _state.history, memory: _state.memory);
+      isLastClicNumber = true;
       return;
     }
 
@@ -328,6 +327,7 @@ class CalculatorController extends ChangeNotifier {
           : current += buttonText;
     }
     _state = _state.copyWith(currentInput: current, output: current);
+    isLastClicNumber = true;
   }
 
   String memoryDisplay() {
