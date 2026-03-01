@@ -18,9 +18,9 @@ class CalculatorState {
     this.currentInput = "",
     this.num1 = "0",
     this.operation = "",
-    Rational? memory,
     this.num2="",
-    this.operation2=""
+    this.operation2="",
+    Rational? memory,
   }) : memory = memory ?? Rational.zero;
 
   CalculatorState copyWith({
@@ -29,9 +29,9 @@ class CalculatorState {
     String? currentInput,
     String? num1,
     String? operation,
-    Rational? memory,
     String? num2,
-    String? operation2
+    String? operation2,
+    Rational? memory
   }) {
     return CalculatorState(
       output: output ?? this.output,
@@ -39,9 +39,9 @@ class CalculatorState {
       currentInput: currentInput ?? this.currentInput,
       num1: num1 ?? this.num1,
       operation: operation ?? this.operation,
-      memory: memory ?? this.memory,
       num2: num2 ?? this.num2,
       operation2: operation2 ?? this.operation2,
+      memory: memory ?? this.memory
     );
   }
 }

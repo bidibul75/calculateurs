@@ -45,7 +45,7 @@ class CalculatorController extends ChangeNotifier {
       case "÷":
       case "x^y":
         // Avoid to use Error message with operators
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
@@ -54,7 +54,7 @@ class CalculatorController extends ChangeNotifier {
       case "=":
       case "M+":
       case "M-":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = true;
         _handleEqualOrMemory(buttonText);
@@ -80,7 +80,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "+/-":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handlePlusMinus();
@@ -89,14 +89,14 @@ class CalculatorController extends ChangeNotifier {
       case "x²":
       case "1/x":
       case "√":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
-        if (_state.output.isNotANumber()) break;
+        if (_state.output.toCleanMathString().isNotANumber()) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleBackspace();
