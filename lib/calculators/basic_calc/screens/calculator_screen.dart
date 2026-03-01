@@ -19,7 +19,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final ThemeManager _themeManager = ThemeManager();
   final symbols = GetIt.I<LocalNumberSymbols>();
 
-
   @override
   void initState() {
     super.initState();
@@ -80,75 +79,90 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         elevation: 0,
         leading: MenuDrawer(themeManager: _themeManager),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-              alignment: Alignment.bottomRight,
-              // Add a ScrollView to prevent overflow when the history is long
-              child: SingleChildScrollView(
-                reverse: true, // Keep the content pinned to the bottom
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Memory display (aligned to the left)
-                    if (_controller.memoryDisplay().isNotEmpty)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(_controller.memoryDisplay(), style: TextStyle(color: Colors.amber, fontSize: 24)),
-                      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  alignment: Alignment.bottomRight,
+                  // Add a ScrollView to prevent overflow when the history is long
+                  child: SingleChildScrollView(
+                    reverse: true, // Keep the content pinned to the bottom
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Memory display (aligned to the left)
+                        if (_controller.memoryDisplay().isNotEmpty)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _controller.memoryDisplay(),
+                              style: TextStyle(color: Colors.amber, fontSize: 24),
+                            ),
+                          ),
 
-                    // History display
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        state.history,
-                        style: TextStyle(color: Colors.grey[400], fontSize: 24),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // FittedBox shrinks the font size if the text is too long
-                    FittedBox(
-                      fit: BoxFit.scaleDown, // Only shrinks, does not grow
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        state.output,
-                        // Force a single line to trigger shrinking
-                        maxLines: 1,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 50, // We can even increase the base size
-                          fontWeight: FontWeight.bold,
+                        // History display
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            state.history,
+                            style: TextStyle(color: Colors.grey[400], fontSize: 24),
+                            textAlign: TextAlign.right,
+                          ),
                         ),
-                      ),
+
+                        const SizedBox(height: 10),
+
+                        // FittedBox shrinks the font size if the text is too long
+                        FittedBox(
+                          fit: BoxFit.scaleDown, // Only shrinks, does not grow
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            state.output,
+                            // Force a single line to trigger shrinking
+                            maxLines: 1,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 50, // We can even increase the base size
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Button grid
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 40, 8, 40),
+                child: Column(
+                  children: [
+                    Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
+                    Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
+                    Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
+                    Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
+                    Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
+                    Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
+                    Row(
+                      children: [
+                        _buildButton('0'),
+                        _buildButton('00'),
+                        _buildButton(symbols.decimalSep),
+                        _buildButton('='),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Button grid
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 40, 8, 40),
-            child: Column(
-              children: [
-                Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
-                Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
-                Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
-                Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
-                Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
-                Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                Row(children: [_buildButton('0'), _buildButton('00'), _buildButton(symbols.decimalSep), _buildButton('=')]),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
