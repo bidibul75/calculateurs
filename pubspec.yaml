@@ -83,6 +83,7 @@ flutter:
 
   assets:
     - assets/textures/brushed_metal.jpg
+    - assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

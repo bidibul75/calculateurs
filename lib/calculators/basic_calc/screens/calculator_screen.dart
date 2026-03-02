@@ -80,81 +80,90 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget build(BuildContext context) {
     final state = _controller.state;
 
-    return Scaffold(
-      backgroundColor: _themeManager.backgroundColor,
-      appBar: AppBar(
-        title: const Text('Basic calculator'),
-        backgroundColor: Colors.grey[300],
-        elevation: 0,
-        leading: MenuDrawer(themeManager: _themeManager),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
+          fit: BoxFit.cover,
+        ),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
-          child: Column(
-            children: [
-              // Display area (no texture)
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  alignment: Alignment.bottomRight,
-                  // Add a ScrollView to prevent overflow when the history is long
-                  child: SingleChildScrollView(
-                    reverse: true, // Keep the content pinned to the bottom
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Memory display (aligned to the left)
-                        if (_controller.memoryDisplay().isNotEmpty)
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Basic calculator'),
+          backgroundColor: Colors.white.withAlpha(150),
+          // Semi-transparent white
+          foregroundColor: Colors.grey[150],
+          // Text and actions color
+          iconTheme: IconThemeData(color: Colors.grey[150]),
+          // Icon color
+          elevation: 0,
+          leading: MenuDrawer(themeManager: _themeManager),
+        ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              children: [
+                // Display area with semi-transparent background
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    alignment: Alignment.bottomRight,
+                    color: Colors.white.withAlpha(150), // Semi-transparent white overlay
+                    // Add a ScrollView to prevent overflow when the history is long
+                    child: SingleChildScrollView(
+                      reverse: true, // Keep the content pinned to the bottom
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Memory display (aligned to the left)
+                          if (_controller.memoryDisplay().isNotEmpty)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _controller.memoryDisplay(),
+                                style: TextStyle(color: Colors.amber[800], fontSize: 24),
+                              ),
+                            ),
+
+                          // History display
                           Align(
-                            alignment: Alignment.centerLeft,
+                            alignment: Alignment.centerRight,
                             child: Text(
-                              _controller.memoryDisplay(),
-                              style: TextStyle(color: Colors.amber, fontSize: 24),
+                              state.history,
+                              style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
+                              textAlign: TextAlign.right,
                             ),
                           ),
 
-                        // History display
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            state.history,
-                            style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
+                          const SizedBox(height: 10),
 
-                        const SizedBox(height: 10),
-
-                        // FittedBox shrinks the font size if the text is too long
-                        FittedBox(
-                          fit: BoxFit.scaleDown, // Only shrinks, does not grow
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            state.output,
-                            // Force a single line to trigger shrinking
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: _themeManager.displayTextColor,
-                              fontSize: 50, // We can even increase the base size
-                              fontWeight: FontWeight.bold,
+                          // FittedBox shrinks the font size if the text is too long
+                          FittedBox(
+                            fit: BoxFit.scaleDown, // Only shrinks, does not grow
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              state.output,
+                              // Force a single line to trigger shrinking
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: _themeManager.displayTextColor,
+                                fontSize: 50, // We can even increase the base size
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              // Button grid with textured background
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(image: AssetImage('assets/textures/brushed_metal.jpg'), fit: BoxFit.cover),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 15, 8, 50),
+                // Button grid area
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
                   child: Column(
                     children: [
                       Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
@@ -174,8 +183,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
