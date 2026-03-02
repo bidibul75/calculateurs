@@ -52,13 +52,22 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget _buildButton(String label) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(6.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: _getButtonColor(label),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            foregroundColor: _themeManager.buttonTextColor,
+            elevation: 6,
+            shadowColor: Colors.black.withAlpha(120),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                // Border line
+                color: Colors.grey[200]!, // Color of border
+                width: 2.0, // Width of border
+              ),
+            ),
+            padding: const EdgeInsets.all(12),
           ),
           onPressed: () => _controller.onButtonPressed(label),
           child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -75,7 +84,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       backgroundColor: _themeManager.backgroundColor,
       appBar: AppBar(
         title: const Text('Basic calculator'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[300],
         elevation: 0,
         leading: MenuDrawer(themeManager: _themeManager),
       ),
@@ -84,6 +93,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           constraints: const BoxConstraints(maxWidth: 500),
           child: Column(
             children: [
+              // Display area (no texture)
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
@@ -110,7 +120,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                           alignment: Alignment.centerRight,
                           child: Text(
                             state.history,
-                            style: TextStyle(color: Colors.grey[400], fontSize: 24),
+                            style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
                             textAlign: TextAlign.right,
                           ),
                         ),
@@ -125,8 +135,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                             state.output,
                             // Force a single line to trigger shrinking
                             maxLines: 1,
-                            style: const TextStyle(
-                              color: Colors.black,
+                            style: TextStyle(
+                              color: _themeManager.displayTextColor,
                               fontSize: 50, // We can even increase the base size
                               fontWeight: FontWeight.bold,
                             ),
@@ -138,26 +148,31 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ),
 
-              // Button grid
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 40, 8, 40),
-                child: Column(
-                  children: [
-                    Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
-                    Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
-                    Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
-                    Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
-                    Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
-                    Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                    Row(
-                      children: [
-                        _buildButton('0'),
-                        _buildButton('00'),
-                        _buildButton(symbols.decimalSep),
-                        _buildButton('='),
-                      ],
-                    ),
-                  ],
+              // Button grid with textured background
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage('assets/textures/brushed_metal.jpg'), fit: BoxFit.cover),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 15, 8, 50),
+                  child: Column(
+                    children: [
+                      Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
+                      Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
+                      Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
+                      Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
+                      Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
+                      Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
+                      Row(
+                        children: [
+                          _buildButton('0'),
+                          _buildButton('00'),
+                          _buildButton(symbols.decimalSep),
+                          _buildButton('='),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

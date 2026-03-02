@@ -305,8 +305,8 @@ class CalculatorController extends ChangeNotifier {
 
     String current = _state.currentInput;
 
-    if (!isLastClicNumber) {
-      if (buttonText == "00") return;
+    if (buttonText == "00") {
+      if (!isLastClicNumber || current == "0") return;
     }
 
     // If a digit is typed after a result (=), start over

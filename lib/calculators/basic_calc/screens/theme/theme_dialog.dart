@@ -47,6 +47,38 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
                 ],
               ),
               const SizedBox(height: 20),
+              const Text('Display Text Color:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  _TextColorOption(
+                    color: Colors.black,
+                    label: 'Black',
+                    isSelected: themeManager.displayTextColor == Colors.black,
+                    onTap: () => themeManager.setDisplayTextColor(Colors.black),
+                  ),
+                  _TextColorOption(
+                    color: Colors.white,
+                    label: 'White',
+                    isSelected: themeManager.displayTextColor == Colors.white,
+                    onTap: () => themeManager.setDisplayTextColor(Colors.white),
+                  ),
+                  _TextColorOption(
+                    color: Colors.blue[800]!,
+                    label: 'Blue',
+                    isSelected: themeManager.displayTextColor == Colors.blue[800]!,
+                    onTap: () => themeManager.setDisplayTextColor(Colors.blue[800]!),
+                  ),
+                  _TextColorOption(
+                    color: Colors.green[800]!,
+                    label: 'Green',
+                    isSelected: themeManager.displayTextColor == Colors.green[800]!,
+                    onTap: () => themeManager.setDisplayTextColor(Colors.green[800]!),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               const Text('Button Groups Color:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
@@ -75,6 +107,38 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
                     label: 'Teal',
                     isSelected: themeManager.buttonGroupColor == Colors.teal[800]!,
                     onTap: () => themeManager.setButtonGroupColor(Colors.teal[800]!),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Text('Button Text Color:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  _TextColorOption(
+                    color: Colors.grey[200]!,
+                    label: 'Light Grey',
+                    isSelected: themeManager.buttonTextColor == Colors.grey[200]!,
+                    onTap: () => themeManager.setButtonTextColor(Colors.grey[200]!),
+                  ),
+                  _TextColorOption(
+                    color: Colors.white,
+                    label: 'White',
+                    isSelected: themeManager.buttonTextColor == Colors.white,
+                    onTap: () => themeManager.setButtonTextColor(Colors.white),
+                  ),
+                  _TextColorOption(
+                    color: Colors.black,
+                    label: 'Black',
+                    isSelected: themeManager.buttonTextColor == Colors.black,
+                    onTap: () => themeManager.setButtonTextColor(Colors.black),
+                  ),
+                  _TextColorOption(
+                    color: Colors.yellow[700]!,
+                    label: 'Yellow',
+                    isSelected: themeManager.buttonTextColor == Colors.yellow[700]!,
+                    onTap: () => themeManager.setButtonTextColor(Colors.yellow[700]!),
                   ),
                 ],
               ),
@@ -147,6 +211,39 @@ class _ButtonGroupColorOption extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 10, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Widget for text color selection
+class _TextColorOption extends StatelessWidget {
+  final Color color;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TextColorOption({required this.color, required this.label, required this.isSelected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          border: Border.all(color: isSelected ? Colors.black : Colors.grey, width: isSelected ? 3 : 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold),
           ),
         ),
       ),
