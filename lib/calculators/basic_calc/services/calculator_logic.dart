@@ -37,7 +37,7 @@ class CalculatorLogic {
         case "x":
           result = r1 * r2;
           break;
-        case "Ã·":
+        case "÷":
           if (r2 == Rational.zero) return "Error";
           result = r1 / r2;
           break;
@@ -94,14 +94,14 @@ class CalculatorLogic {
       }
 
       switch (operation) {
-        case "xÂ²":
+        case "x²":
           result = r * r;
           break;
         case "1/x":
           if (r == Rational.zero) return "Error";
           result = Rational.one / r;
           break;
-        case "âˆš":
+        case "√":
           // Try to use built-in sqrt first for rational results.
           // If input is irrational, fall back to Newton-Raphson for precision.
           final Decimal inputDecimal = Decimal.parse(input);
@@ -184,12 +184,12 @@ class CalculatorLogic {
     String formattedInput = format(inputVal);
 
     switch (operation) {
-      case "xÂ²":
-        return "${currentHistory == "" ? "" : currentHistory}($formattedInput)Â² =";
+      case "x²":
+        return "${currentHistory == "" ? "" : currentHistory}($formattedInput)² =";
       case "1/x":
         return "${currentHistory == "" ? "" : currentHistory}1/($formattedInput) =";
-      case "âˆš":
-        return "${currentHistory == "" ? "" : currentHistory}âˆš($formattedInput) =";
+      case "√":
+        return "${currentHistory == "" ? "" : currentHistory}√($formattedInput) =";
       default:
         return "$operation($formattedInput) =";
     }
