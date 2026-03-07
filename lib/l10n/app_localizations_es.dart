@@ -1,0 +1,106 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Spanish Castilian (`es`).
+class AppLocalizationsEs extends AppLocalizations {
+  AppLocalizationsEs([String locale = 'es']) : super(locale);
+
+  @override
+  String get appTitle => 'Calculadora básica';
+
+  @override
+  String get menuThemes => 'Temas';
+
+  @override
+  String get menuWhoAmI => 'Quién soy';
+
+  @override
+  String get menuDonate => 'Donar';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get whoAmITitle => 'Quién soy';
+
+  @override
+  String get whoAmIBody =>
+      'Me llamo Walter Bianchi, soy desarrollador de software y me apasiona crear aplicaciones útiles y bonitas.\n\nCreé esta calculadora para ofrecer una herramienta de cálculo simple pero potente.\n\nEspero que te resulte útil.\n\nEstoy buscando trabajo, así que si te gusta este proyecto (escrito en Flutter) y quieres trabajar conmigo, no dudes en contactarme.\n';
+
+  @override
+  String get whoAmILinkedIn => 'Perfil de LinkedIn';
+
+  @override
+  String get whoAmIDonateCta => 'Donaciones bienvenidas';
+
+  @override
+  String get donateTitle => 'Donar';
+
+  @override
+  String get donateIntro =>
+      'Gracias por usar esta calculadora.\n\nSi esta aplicación te resulta útil y quieres apoyar su desarrollo, puedes hacer una donación:\n';
+
+  @override
+  String get donateViaPaypal => 'Donar con PayPal';
+
+  @override
+  String get donateOutro =>
+      'Cada contribución ayuda a mejorar esta aplicación.';
+
+  @override
+  String get themeSettingsTitle => 'Configuración del tema';
+
+  @override
+  String get themeBackgroundColor => 'Color de fondo:';
+
+  @override
+  String get themeDisplayTextColor => 'Color del texto de pantalla:';
+
+  @override
+  String get themeButtonGroupsColor => 'Color de grupos de botones:';
+
+  @override
+  String get themeButtonTextColor => 'Color del texto de botones:';
+
+  @override
+  String get colorWhite => 'Blanco';
+
+  @override
+  String get colorDark => 'Oscuro';
+
+  @override
+  String get colorLightBlue => 'Azul claro';
+
+  @override
+  String get colorLightAmber => 'Ámbar claro';
+
+  @override
+  String get colorBlack => 'Negro';
+
+  @override
+  String get colorBlue => 'Azul';
+
+  @override
+  String get colorGreen => 'Verde';
+
+  @override
+  String get colorDarkGrey => 'Gris oscuro';
+
+  @override
+  String get colorPurple => 'Morado';
+
+  @override
+  String get colorTeal => 'Verde azulado';
+
+  @override
+  String get colorLightGrey => 'Gris claro';
+
+  @override
+  String get colorYellow => 'Amarillo';
+
+  @override
+  String get photoCredit => 'Foto: Bady Abbas en Unsplash';
+}

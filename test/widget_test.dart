@@ -5,26 +5,31 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:calculators/main.dart';
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:calculators/main.dart';
+import 'package:get_it/get_it.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Calculator app smoke test', (WidgetTester tester) async {
+    // Setup GetIt before building the app
+    if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+      GetIt.I.unregister<LocalNumberSymbols>();
+    }
+
+    final symbols = LocalNumberSymbols();
+    symbols.updateFromLocale('en-US');
+    GetIt.I.registerSingleton<LocalNumberSymbols>(symbols);
+
     // Build our app and trigger a frame.
     await tester.pumpWidget(const CalculatorApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the app has a title
+    expect(find.text('Basic calculator'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the app has a menu drawer button
+    expect(find.byIcon(Icons.menu), findsOneWidget);
   });
 }

@@ -2,6 +2,7 @@
 
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
+import 'package:calculators/l10n/app_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controllers/calculator_controller.dart';
@@ -89,6 +90,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -100,7 +102,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Basic calculator'),
+          title: Text(l10n.appTitle),
           backgroundColor: Colors.white.withAlpha(150),
           // Semi-transparent white
           foregroundColor: Colors.grey[150],
@@ -208,7 +210,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 child: GestureDetector(
                   onTap: () => _launchPhotoCredits(),
                   child: Text(
-                    'Photo: Bady Abbas on Unsplash',
+                    l10n.photoCredit,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
