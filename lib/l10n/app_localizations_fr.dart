@@ -103,4 +103,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get photoCredit => 'Photo : Bady Abbas sur Unsplash';
+
+  @override
+  String get menuSectionHealth => 'Santé';
+
+  @override
+  String get menuSectionConversions => 'Conversions';
+
+  @override
+  String get menuSectionFinance => 'Finances';
+
+  @override
+  String get menuSectionRealEstate => 'Immobilier';
+
+  @override
+  String get bmiTitle => 'Calculateur IMC';
+
+  @override
+  String get menuBmi => 'Calculateur IMC';
+
+  @override
+  String get bmiPromptHeight => 'Taille (m) :';
+
+  @override
+  String get bmiPromptWeight => 'Poids (kg) :';
+
+  @override
+  String get bmiPromptResult => 'IMC :';
+
+  @override
+  String get bmiCategoryUnderweight => 'Maigreur';
+
+  @override
+  String get bmiCategoryNormal => 'Poids normal';
+
+  @override
+  String get bmiCategoryOverweight => 'Surpoids';
+
+  @override
+  String get bmiCategoryObese => 'Obésité';
 }

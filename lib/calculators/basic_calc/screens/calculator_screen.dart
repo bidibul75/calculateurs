@@ -18,7 +18,7 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
-  final ThemeManager _themeManager = ThemeManager();
+  final ThemeManager _themeManager = GetIt.I<ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
 
   @override
@@ -34,7 +34,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _controller.removeListener(_updateUI);
     _themeManager.removeListener(_updateUI);
     _controller.dispose();
-    _themeManager.dispose();
     super.dispose();
   }
 
@@ -42,10 +41,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     setState(() {});
   }
 
-
   /// Launch photo credits (photographer and photo page on Unsplash)
   Future<void> _launchPhotoCredits() async {
-    final Uri url = Uri.parse('https://unsplash.com/fr/photos/champ-dherbe-verte-pendant-la-journee-5HI7Ea3yD-w?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText');
+    final Uri url = Uri.parse(
+      'https://unsplash.com/fr/photos/champ-dherbe-verte-pendant-la-journee-5HI7Ea3yD-w?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText',
+    );
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception('Could not launch photo credits');
     }
@@ -180,8 +180,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
                       child: Column(
                         children: [
-                          Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
-                          Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
+                          Row(
+                            children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')],
+                          ),
+                          Row(
+                            children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')],
+                          ),
                           Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
                           Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
                           Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
@@ -211,11 +215,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   onTap: () => _launchPhotoCredits(),
                   child: Text(
                     l10n.photoCredit,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      decoration: TextDecoration.underline,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 12, decoration: TextDecoration.underline),
                   ),
                 ),
               ),

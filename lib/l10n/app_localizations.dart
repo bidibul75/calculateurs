@@ -287,6 +287,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo: Bady Abbas on Unsplash'**
   String get photoCredit;
+
+  /// No description provided for @menuSectionHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get menuSectionHealth;
+
+  /// No description provided for @menuSectionConversions.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversions'**
+  String get menuSectionConversions;
+
+  /// No description provided for @menuSectionFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get menuSectionFinance;
+
+  /// No description provided for @menuSectionRealEstate.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Estate'**
+  String get menuSectionRealEstate;
+
+  /// No description provided for @bmiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI Calculator'**
+  String get bmiTitle;
+
+  /// No description provided for @menuBmi.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI Calculator'**
+  String get menuBmi;
+
+  /// No description provided for @bmiPromptHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Height (m):'**
+  String get bmiPromptHeight;
+
+  /// No description provided for @bmiPromptWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg):'**
+  String get bmiPromptWeight;
+
+  /// No description provided for @bmiPromptResult.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI:'**
+  String get bmiPromptResult;
+
+  /// No description provided for @bmiCategoryUnderweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Underweight'**
+  String get bmiCategoryUnderweight;
+
+  /// No description provided for @bmiCategoryNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal weight'**
+  String get bmiCategoryNormal;
+
+  /// No description provided for @bmiCategoryOverweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Overweight'**
+  String get bmiCategoryOverweight;
+
+  /// No description provided for @bmiCategoryObese.
+  ///
+  /// In en, this message translates to:
+  /// **'Obese'**
+  String get bmiCategoryObese;
 }
 
 class _AppLocalizationsDelegate

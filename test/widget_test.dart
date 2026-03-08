@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:calculators/calculators/basic_calc/screens/theme/theme_manager.dart';
 import 'package:calculators/main.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,14 @@ void main() {
     if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
       GetIt.I.unregister<LocalNumberSymbols>();
     }
+    if (GetIt.I.isRegistered<ThemeManager>()) {
+      GetIt.I.unregister<ThemeManager>();
+    }
 
     final symbols = LocalNumberSymbols();
     symbols.updateFromLocale('en-US');
     GetIt.I.registerSingleton<LocalNumberSymbols>(symbols);
+    GetIt.I.registerSingleton<ThemeManager>(ThemeManager());
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(const CalculatorApp());

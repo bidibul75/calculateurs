@@ -30,6 +30,26 @@
   "colorTeal": "Sarcelle",
   "colorLightGrey": "Gris clair",
   "colorYellow": "Jaune",
-  "photoCredit": "Photo : Bady Abbas sur Unsplash"
-}
+  "photoCredit": "Photo : Bady Abbas sur Unsplash",
 
+  "@_menu.sections": {
+    "description": "Libelles des sections pour regrouper les modules dans le menu burger"
+  },
+  "menuSectionHealth": "Santé",
+  "menuSectionConversions": "Conversions",
+  "menuSectionFinance": "Finances",
+  "menuSectionRealEstate": "Immobilier",
+
+  "@_module.health.bmi": {
+    "description": "Vocabulaire module : Sante > IMC"
+  },
+  "bmiTitle": "Calculateur IMC",
+  "menuBmi": "Calculateur IMC",
+  "bmiPromptHeight": "Taille (m) :",
+  "bmiPromptWeight": "Poids (kg) :",
+  "bmiPromptResult": "IMC :",
+  "bmiCategoryUnderweight": "Maigreur",
+  "bmiCategoryNormal": "Poids normal",
+  "bmiCategoryOverweight": "Surpoids",
+  "bmiCategoryObese": "Obésité"
+}

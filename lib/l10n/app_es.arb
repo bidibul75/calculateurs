@@ -30,6 +30,26 @@
   "colorTeal": "Verde azulado",
   "colorLightGrey": "Gris claro",
   "colorYellow": "Amarillo",
-  "photoCredit": "Foto: Bady Abbas en Unsplash"
-}
+  "photoCredit": "Foto: Bady Abbas en Unsplash",
 
+  "@_menu.sections": {
+    "description": "Etiquetas de secciones para agrupar modulos en el menu"
+  },
+  "menuSectionHealth": "Salud",
+  "menuSectionConversions": "Conversiones",
+  "menuSectionFinance": "Finanzas",
+  "menuSectionRealEstate": "Inmobiliario",
+
+  "@_module.health.bmi": {
+    "description": "Vocabulario del modulo: Salud > IMC"
+  },
+  "bmiTitle": "Calculadora IMC",
+  "menuBmi": "Calculadora IMC",
+  "bmiPromptHeight": "Altura (m):",
+  "bmiPromptWeight": "Peso (kg):",
+  "bmiPromptResult": "IMC:",
+  "bmiCategoryUnderweight": "Bajo peso",
+  "bmiCategoryNormal": "Peso normal",
+  "bmiCategoryOverweight": "Sobrepeso",
+  "bmiCategoryObese": "Obesidad"
+}

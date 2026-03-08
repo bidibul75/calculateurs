@@ -102,4 +102,43 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get photoCredit => 'Foto: Bady Abbas su Unsplash';
+
+  @override
+  String get menuSectionHealth => 'Salute';
+
+  @override
+  String get menuSectionConversions => 'Conversioni';
+
+  @override
+  String get menuSectionFinance => 'Finanza';
+
+  @override
+  String get menuSectionRealEstate => 'Immobiliare';
+
+  @override
+  String get bmiTitle => 'Calcolatore BMI';
+
+  @override
+  String get menuBmi => 'Calcolatore BMI';
+
+  @override
+  String get bmiPromptHeight => 'Altezza (m):';
+
+  @override
+  String get bmiPromptWeight => 'Peso (kg):';
+
+  @override
+  String get bmiPromptResult => 'BMI:';
+
+  @override
+  String get bmiCategoryUnderweight => 'Sottopeso';
+
+  @override
+  String get bmiCategoryNormal => 'Peso normale';
+
+  @override
+  String get bmiCategoryOverweight => 'Sovrappeso';
+
+  @override
+  String get bmiCategoryObese => 'Obesità';
 }

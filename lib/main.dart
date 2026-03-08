@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:calculators/l10n/app_localizations.dart';
-import 'calculators/basic_calc/screens/calculator_screen.dart';
+import 'package:calculators/calculators/basic_calc/screens/theme/theme_manager.dart';
+import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
 
 void main() async {
@@ -13,10 +14,15 @@ void main() async {
   // Lock screen orientation to portrait
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Register once, then keep it updated when the locale changes.
+  // Register shared services.
   final LocalNumberSymbols localNumberSymbols = LocalNumberSymbols();
   localNumberSymbols.updateFromLocale(WidgetsBinding.instance.platformDispatcher.locale.toString());
-  GetIt.I.registerSingleton<LocalNumberSymbols>(localNumberSymbols);
+  if (!GetIt.I.isRegistered<LocalNumberSymbols>()) {
+    GetIt.I.registerSingleton<LocalNumberSymbols>(localNumberSymbols);
+  }
+  if (!GetIt.I.isRegistered<ThemeManager>()) {
+    GetIt.I.registerSingleton<ThemeManager>(ThemeManager());
+  }
 
   runApp(const CalculatorApp());
 }
@@ -55,8 +61,9 @@ class CalculatorApp extends StatelessWidget {
         return resolvedLocale;
       },
 
-      // Default start screen
-      home: const CalculatorScreen(),
+      // Define routes
+      initialRoute: AppRoutes.initialRoute,
+      routes: AppRoutes.routes,
     );
   }
 }

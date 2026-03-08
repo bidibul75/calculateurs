@@ -1,10 +1,16 @@
 // lib/calculators/basic_calc/sreens/menu_drawer.dart
 
-import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/navigation/menu_catalog.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'theme/theme_dialog.dart';
 import 'theme/theme_manager.dart';
+
+const String _actionThemes = 'action:themes';
+const String _actionWhoAmI = 'action:who_am_i';
+const String _actionDonate = 'action:donate';
+const String _routePrefix = 'route:';
 
 /// Shows the "Who am I" dialog
 void showWhoAmIDialog(BuildContext context) {
@@ -102,10 +108,7 @@ void showDonateDialog(BuildContext context) {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              l10n.donateOutro,
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-            ),
+            Text(l10n.donateOutro, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
           ],
         ),
         actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.close))],
@@ -123,22 +126,62 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    final modules = buildModuleMenuCatalog(l10n);
+
+    final List<PopupMenuEntry<String>> items = [
+      PopupMenuItem<String>(value: _actionThemes, child: Text(l10n.menuThemes)),
+      PopupMenuItem<String>(value: _actionWhoAmI, child: Text(l10n.menuWhoAmI)),
+      PopupMenuItem<String>(value: _actionDonate, child: Text(l10n.menuDonate)),
+    ];
+
+    for (final section in ModuleSection.values) {
+      final sectionModules = modules.where((module) => module.section == section).toList();
+      if (sectionModules.isEmpty) {
+        continue;
+      }
+
+      items.add(const PopupMenuDivider());
+      items.add(
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Text(sectionTitle(section, l10n), style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      );
+
+      for (final module in sectionModules) {
+        items.add(PopupMenuItem<String>(value: '$_routePrefix${module.routeName}', child: Text(module.label)));
+      }
+    }
+
     return PopupMenuButton<String>(
       icon: const Icon(Icons.menu),
       onSelected: (String value) {
-        if (value == 'themes') {
+        if (value == _actionThemes) {
           showThemeDialog(context, themeManager);
-        } else if (value == 'who_am_i') {
+          return;
+        }
+        if (value == _actionWhoAmI) {
           showWhoAmIDialog(context);
-        } else if (value == 'donate') {
+          return;
+        }
+        if (value == _actionDonate) {
           showDonateDialog(context);
+          return;
+        }
+        if (value.startsWith(_routePrefix)) {
+          final routeName = value.substring(_routePrefix.length);
+          if (routeName == currentRoute) {
+            return;
+          }
+
+          // Schedule navigation after popup route teardown to avoid transient layout/hit-test issues.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context, rootNavigator: true).pushNamed(routeName);
+          });
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(value: 'themes', child: Text(l10n.menuThemes)),
-        PopupMenuItem<String>(value: 'who_am_i', child: Text(l10n.menuWhoAmI)),
-        PopupMenuItem<String>(value: 'donate', child: Text(l10n.menuDonate)),
-      ],
+      itemBuilder: (BuildContext context) => items,
     );
   }
 }

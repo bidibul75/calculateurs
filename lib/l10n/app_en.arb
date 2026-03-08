@@ -30,6 +30,26 @@
   "colorTeal": "Teal",
   "colorLightGrey": "Light Grey",
   "colorYellow": "Yellow",
-  "photoCredit": "Photo: Bady Abbas on Unsplash"
-}
+  "photoCredit": "Photo: Bady Abbas on Unsplash",
 
+  "@_menu.sections": {
+    "description": "Section labels for grouped calculator modules in the burger menu"
+  },
+  "menuSectionHealth": "Health",
+  "menuSectionConversions": "Conversions",
+  "menuSectionFinance": "Finance",
+  "menuSectionRealEstate": "Real Estate",
+
+  "@_module.health.bmi": {
+    "description": "Module vocabulary: Health > BMI"
+  },
+  "bmiTitle": "BMI Calculator",
+  "menuBmi": "BMI Calculator",
+  "bmiPromptHeight": "Height (m):",
+  "bmiPromptWeight": "Weight (kg):",
+  "bmiPromptResult": "BMI:",
+  "bmiCategoryUnderweight": "Underweight",
+  "bmiCategoryNormal": "Normal weight",
+  "bmiCategoryOverweight": "Overweight",
+  "bmiCategoryObese": "Obese"
+}
