@@ -91,6 +91,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget build(BuildContext context) {
     final state = _controller.state;
     final l10n = AppLocalizations.of(context);
+    final mediaSize = MediaQuery.sizeOf(context);
+    final bool isDesktopLike = mediaSize.width >= 768;
+    final double keyboardHeight =
+        (mediaSize.height * (isDesktopLike ? 0.44 : 0.50))
+            .clamp(isDesktopLike ? 330.0 : 360.0, isDesktopLike ? 560.0 : 720.0)
+            .toDouble();
 
     return Container(
       decoration: BoxDecoration(
@@ -178,27 +184,30 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     // Button grid area
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')],
-                          ),
-                          Row(
-                            children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')],
-                          ),
-                          Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
-                          Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
-                          Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
-                          Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                          Row(
-                            children: [
-                              _buildButton('0'),
-                              _buildButton('00'),
-                              _buildButton(symbols.decimalSep),
-                              _buildButton('='),
-                            ],
-                          ),
-                        ],
+                      child: SizedBox(
+                        height: keyboardHeight,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')],
+                            ),
+                            Row(
+                              children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')],
+                            ),
+                            Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
+                            Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
+                            Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
+                            Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
+                            Row(
+                              children: [
+                                _buildButton('0'),
+                                _buildButton('00'),
+                                _buildButton(symbols.decimalSep),
+                                _buildButton('='),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

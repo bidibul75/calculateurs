@@ -69,6 +69,24 @@ class _BmiScreenState extends State<BmiScreen> {
     return _themeManager.buttonGroupColor;
   }
 
+  /// Determines category text color based on BMI category
+  Color _getCategoryColor(String bmiOutput) {
+    print(bmiOutput);
+    final category = BmiLogic.getBmiCategory(bmiOutput);
+    switch (category) {
+      case 'underweight':
+        return Colors.blue;
+      case 'normal':
+        return Colors.green;
+      case 'overweight':
+        return Colors.orange;
+      case 'obese':
+        return Colors.red;
+      default:
+        return _themeManager.displayTextColor;
+    }
+  }
+
   /// Builds an individual button
   Widget _buildButton(String label, {int flex = 1}) {
     return Expanded(
@@ -138,6 +156,11 @@ class _BmiScreenState extends State<BmiScreen> {
     final l10n = AppLocalizations.of(context);
     final bool hasComputedBmi = state.weight != null && state.prompt == l10n.bmiPromptResult;
     final String bmiCategory = hasComputedBmi ? _localizedBmiCategory(l10n, state.output) : '';
+    final mediaSize = MediaQuery.sizeOf(context);
+    final bool isDesktopLike = mediaSize.width >= 768;
+    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : 0.50))
+        .clamp(isDesktopLike ? 260.0 : 300.0, isDesktopLike ? 430.0 : 560.0)
+        .toDouble();
 
     return Container(
       decoration: BoxDecoration(
@@ -167,7 +190,7 @@ class _BmiScreenState extends State<BmiScreen> {
                       // Display area with semi-transparent background
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 50),
                           alignment: Alignment.bottomRight,
                           color: Colors.white.withAlpha(150),
                           child: SingleChildScrollView(
@@ -212,8 +235,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     child: Text(
                                       bmiCategory,
                                       style: TextStyle(
-                                        //color: _themeManager.displayTextColor.withAlpha(190),
-                                        color: state.output == "Obese" ? Colors.red : Colors.green,
+                                        color: _getCategoryColor(state.output),
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -230,21 +252,32 @@ class _BmiScreenState extends State<BmiScreen> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
                         child: SizedBox(
-                          height: 320,
+                          height: keyboardHeight,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               // Left side: numeric keypad
                               Expanded(
                                 flex: 3,
-                                child: Column(
-                                  children: [
-                                    Row(children: [_buildButton('C'), _buildButton('⌫')]),
-                                    Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
-                                    Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
-                                    Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
-                                    Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
-                                  ],
+                                child: SizedBox.expand(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(child: Row(children: [_buildButton('C'), _buildButton('⌫')])),
+                                      Expanded(
+                                        child: Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
+                                      ),
+                                      Expanded(
+                                        child: Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
+                                      ),
+                                      Expanded(
+                                        child: Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
+                                      ),
+                                      Expanded(
+                                        child: Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
 
