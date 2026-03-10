@@ -3,12 +3,12 @@
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:get_it/get_it.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../controllers/bmi_controller.dart';
 import '../services/bmi_logic.dart';
-import '../../../basic_calc/screens/theme/theme_manager.dart';
-import '../../../basic_calc/screens/menu_drawer.dart';
+import '../../../../shared/widgets/menu_drawer.dart';
 
 class BmiScreen extends StatefulWidget {
   const BmiScreen({super.key});
@@ -19,7 +19,7 @@ class BmiScreen extends StatefulWidget {
 
 class _BmiScreenState extends State<BmiScreen> {
   final BmiController _controller = BmiController();
-  final ThemeManager _themeManager = GetIt.I<ThemeManager>();
+  final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
   bool _isInitialized = false;
 
@@ -53,15 +53,6 @@ class _BmiScreenState extends State<BmiScreen> {
     setState(() {});
   }
 
-  /// Launch photo credits (photographer and photo page on Unsplash)
-  Future<void> _launchPhotoCredits() async {
-    final Uri url = Uri.parse(
-      'https://unsplash.com/fr/photos/champ-dherbe-verte-pendant-la-journee-5HI7Ea3yD-w?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText',
-    );
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch photo credits');
-    }
-  }
 
   /// Determines button color
   Color _getButtonColor(String label) {
@@ -296,16 +287,7 @@ class _BmiScreenState extends State<BmiScreen> {
             Positioned(
               bottom: 16,
               right: 16,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => _launchPhotoCredits(),
-                  child: Text(
-                    l10n.photoCredit,
-                    style: TextStyle(color: Colors.white, fontSize: 12, decoration: TextDecoration.underline),
-                  ),
-                ),
-              ),
+              child: const PhotoCreditLink(),
             ),
           ],
         ),

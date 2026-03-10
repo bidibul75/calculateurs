@@ -4,8 +4,8 @@ import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/navigation/menu_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'theme/theme_dialog.dart';
-import 'theme/theme_manager.dart';
+import 'package:calculators/shared/theme/theme_dialog.dart' as shared_theme_dialog;
+import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 
 const String _actionThemes = 'action:themes';
 const String _actionWhoAmI = 'action:who_am_i';
@@ -119,7 +119,7 @@ void showDonateDialog(BuildContext context) {
 
 /// The burger menu displayed in the AppBar
 class MenuDrawer extends StatelessWidget {
-  final ThemeManager themeManager;
+  final shared_theme.ThemeManager themeManager;
 
   const MenuDrawer({super.key, required this.themeManager});
 
@@ -158,7 +158,7 @@ class MenuDrawer extends StatelessWidget {
       icon: const Icon(Icons.menu),
       onSelected: (String value) {
         if (value == _actionThemes) {
-          showThemeDialog(context, themeManager);
+          shared_theme_dialog.showThemeDialog(context, themeManager);
           return;
         }
         if (value == _actionWhoAmI) {

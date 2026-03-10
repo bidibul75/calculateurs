@@ -1,10 +1,8 @@
-// lib/calculators/basic_calc/sreens/theme/theme_dialog.dart
-
-import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
 import 'theme_manager.dart';
 
-/// Shows a dialog to customize theme settings
+/// Shows a dialog to customize shared theme settings.
 void showThemeDialog(BuildContext context, ThemeManager themeManager) {
   final l10n = AppLocalizations.of(context);
   showDialog(
@@ -153,7 +151,6 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
   );
 }
 
-/// Widget for background color selection
 class _ColorOption extends StatelessWidget {
   final Color color;
   final String label;
@@ -174,15 +171,12 @@ class _ColorOption extends StatelessWidget {
           border: Border.all(color: isSelected ? Colors.black : Colors.grey, width: isSelected ? 3 : 1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(
-          child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)),
-        ),
+        child: Center(child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10))),
       ),
     );
   }
 }
 
-/// Widget for button group color selection
 class _ButtonGroupColorOption extends StatelessWidget {
   final Color color;
   final String label;
@@ -220,7 +214,6 @@ class _ButtonGroupColorOption extends StatelessWidget {
   }
 }
 
-/// Widget for text color selection
 class _TextColorOption extends StatelessWidget {
   final Color color;
   final String label;
@@ -252,3 +245,4 @@ class _TextColorOption extends StatelessWidget {
     );
   }
 }
+

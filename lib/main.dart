@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:calculators/l10n/app_localizations.dart';
-import 'package:calculators/calculators/basic_calc/screens/theme/theme_manager.dart';
+import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
 
@@ -20,8 +20,8 @@ void main() async {
   if (!GetIt.I.isRegistered<LocalNumberSymbols>()) {
     GetIt.I.registerSingleton<LocalNumberSymbols>(localNumberSymbols);
   }
-  if (!GetIt.I.isRegistered<ThemeManager>()) {
-    GetIt.I.registerSingleton<ThemeManager>(ThemeManager());
+  if (!GetIt.I.isRegistered<shared_theme.ThemeManager>()) {
+    GetIt.I.registerSingleton<shared_theme.ThemeManager>(shared_theme.ThemeManager());
   }
 
   runApp(const CalculatorApp());
