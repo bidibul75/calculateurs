@@ -1,59 +1,82 @@
 import 'package:calculators/utils/extensions/extensions.dart';
 
 void main() {
-  String address = "20001:db8::acd:1234::/64";
-  print (address);
+  String address = "2001:db8:0:0:1234:1:2:3/128";
+  print(address);
+
   AddressIPV6 addressIPV6 = AddressIPV6(address);
-  if (addressIPV6.isValidIPv6CIDRSimple(address)) {
-    print("adresse valide (RegExp)");
-  } else {
-    print("adresse invalide (RegExp)");
+
+  print(addressIPV6.address6List);
+}
+
+/// Fills the elements of the address with 0 at the beginning
+List<String> cleanAddressIPV6(List<String> address) {
+  for (int i = 0; i < address.length; i++) {
+    address[i] = address[i].toUpperCase();
+    if (address[i].length < 4) {
+      address[i] = "0000".substring(0, 4 - address[i].length) + address[i];
+    }
   }
-  addressIPV6.string_to_list_strings_IPV6();
+  return address;
+}
+
+bool isValidIPv6Suffix(String cidr) {
+  int? i = int.tryParse(cidr);
+  return (i != null && i >= 0 && i <= 128) ? true : false;
 }
 
 class AddressIPV6 {
   String address6 = "";
+  List<String> address6List = [];
 
-  AddressIPV6(this.address6);
+  AddressIPV6(this.address6) {
+    List<String> addressList = address6.split("/");
+    // Validate the pure IPv6 part, not the CIDR suffix.
+    if (addressList.isNotEmpty && addressList[0].isValidIPv6) {
+      print("adresse valide hors suffixe (regexp");
+      if (addressList[1].isNotEmpty && isValidIPv6Suffix(addressList[1])) {
+        print("suffixe valide");
 
-  bool isValidIPv6CIDRSimple(String cidr) {
-    // Simple RegExp
-    final regex = RegExp(r'^([0-9a-fA-F:]+)\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])$');
-    return regex.hasMatch(cidr);
-  }
-
-  String isValidIPv6Hextet (List<String> list, String cidr){
-    String message = "";
-    for (String hextet in list){
-      if (hextet.length > 4) message += "Error : at least one hextet contains more than 4 digits.\n";
-    }
-    if (cidr.count("::") > 1) message += "Error : more than one zero compression in address.\n";
-    return message;
-  }
-
-  void string_to_list_strings_IPV6() {
-    List<String> adresseList = address6.split("/");
-    List<String> adresseListTemp = adresseList[0].split(":");
-    int numberOfDoublePoints = adresseListTemp.length - 1;
-    print(numberOfDoublePoints);
-    String suffixe = adresseList[1];
-    if (adresseList[0].contains("::") && numberOfDoublePoints < 7) {
-      adresseList[0] = adresseList[0].replaceAll("::", ":::::::".substring(0, 7 - numberOfDoublePoints + 2));
-      print(adresseList[0]);
-    }
-    adresseListTemp = adresseList[0].split(":");
-    print(adresseListTemp);
-    print (isValidIPv6Hextet(adresseListTemp, address6));
-
-    for (int i = 0; i < adresseListTemp.length; ++i) {
-      adresseListTemp[i] = adresseListTemp[i].toUpperCase();
-      if (adresseListTemp[i] == "") {
-        adresseListTemp[i] = "0000";
-      } else if (adresseListTemp[i].length < 4) {
-        adresseListTemp[i] = "0000".substring(0, 4 - adresseListTemp[i].length) + adresseListTemp[i];
+        address6List = formatIPV6WithoutSuffix(addressList[0]);
+        address6List.add(addressList[1]);
+      } else {
+        print("suffixe non valide");
       }
+    } else {
+      print("regexp : adresse invalide");
+      //throw ("Error : invalid IPV6 address");
     }
-    print(adresseListTemp);
+  }
+
+  /// Formats a condensed IPV6 address into a full format list of strings
+  List<String> formatIPV6WithoutSuffix(String address) {
+    if (address == "::1") {
+      return ["0000", "0000", "0000", "0000", "0000", "0000", "0000", "0001"];
+    }
+    if (address == "::") {
+      return ["0000", "0000", "0000", "0000", "0000", "0000", "0000", "0000"];
+    }
+
+    if (address.contains("::")) {
+      int count = 0;
+      List<String> addressPart0 = [], addressPart1 = [];
+      List<String> addressParts = address.split("::");
+      if (addressParts[0] != "") {
+        addressPart0 = addressParts[0].split(":");
+        count += addressPart0.length;
+      }
+      if (addressParts[1] != "") {
+        addressPart1 = addressParts[1].split(":");
+        count += addressPart1.length;
+      }
+      print("count $count");
+
+      for (int i = 0; i < 8 - count; i++) {
+        addressPart0.add("0000");
+      }
+
+      return cleanAddressIPV6(addressPart0 + addressPart1);
+    }
+    return cleanAddressIPV6(address.split(":"));
   }
 }
