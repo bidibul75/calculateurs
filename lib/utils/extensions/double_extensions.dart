@@ -35,9 +35,9 @@ extension DoubleExtensions on double {
   ///
   /// Example:
   /// ```dart
-  /// 0.05.toPercentage(); // Returns "5%"
+  /// 0.05.toPercentage; // Returns "5%"
   /// ```
-  String toPercentage() {
+  String get toPercentage {
     return '${(this * 100).roundTo(2)}%';
   }
 
@@ -105,14 +105,14 @@ extension DoubleExtensions on double {
   }
 
   /// Determines if a string represents an integer
-  bool isInteger() {
+  bool get isInteger {
     return !isNaN && !isInfinite && this == toInt();
   }
 
   /// Suppress the .0 end of double numbers
   /// Beware that this method returns a num, which can be either an int or a double depending on the value.
-  num cleanDouble() {
-    return isInteger() ? toInt() : this;
+  num get cleanDouble {
+    return isInteger ? toInt() : this;
   }
 }
 

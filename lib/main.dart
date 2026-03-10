@@ -1,7 +1,10 @@
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'calculators/basic_calc/screens/calculator_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
 
 void main() async {
@@ -11,8 +14,15 @@ void main() async {
   // Lock screen orientation to portrait
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Records the unique instance at startup, so it can be used everywhere in the app with GetIt.I
-  GetIt.I.registerSingleton<LocalNumberSymbols>(LocalNumberSymbols());
+  // Register shared services.
+  final LocalNumberSymbols localNumberSymbols = LocalNumberSymbols();
+  localNumberSymbols.updateFromLocale(WidgetsBinding.instance.platformDispatcher.locale.toString());
+  if (!GetIt.I.isRegistered<LocalNumberSymbols>()) {
+    GetIt.I.registerSingleton<LocalNumberSymbols>(localNumberSymbols);
+  }
+  if (!GetIt.I.isRegistered<shared_theme.ThemeManager>()) {
+    GetIt.I.registerSingleton<shared_theme.ThemeManager>(shared_theme.ThemeManager());
+  }
 
   runApp(const CalculatorApp());
 }
@@ -23,12 +33,37 @@ class CalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Basic calculator',
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), useMaterial3: true),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
+        Locale resolvedLocale = const Locale('en', 'US');
 
-      // Default start screen
-      home: const CalculatorScreen(),
+        if (locale != null) {
+          for (final supportedLocale in supportedLocales) {
+            if (supportedLocale.languageCode == locale.languageCode) {
+              resolvedLocale = supportedLocale;
+              break;
+            }
+          }
+        }
+
+        if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+          GetIt.I<LocalNumberSymbols>().updateFromLocale(resolvedLocale.toLanguageTag());
+        }
+        return resolvedLocale;
+      },
+
+      // Define routes
+      initialRoute: AppRoutes.initialRoute,
+      routes: AppRoutes.routes,
     );
   }
 }

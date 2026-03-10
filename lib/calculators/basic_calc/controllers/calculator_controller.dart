@@ -45,7 +45,7 @@ class CalculatorController extends ChangeNotifier {
       case "÷":
       case "x^y":
         // Avoid to use Error message with operators
-        if (_state.output.toCleanMathString().isNotANumber()) break;
+        if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
@@ -54,7 +54,7 @@ class CalculatorController extends ChangeNotifier {
       case "=":
       case "M+":
       case "M-":
-        if (_state.output.toCleanMathString().isNotANumber()) break;
+        if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = true;
         _handleEqualOrMemory(buttonText);
@@ -65,10 +65,10 @@ class CalculatorController extends ChangeNotifier {
         isLastClicEqualOrMemo = true;
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
-          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString();
+          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
           _state = _state.copyWith(
             output: memVal,
-            currentInput: memVal.toCleanMathString(), // Clean for internal calculation
+            currentInput: memVal.toCleanMathString, // Clean for internal calculation
           );
         }
         break;
@@ -80,7 +80,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "+/-":
-        if (_state.output.toCleanMathString().isNotANumber()) break;
+        if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handlePlusMinus();
@@ -89,14 +89,14 @@ class CalculatorController extends ChangeNotifier {
       case "x²":
       case "1/x":
       case "√":
-        if (_state.output.toCleanMathString().isNotANumber()) break;
+        if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleUnary(buttonText);
         break;
 
       case "⌫":
-        if (_state.output.toCleanMathString().isNotANumber()) break;
+        if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleBackspace();
@@ -118,7 +118,7 @@ class CalculatorController extends ChangeNotifier {
 
     if (_state.currentInput.isNotEmpty) {
       // Store the first number (num1)
-      String inputClean = _state.currentInput.toCleanMathString();
+      String inputClean = _state.currentInput.toCleanMathString;
 
       if (_state.operation.isNotEmpty) {
         if (op != "^") {
@@ -137,7 +137,7 @@ class CalculatorController extends ChangeNotifier {
 
           // Set the intermediate result as the new num1 for the next operation
           _state = _state.copyWith(
-            num1: intermediateResult.toCleanMathString(),
+            num1: intermediateResult.toCleanMathString,
             operation: op,
             currentInput: "",
             output: "",
@@ -169,11 +169,8 @@ class CalculatorController extends ChangeNotifier {
       String currentHist = _state.history.trim();
       // Remove the last operator and apply the new one
       if (currentHist.isNotEmpty) {
-        // Simple regex to replace the last character if it is an operator
-        // Or simplified rebuild:
-        String base = _state.num1; // Reuse stored num1
-        // Reformat num1 for display
-        String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString() ?? base;
+        String base = _state.num1;
+        String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString ?? base;
         String newHistory = "$formattedBase $op ";
         _state = _state.copyWith(operation: op, history: newHistory);
       }
@@ -183,12 +180,11 @@ class CalculatorController extends ChangeNotifier {
   void _handleEqualOrMemory(String buttonText) {
     isLastClicNumber = false;
     Rational memo = _state.memory;
-    String currentInputClean = _state.currentInput.toCleanMathString();
+    String currentInputClean = _state.currentInput.toCleanMathString;
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
       String result;
-      String secondOperandForHistory = currentInputClean; // Store the original second operand for display
+      String secondOperandForHistory = currentInputClean;
 
-      // 1. Compute the result
       if (_state.num2 == "") {
         result = CalculatorLogic.calculateResult(
           num1: _state.num1,
@@ -196,7 +192,6 @@ class CalculatorController extends ChangeNotifier {
           operation: _state.operation,
         );
       } else {
-        // x^y case: num2 is the base, currentInputClean is the exponent
         result = CalculatorLogic.calculateResult(
           num1: _state.num1,
           num2: _state.num2,
@@ -204,7 +199,6 @@ class CalculatorController extends ChangeNotifier {
           operation: _state.operation,
           operation2: "^",
         );
-        // For history display: show the computed second operand (num2^num3)
         secondOperandForHistory = CalculatorLogic.calculateResult(
           num1: _state.num2,
           num2: currentInputClean,
@@ -212,14 +206,12 @@ class CalculatorController extends ChangeNotifier {
         );
       }
 
-      // Handle M+ / M- memory on the result
       if (buttonText == "M+" || buttonText == "M-") {
-        // Keep the same precision as result
-        Rational resRational = Rational.parse(result.toCleanMathString());
+        Rational resRational = Rational.parse(result.toCleanMathString);
         if (buttonText == "M+") memo += resRational;
         if (buttonText == "M-") memo -= resRational;
       }
-      // Update history
+
       String history = _state.history.contains("=")
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
@@ -232,23 +224,15 @@ class CalculatorController extends ChangeNotifier {
 
       _state = _state.copyWith(
         output: result,
-        // result is already formatted by the logic
         history: history,
         currentInput: result,
-        // Keep result as input for the next operation
         operation: "",
-        // Reset operation
         num1: "0",
-        // Reset num1 for next calculation
         num2: "",
-        // Reset num2
         operation2: "",
-        // Reset operation2
         memory: memo,
       );
-    }
-    // Direct memory handling (if no active operation: e.g. "5 M+")
-    else if (buttonText.startsWith("M") && currentInputClean.isNotEmpty) {
+    } else if (buttonText.startsWith("M") && currentInputClean.isNotEmpty) {
       Rational val = Rational.parse(currentInputClean);
       if (buttonText == "M+") memo += val;
       if (buttonText == "M-") memo -= val;
@@ -259,18 +243,13 @@ class CalculatorController extends ChangeNotifier {
   void _handleUnary(String op) {
     String history = "";
     if (_state.output.isNotEmpty) {
-      String inputClean = _state.output.toCleanMathString();
-
-      // Calculates the unary operation
+      String inputClean = _state.output.toCleanMathString;
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
-      // If there's a first operand, does the operation after the second operand is calculated
-      if (_state.history.containsOperator() && !_state.history.contains("=")) {
+      if (_state.history.containsOperator && !_state.history.contains("=")) {
         result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
       }
-      // If we already have a history with an operator (e.g: "1 000 + 500") and we apply a unary operation on the result,
-      // we want to keep the history and just update the last part (e.g: "1 000 + (500)² = 250 000").
-      // But if we don't have an operator in the history, we just want to show the unary operation (e.g: "√(500) = 22,36").
+
       if (_state.history.contains("=")) {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
         _state = _state.copyWith(currentInput: result, output: result, history: history);
@@ -307,8 +286,7 @@ class CalculatorController extends ChangeNotifier {
     // Get the local decimal separator (comma or dot) via extensions or Intl
     // To simplify, assume the UI sends "." and we display "."
     // If you want to handle comma input, replace "." with "," here.
-
-    String current = _state.currentInput;
+    String current = _state.currentInput.toCleanMathString;
 
     if (buttonText == "00") {
       if (!isLastClicNumber || current == "0") return;
@@ -331,12 +309,12 @@ class CalculatorController extends ChangeNotifier {
           ? current = "0${symbols.decimalSep}"
           : current += buttonText;
     }
-    _state = _state.copyWith(currentInput: current, output: current);
+    _state = _state.copyWith(currentInput: current, output: current.format);
     isLastClicNumber = true;
   }
 
   String memoryDisplay() {
     if (_state.memory == Rational.zero) return "";
-    return "M = ${Decimal.parse(_state.memory.toDecimal().toString()).toPreciseFormattedString()}";
+    return "M = ${Decimal.parse(_state.memory.toDecimal().toString()).toPreciseFormattedString}";
   }
 }

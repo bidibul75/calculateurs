@@ -5,7 +5,7 @@ import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 
 extension DecimalFormatting on Decimal {
-  String toPreciseFormattedString() {
+  String get toPreciseFormattedString {
     // 1. Get the locale (e.g., "fr_FR" or "en_US")
     final symbols = GetIt.I<LocalNumberSymbols>();
 

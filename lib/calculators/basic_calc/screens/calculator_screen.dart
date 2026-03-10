@@ -2,11 +2,12 @@
 
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
+import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:get_it/get_it.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../controllers/calculator_controller.dart';
-import 'theme/theme_manager.dart';
-import 'menu_drawer.dart';
+import '../../../shared/widgets/menu_drawer.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -17,7 +18,7 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
-  final ThemeManager _themeManager = ThemeManager();
+  final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
 
   @override
@@ -33,21 +34,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _controller.removeListener(_updateUI);
     _themeManager.removeListener(_updateUI);
     _controller.dispose();
-    _themeManager.dispose();
     super.dispose();
   }
 
   void _updateUI() {
     setState(() {});
-  }
-
-
-  /// Launch photo credits (photographer and photo page on Unsplash)
-  Future<void> _launchPhotoCredits() async {
-    final Uri url = Uri.parse('https://unsplash.com/fr/photos/champ-dherbe-verte-pendant-la-journee-5HI7Ea3yD-w?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch photo credits');
-    }
   }
 
   /// Determines button color amongst text
@@ -89,6 +80,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
+    final l10n = AppLocalizations.of(context);
+    final mediaSize = MediaQuery.sizeOf(context);
+    final bool isDesktopLike = mediaSize.width >= 768;
+    final double keyboardHeight =
+        (mediaSize.height * (isDesktopLike ? 0.44 : 0.50))
+            .clamp(isDesktopLike ? 330.0 : 360.0, isDesktopLike ? 560.0 : 720.0)
+            .toDouble();
 
     return Container(
       decoration: BoxDecoration(
@@ -100,7 +98,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Basic calculator'),
+          title: Text(l10n.appTitle),
           backgroundColor: Colors.white.withAlpha(150),
           // Semi-transparent white
           foregroundColor: Colors.grey[150],
@@ -176,23 +174,30 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     // Button grid area
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
-                      child: Column(
-                        children: [
-                          Row(children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')]),
-                          Row(children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')]),
-                          Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
-                          Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
-                          Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
-                          Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                          Row(
-                            children: [
-                              _buildButton('0'),
-                              _buildButton('00'),
-                              _buildButton(symbols.decimalSep),
-                              _buildButton('='),
-                            ],
-                          ),
-                        ],
+                      child: SizedBox(
+                        height: keyboardHeight,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')],
+                            ),
+                            Row(
+                              children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')],
+                            ),
+                            Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
+                            Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
+                            Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
+                            Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
+                            Row(
+                              children: [
+                                _buildButton('0'),
+                                _buildButton('00'),
+                                _buildButton(symbols.decimalSep),
+                                _buildButton('='),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -203,20 +208,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             Positioned(
               bottom: 16,
               right: 16,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => _launchPhotoCredits(),
-                  child: Text(
-                    'Photo: Bady Abbas on Unsplash',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
+              child: const PhotoCreditLink(),
             ),
           ],
         ),

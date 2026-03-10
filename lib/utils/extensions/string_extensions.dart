@@ -1,7 +1,10 @@
 // lib/utils/extensions/string_extensions.dart
 
+import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
+import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rational/rational.dart';
 
 /// Utility extensions for the String class
 extension StringExtensions on String {
@@ -40,7 +43,7 @@ extension StringExtensions on String {
   /// Beware ! works fine only with unformatted numbers
   String truncate(int maxLength, {String suffix = '...'}) {
     if (length <= maxLength) return this;
-    if (isADouble()) {
+    if (isADouble) {
       return '${substring(0, maxLength)}$suffix';
     }
     return this;
@@ -48,7 +51,7 @@ extension StringExtensions on String {
 
   /// Simplifies a String ended with ".0" : for instance 3.0 becomes 3.
   /// Beware ! works fine only with unformatted numbers
-  String cleanPointZero() {
+  String get cleanPointZero {
     if (this == ".0") return "0";
     if (isNotEmpty && length > 2) {
       if (substring(length - 2) == ".0") return substring(0, length - 2);
@@ -58,28 +61,28 @@ extension StringExtensions on String {
 
   /// Determines if a String represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool isANumber() {
+  bool get isANumber {
     if (double.tryParse(this) == null) return false;
     return true;
   }
 
   /// Determines if a string represents a double (.0 excluded)
   /// Beware ! works fine only with unformatted numbers
-  bool isADouble() {
-    String temp = trim().cleanPointZero();
-    if (isANumber() && temp.contains(".")) return true;
+  bool get isADouble {
+    String temp = trim().cleanPointZero;
+    if (isANumber && temp.contains(".")) return true;
     return false;
   }
 
   /// Determines if a String does NOT represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool isNotANumber() {
-    if (isANumber()) return false;
+  bool get isNotANumber {
+    if (isANumber) return false;
     return true;
   }
 
   /// Determines if the string represents a number or a single expression with a single operator ( for instance 3² or √(1+2) ).
-  bool hasAGlobalOperator() {
+  bool get hasAGlobalOperator {
     String operation = trim();
     if (!operation.startsWith("√") && !operation.endsWith("²")) {
       return false;
@@ -87,7 +90,7 @@ extension StringExtensions on String {
     if (operation.startsWith("√")) operation = operation.substring(1);
     if (operation.endsWith("²")) operation = operation.substring(0, operation.length - 1);
     operation = operation.trim();
-    if (operation.isANumber()) {
+    if (operation.isANumber) {
       return true;
     }
     if (!operation.startsWith("(")) return false;
@@ -110,16 +113,16 @@ extension StringExtensions on String {
   }
 
   /// Determines if the string represents a squared number or a squared expression as a whole.
-  bool isAGlobalSquared() {
-    if (trim().endsWith("²") && hasAGlobalOperator()) {
+  bool get isAGlobalSquared {
+    if (trim().endsWith("²") && hasAGlobalOperator) {
       return true;
     }
     return false;
   }
 
   /// Determines if the string represents a number inside a square root or an entire expression inside a square root.
-  bool isAGlobalSQR() {
-    if (trim().startsWith("√") && hasAGlobalOperator()) {
+  bool get isAGlobalSQR {
+    if (trim().startsWith("√") && hasAGlobalOperator) {
       return true;
     }
     return false;
@@ -140,12 +143,12 @@ extension StringExtensions on String {
   }
 
   /// Returns the last character of a string
-  String lastCharacter() {
+  String get lastCharacter {
     return isEmpty ? "" : this[length - 1];
   }
 
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
-  String toCleanMathString() {
+  String get toCleanMathString {
     final symbols = GetIt.I<LocalNumberSymbols>();
 
     // 1. Remove thousand separators (spaces)
@@ -160,7 +163,18 @@ extension StringExtensions on String {
   }
 
   /// Determines if the string contains an operator (+, -, *, ÷)
-  bool containsOperator() {
+  bool get containsOperator {
     return RegExp(r'[+\-*÷]').hasMatch(this);
+  }
+
+  // Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
+  String get format {
+    try {
+      if (isNotANumber) return this;
+      final value = Rational.parse(this).toDecimal(scaleOnInfinitePrecision: 10);
+      return DecimalFormatting(value).toPreciseFormattedString;
+    } catch (e) {
+      return this;
+    }
   }
 }
