@@ -1,16 +1,12 @@
 // lib/calculators/basic_calc/sreens/menu_drawer.dart
 
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/navigation/app_routes.dart';
 import 'package:calculators/navigation/menu_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:calculators/shared/theme/theme_dialog.dart' as shared_theme_dialog;
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
-
-const String _actionThemes = 'action:themes';
-const String _actionWhoAmI = 'action:who_am_i';
-const String _actionDonate = 'action:donate';
-const String _routePrefix = 'route:';
 
 /// Shows the "Who am I" dialog
 void showWhoAmIDialog(BuildContext context) {
@@ -123,65 +119,85 @@ class MenuDrawer extends StatelessWidget {
 
   const MenuDrawer({super.key, required this.themeManager});
 
+  void _navigateToRoute(BuildContext context, String routeName) {
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    if (currentRoute == routeName) {
+      return;
+    }
+    Navigator.of(context, rootNavigator: true).pushNamed(routeName);
+  }
+
+  void _showMenuSheet(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final modules = buildModuleMenuCatalog(l10n);
+    final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
+
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.palette_outlined),
+                title: Text(l10n.menuThemes),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  shared_theme_dialog.showThemeDialog(context, themeManager);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.badge_outlined),
+                title: Text(l10n.menuWhoAmI),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  showWhoAmIDialog(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.favorite_outline),
+                title: Text(l10n.menuDonate),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  showDonateDialog(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.calculate_outlined),
+                title: Text(l10n.appTitle),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, AppRoutes.home);
+                },
+              ),
+              if (healthModules.isNotEmpty)
+                ExpansionTile(
+                  leading: const Icon(Icons.health_and_safety_outlined),
+                  title: Text(sectionTitle(ModuleSection.health, l10n)),
+                  children: [
+                    for (final module in healthModules)
+                      ListTile(
+                        contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                        title: Text(module.label),
+                        onTap: () {
+                          Navigator.of(sheetContext).pop();
+                          _navigateToRoute(context, module.routeName);
+                        },
+                      ),
+                  ],
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final currentRoute = ModalRoute.of(context)?.settings.name;
-    final modules = buildModuleMenuCatalog(l10n);
-
-    final List<PopupMenuEntry<String>> items = [
-      PopupMenuItem<String>(value: _actionThemes, child: Text(l10n.menuThemes)),
-      PopupMenuItem<String>(value: _actionWhoAmI, child: Text(l10n.menuWhoAmI)),
-      PopupMenuItem<String>(value: _actionDonate, child: Text(l10n.menuDonate)),
-    ];
-
-    for (final section in ModuleSection.values) {
-      final sectionModules = modules.where((module) => module.section == section).toList();
-      if (sectionModules.isEmpty) {
-        continue;
-      }
-
-      items.add(const PopupMenuDivider());
-      items.add(
-        PopupMenuItem<String>(
-          enabled: false,
-          child: Text(sectionTitle(section, l10n), style: const TextStyle(fontWeight: FontWeight.bold)),
-        ),
-      );
-
-      for (final module in sectionModules) {
-        items.add(PopupMenuItem<String>(value: '$_routePrefix${module.routeName}', child: Text(module.label)));
-      }
-    }
-
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.menu),
-      onSelected: (String value) {
-        if (value == _actionThemes) {
-          shared_theme_dialog.showThemeDialog(context, themeManager);
-          return;
-        }
-        if (value == _actionWhoAmI) {
-          showWhoAmIDialog(context);
-          return;
-        }
-        if (value == _actionDonate) {
-          showDonateDialog(context);
-          return;
-        }
-        if (value.startsWith(_routePrefix)) {
-          final routeName = value.substring(_routePrefix.length);
-          if (routeName == currentRoute) {
-            return;
-          }
-
-          // Schedule navigation after popup route teardown to avoid transient layout/hit-test issues.
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context, rootNavigator: true).pushNamed(routeName);
-          });
-        }
-      },
-      itemBuilder: (BuildContext context) => items,
-    );
+    return IconButton(icon: const Icon(Icons.menu), onPressed: () => _showMenuSheet(context));
   }
 }
