@@ -1,12 +1,13 @@
+import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
-void main() {
-  String address = "2001:db8:0:0:1234:1:2:3/128";
+void addressIPv6() {
+  String address = "2001:db8:0:0:1234:1:2:3/64";
   print(address);
 
   AddressIPV6 addressIPV6 = AddressIPV6(address);
-
   print(addressIPV6.address6List);
+  print(addressIPV6.numberOfAddresses);
 }
 
 /// Fills the elements of the address with 0 at the beginning
@@ -22,12 +23,13 @@ List<String> cleanAddressIPV6(List<String> address) {
 
 bool isValidIPv6Suffix(String cidr) {
   int? i = int.tryParse(cidr);
-  return (i != null && i >= 0 && i <= 128) ? true : false;
+  return i != null && i >= 0 && i <= 128;
 }
 
 class AddressIPV6 {
   String address6 = "";
   List<String> address6List = [];
+  String numberOfAddresses = "";
 
   AddressIPV6(this.address6) {
     List<String> addressList = address6.split("/");
@@ -35,6 +37,7 @@ class AddressIPV6 {
     if (addressList.isNotEmpty && addressList[0].isValidIPv6) {
       print("adresse valide hors suffixe (regexp");
       if (addressList[1].isNotEmpty && isValidIPv6Suffix(addressList[1])) {
+        numberOfAddresses = CalculatorLogic.calculateResult(num1: "2", num2: addressList[1], operation: "^");
         print("suffixe valide");
 
         address6List = formatIPV6WithoutSuffix(addressList[0]);
