@@ -5,7 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:calculators/calculators/basic_calc/screens/theme/theme_manager.dart';
+import 'package:calculators/shared/theme/theme_manager.dart';
 import 'package:calculators/main.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';

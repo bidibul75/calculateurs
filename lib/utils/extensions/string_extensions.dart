@@ -27,10 +27,22 @@ extension StringExtensions on String {
 
   /// Checks if the string is a valid IPv6 address
   bool get isValidIPv6 {
+    // RFC-style IPv6 forms (full + compressed), without IPv4-mapped and zone id.
     final regex = RegExp(
-      r'^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|::([0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})$',
+      r'^(?:'
+      r'(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,7}:|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|'
+      r'(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|'
+      r'[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}|'
+      r':(?::[0-9a-fA-F]{1,4}){1,7}|'
+      r'::'
+      r')$',
     );
-    return regex.hasMatch(this);
+    return regex.hasMatch(trim());
   }
 
   /// Capitalizes the first letter

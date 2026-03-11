@@ -6,6 +6,7 @@ import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
+import 'package:calculators/calculators/ip/models/addressIPV6.dart';
 
 void main() async {
   // Mandatory to execute code before runApp
@@ -24,7 +25,16 @@ void main() async {
     GetIt.I.registerSingleton<shared_theme.ThemeManager>(shared_theme.ThemeManager());
   }
 
-  runApp(const CalculatorApp());
+  //   runApp(const CalculatorApp());
+
+  String address = "2001:db8:0:0:1234::/128";
+  print(address);
+
+  AddressIPV6 addressIPV6 = AddressIPV6(address);
+  print(addressIPV6.address6List);
+  print(addressIPV6.numberOfAddresses);
+
+  runApp(AddressIPV6(address) as Widget);
 }
 
 class CalculatorApp extends StatelessWidget {
