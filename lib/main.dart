@@ -27,7 +27,7 @@ void main() async {
 
   //   runApp(const CalculatorApp());
 
-  String address = "2001:db8:0:0:1234::/128";
+  String address = "2001:db8:0:0:1234::/64";
   print(address);
 
   AddressIPV6 addressIPV6 = AddressIPV6(address);
