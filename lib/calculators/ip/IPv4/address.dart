@@ -1,22 +1,23 @@
 // IPV4 mask calculator
 // erreur nombre d'adresses
-import 'MyException.dart';
+import 'package:calculators/utils/my_exception.dart';
+import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
 
 void main() {
-  Adresse adresse = Adresse(" 90.16.84.82/22", "adresse");
-  print("Masque réseau : ${adresse.mask}");
-  print("Masque inverse : ${adresse.wildcardMask}");
-  print("Adresse réseau : ${adresse.addressNetwork}");
-  print("Adresse diffusion : ${adresse.addressBroadcast}");
-  print("Première adresse réseau : ${adresse.addressAvailableFirstOne}");
-  print("Dernière adresse réseau : ${adresse.addressAvailableLastOne}");
-  print("Nombre d'adresses : ${thousandSpaces(adresse.numberAvailableAddresses)}");
-  print("Nombre d'adresses utilisables : ${thousandSpaces(adresse.numberAvailableAddresses - 2)}");
-  print("Adresse binaire : ${adresse.addressOnlyString}");
-  print("Adresse list : ${adresse.addressList}");
+  Address address = Address(" 90.16.84.82/8", "address");
+  print("Masque réseau : ${address.mask}");
+  print("Masque inverse : ${address.wildcardMask}");
+  print("Adresse réseau : ${address.addressNetwork}");
+  print("Adresse diffusion : ${address.addressBroadcast}");
+  print("Première adresse réseau : ${address.addressAvailableFirstOne}");
+  print("Dernière adresse réseau : ${address.addressAvailableLastOne}");
+  print("Nombre d'adresses : ${thousandSpaces(address.numberAvailableAddresses)}");
+  print("Nombre d'adresses utilisables : ${thousandSpaces(address.numberUsableAddresses)}");
+  print("Adresse binaire : ${address.addressOnlyString}");
+  print("Adresse list : ${address.addressList}");
 }
 
-class Adresse {
+class Address {
   String addressToProcess,
       addressNetwork = "",
       addressBroadcast = "",
@@ -25,7 +26,7 @@ class Adresse {
       addressOnlyString = "",
       addressNetworkStringBinary = "",
       addressBroadcastStringBinary = "";
-  int suffix = 0, valueTemp = 0, numberAvailableAddresses = 0;
+  int suffix = 0, valueTemp = 0; //, numberAvailableAddresses = 0;
 
   List<String> addressList = [],
       addressNetworkList = [],
@@ -35,9 +36,9 @@ class Adresse {
       addressAvailableFirstOne = [],
       addressAvailableLastOne = [];
 
-  Adresse(this.addressToProcess, String origin) {
+  Address(this.addressToProcess, String origin) {
     // Regexp processing in case of not having done yet
-    if (origin == "adresse") {
+    if (origin == "address") {
       addressToProcess = regexpProcess(addressToProcess);
     }
     print("origin : $origin");
@@ -56,7 +57,7 @@ class Adresse {
     addressOnlyList = addressList.sublist(0, 4);
     addressOnlyString = listStringsDecimalToStringBinary(addressOnlyList);
 
-    for (int i = 0; i < 32; ++i) {
+    for (int i = 0; i < 32; i++) {
       addressNetwork += (int.parse(addressOnlyString[i]) & int.parse(mask[i])).toString();
       addressBroadcast += (int.parse(addressOnlyString[i]) | int.parse(wildcardMask[i])).toString();
     }
@@ -80,13 +81,22 @@ class Adresse {
     if (suffix < 32) {
       addressAvailableFirstOne = addressShift(addressAvailableFirstOne, 1);
       addressAvailableLastOne = addressShift(addressAvailableLastOne, -1);
-      numberAvailableAddresses = countsAvailableAddresses(addressNetworkList, addressBroadcastList);
-    } else {
-      numberAvailableAddresses = 1;
     }
 
     mask = stringBinaryToStringDecimalDots(mask);
     wildcardMask = stringBinaryToStringDecimalDots(wildcardMask);
+  }
+
+  /// Returns the number of available addresses
+  int get numberAvailableAddresses => 1 << (32 - suffix);
+
+  /// Returns the number of usable host addresses for this prefix.
+  /// /32 keeps 1 host address, /31 keeps 2 host addresses (RFC 3021),
+  /// otherwise network and broadcast are excluded.
+  int get numberUsableAddresses {
+    if (suffix == 32) return 1;
+    if (suffix == 31) return 2;
+    return numberAvailableAddresses - 2;
   }
 }
 
@@ -103,7 +113,7 @@ String regexpProcess(String addressToProcessString) {
   }
 }
 
-// Converts a string into a list of 5 strings (the elements of the address)
+/// Converts a string into a list of 5 strings (the elements of the address)
 List<String> stringToListStrings(String addressString) {
   List<String> addressParts = addressString.split("/");
   String suffixStr = addressParts[1];
@@ -113,29 +123,29 @@ List<String> stringToListStrings(String addressString) {
   return addressParts;
 }
 
-// Tests the numbers of the address
+/// Tests the numbers of the address
 void testsNumbersInList(List<String> addressListString) {
   int suffixValue = int.parse(addressListString[4]);
   if (suffixValue < 0 || suffixValue > 32) {
     throw MyException("Erreur ! suffixe incorrect ", addressListString.toString());
   }
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     if (int.parse(addressListString[i]) < 0 || int.parse(addressListString[i]) > 255) {
       throw MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres", addressListString.toString());
     }
   }
 }
 
-// Casts a list of decimal numbers into a single binary string
+/// Casts a list of decimal numbers into a single binary string
 String listStringsDecimalToStringBinary(List<String> addressListShort) {
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
     addressListShort[i] = "0" * (8 - addressListShort[i].length) + addressListShort[i];
   }
   return addressListShort.join("");
 }
 
-// Casts a binary string into a string of 4 decimals separated by dots
+/// Casts a binary string into a string of 4 decimals separated by dots
 String stringBinaryToStringDecimalDots(String binaryString) {
   String decimalString = (int.parse(binaryString.substring(0, 8), radix: 2)).toString();
   for (int i = 8; i < 32; i += 8) {
@@ -144,20 +154,20 @@ String stringBinaryToStringDecimalDots(String binaryString) {
   return decimalString;
 }
 
-// Casts a dot-separated String into a List (address without the suffix)
+/// Casts a dot-separated String into a List (address without the suffix)
 List<String> stringDotsToList(String dotString) {
   return dotString.split(".");
 }
 
-// Casts a List into a dot-separated String
+/// Casts a List into a dot-separated String
 String listToStringDots(List list) {
   return list.join(".");
 }
 
-// Counts the number of available addresses among a range
+/// Counts the number of available addresses among a range
 int countsAvailableAddresses(List<String> networkList, broadcastList) {
   int nbAvailableAddresses = 1, gap = 0;
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     gap = int.parse(broadcastList[i]) - int.parse(networkList[i]);
     if (gap != 0) {
       nbAvailableAddresses *= (gap + 1);
@@ -166,7 +176,7 @@ int countsAvailableAddresses(List<String> networkList, broadcastList) {
   return nbAvailableAddresses;
 }
 
-// Calculates the address that follows or precedes a given address (without suffix)
+/// Calculates the address that follows or precedes a given address (without suffix)
 List<String> addressShift(List<String> address, int step) {
   for (int i = 3; i > -1; i--) {
     if (step == -1 && address[i] == "0") {
@@ -188,7 +198,7 @@ List<String> addressShift(List<String> address, int step) {
 }
 
 List<String> listStringsBinaryToDecimal(List<String> address) {
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 4; i++) {
     address[i] = int.parse(address[i], radix: 2).toString();
   }
   return address;

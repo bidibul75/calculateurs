@@ -1,4 +1,4 @@
-import 'adresse.dart';
+import 'address.dart';
 import 'relation.dart';
 
 void main() {
@@ -109,7 +109,7 @@ String supernetCalculation(int addressCount, List<String> list, String supernetA
   return supernetAddress;
 }
 
-class Supernet extends Adresse {
+class Supernet extends Address {
   String addressTemp;
 
   Supernet(this.addressTemp) : super(addressTemp, "supernet");
@@ -210,7 +210,7 @@ class Supernet extends Adresse {
   }
 
   /// Tests if the networks in a list are all contiguous or not
-  static bool isAListOfContiguousAddresses(List<Adresse> list) {
+  static bool isAListOfContiguousAddresses(List<Address> list) {
     for (int i = 0; i < list.length - 1; i++) {
       if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
           int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {

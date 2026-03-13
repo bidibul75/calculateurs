@@ -1,6 +1,6 @@
-import 'package:calculators/calculators/ip/models/adresse.dart';
-import 'package:calculators/calculators/ip/models/relation.dart';
-import 'package:calculators/calculators/ip/models/supernet.dart';
+import 'package:calculators/calculators/ip/IPv4/address.dart';
+import 'package:calculators/calculators/ip/IPv4/relation.dart';
+import 'package:calculators/calculators/ip/IPv4/supernet.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
