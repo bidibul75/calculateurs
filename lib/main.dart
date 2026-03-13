@@ -6,7 +6,8 @@ import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
-import 'package:calculators/calculators/ip/models/addressIPV6.dart';
+import 'package:calculators/calculators/ip/IPv6/addressIPV6.dart';
+import 'package:calculators/calculators/ip/IPv4/address.dart';
 
 void main() async {
   // Mandatory to execute code before runApp
@@ -27,14 +28,16 @@ void main() async {
 
   //   runApp(const CalculatorApp());
 
-  String address = "2001:db8:0:0:1234::/64";
-  print(address);
+  runApp(address() as Widget);
 
-  AddressIPV6 addressIPV6 = AddressIPV6(address);
-  print(addressIPV6.address6List);
-  print(addressIPV6.numberOfAddresses);
-
-  runApp(AddressIPV6(address) as Widget);
+  // String address = "2001:db8:0:0:1234::/64";
+  // print(address);
+  //
+  // AddressIPV6 addressIPV6 = AddressIPV6(address);
+  // print(addressIPV6.address6List);
+  // print(addressIPV6.numberOfAddresses);
+  //
+  // runApp(AddressIPV6(address) as Widget);
 }
 
 class CalculatorApp extends StatelessWidget {

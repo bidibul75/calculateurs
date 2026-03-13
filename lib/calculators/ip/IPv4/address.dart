@@ -1,9 +1,9 @@
 // IPV4 mask calculator
 // erreur nombre d'adresses
 import 'package:calculators/utils/my_exception.dart';
-import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
+import 'package:calculators/utils/extensions/extensions.dart';
 
-void main() {
+void address() {
   Address address = Address(" 90.16.84.82/8", "address");
   print("Masque réseau : ${address.mask}");
   print("Masque inverse : ${address.wildcardMask}");
@@ -11,8 +11,8 @@ void main() {
   print("Adresse diffusion : ${address.addressBroadcast}");
   print("Première adresse réseau : ${address.addressAvailableFirstOne}");
   print("Dernière adresse réseau : ${address.addressAvailableLastOne}");
-  print("Nombre d'adresses : ${thousandSpaces(address.numberAvailableAddresses)}");
-  print("Nombre d'adresses utilisables : ${thousandSpaces(address.numberUsableAddresses)}");
+  print("Nombre d'adresses : ${(address.numberAvailableAddresses).toString().format}");
+  print("Nombre d'adresses utilisables : ${(address.numberUsableAddresses).toString().format}");
   print("Adresse binaire : ${address.addressOnlyString}");
   print("Adresse list : ${address.addressList}");
 }
@@ -202,13 +202,4 @@ List<String> listStringsBinaryToDecimal(List<String> address) {
     address[i] = int.parse(address[i], radix: 2).toString();
   }
   return address;
-}
-
-String thousandSpaces(int number) {
-  String numberString = number.toString(), result = "";
-  while (numberString.length > 3) {
-    result = "${numberString.substring(numberString.length - 3)} $result";
-    numberString = numberString.substring(0, numberString.length - 3);
-  }
-  return ("$numberString $result").trimRight();
 }

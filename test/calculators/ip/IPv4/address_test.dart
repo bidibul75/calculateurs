@@ -83,13 +83,6 @@ void main() {
       expect(addressShift(['10', '0', '1', '0'], -1), ['10', '0', '0', '255']);
     });
 
-    test('thousandSpaces inserts space every 3 digits', () {
-      expect(thousandSpaces(0), '0');
-      expect(thousandSpaces(123), '123');
-      expect(thousandSpaces(1234), '1 234');
-      expect(thousandSpaces(1234567), '1 234 567');
-    });
-
     test('regexpProcess throws for invalid CIDR format', () {
       expect(() => regexpProcess('192.168.1/24'), throwsA(isA<MyException>()));
     });
