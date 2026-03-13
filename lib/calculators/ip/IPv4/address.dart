@@ -4,7 +4,7 @@ import 'package:calculators/utils/my_exception.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
 void address() {
-  Address address = Address(" 90.16.84.82/8", "address");
+  Address address = Address(" 90.16.84.82/1", "address");
   print("Masque réseau : ${address.mask}");
   print("Masque inverse : ${address.wildcardMask}");
   print("Adresse réseau : ${address.addressNetwork}");
@@ -140,7 +140,7 @@ void testsNumbersInList(List<String> addressListString) {
 String listStringsDecimalToStringBinary(List<String> addressListShort) {
   for (int i = 0; i < 4; i++) {
     addressListShort[i] = (int.parse(addressListShort[i])).toRadixString(2);
-    addressListShort[i] = "0" * (8 - addressListShort[i].length) + addressListShort[i];
+    addressListShort[i] = addressListShort[i].padLeft(8,'0');
   }
   return addressListShort.join("");
 }

@@ -28,16 +28,9 @@ void main() async {
 
   //   runApp(const CalculatorApp());
 
-  runApp(address() as Widget);
+  //runApp(address() as Widget);
 
-  // String address = "2001:db8:0:0:1234::/64";
-  // print(address);
-  //
-  // AddressIPV6 addressIPV6 = AddressIPV6(address);
-  // print(addressIPV6.address6List);
-  // print(addressIPV6.numberOfAddresses);
-  //
-  // runApp(AddressIPV6(address) as Widget);
+  runApp(addressIPv6() as Widget);
 }
 
 class CalculatorApp extends StatelessWidget {

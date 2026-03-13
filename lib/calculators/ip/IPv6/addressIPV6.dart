@@ -1,25 +1,21 @@
 import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:calculators/utils/my_exception.dart';
 
 void addressIPv6() {
-  String address = "2001:db8:0:0:1234:1:2:3/64";
+  String address = "2001:db8::1234:1:2:3/64";
   print(address);
 
   AddressIPV6 addressIPV6 = AddressIPV6(address);
-  print(addressIPV6.address6List);
+  print(addressIPV6.address6ListString);
+  print(addressIPV6.hexListToBinaryString(addressIPV6.address6ListString));
   print(addressIPV6.numberOfAddresses);
+  print("network address : ${addressIPV6.networkAdress6}");
 }
 
 /// Fills the elements of the address with 0 at the beginning
-List<String> cleanAddressIPV6(List<String> address) {
-  for (int i = 0; i < address.length; i++) {
-    address[i] = address[i].toUpperCase();
-    if (address[i].length < 4) {
-      address[i] = "0000".substring(0, 4 - address[i].length) + address[i];
-    }
-  }
-  return address;
-}
+List<String> cleanAddressIPV6(List<String> address) =>
+    address.map((element) => element.toUpperCase().padLeft(4, '0')).toList();
 
 bool isValidIPv6Suffix(String cidr) {
   int? i = int.tryParse(cidr);
@@ -28,27 +24,52 @@ bool isValidIPv6Suffix(String cidr) {
 
 class AddressIPV6 {
   String address6 = "";
-  List<String> address6List = [];
-  String numberOfAddresses = "";
+  List<String> address6ListString = [];
+  List<String> address6WithoutSuffixListString = [];
+  String numberOfAddresses = "0";
+  String addressWithoutSuffixString = "";
+  String suffix = "";
+  String address6BinaryString = "";
+  List<String> networkAdress6 = [];
 
   AddressIPV6(this.address6) {
+    address6 = address6.replaceAll(" ", "");
     List<String> addressList = address6.split("/");
-    // Validate the pure IPv6 part, not the CIDR suffix.
-    if (addressList.isNotEmpty && addressList[0].isValidIPv6) {
-      print("adresse valide hors suffixe (regexp");
-      if (addressList[1].isNotEmpty && isValidIPv6Suffix(addressList[1])) {
-        numberOfAddresses = CalculatorLogic.calculateResult(num1: "2", num2: addressList[1], operation: "^");
-        print("suffixe valide");
 
-        address6List = formatIPV6WithoutSuffix(addressList[0]);
-        address6List.add(addressList[1]);
-      } else {
-        print("suffixe non valide");
-      }
-    } else {
-      print("regexp : adresse invalide");
-      //throw ("Error : invalid IPV6 address");
+    if (addressList.length != 2) {
+      throw MyException("Erreur : format CIDR IPv6 invalide", address6);
     }
+
+    addressWithoutSuffixString = addressList[0];
+    suffix = addressList[1];
+
+    if (addressWithoutSuffixString.isEmpty) {
+      throw MyException("Erreur : adresse IPv6 vide", address6);
+    }
+
+    if (suffix.isEmpty || !isValidIPv6Suffix(suffix)) {
+      throw MyException("Erreur : suffixe IPv6 invalide", address6);
+    }
+
+    if (!addressWithoutSuffixString.isValidIPv6) {
+      throw MyException("Erreur : adresse IPv6 invalide", addressWithoutSuffixString);
+    }
+
+    numberOfAddresses = CalculatorLogic.calculateResult(
+      num1: "2",
+      num2: (128 - int.parse(suffix)).toString(),
+      operation: "^",
+    );
+
+    if (numberOfAddresses == "Error") {
+      throw MyException("Erreur : calcul du nombre d'adresses IPv6 impossible", address6);
+    }
+
+    address6WithoutSuffixListString = formatIPV6WithoutSuffix(addressWithoutSuffixString);
+    address6ListString = [...address6WithoutSuffixListString, suffix];
+    address6BinaryString = hexListToBinaryString(address6WithoutSuffixListString);
+    networkAdress6 = networkAddress6ListString(address6ListString);
+
   }
 
   /// Formats a condensed IPV6 address into a full format list of strings
@@ -72,7 +93,6 @@ class AddressIPV6 {
         addressPart1 = addressParts[1].split(":");
         count += addressPart1.length;
       }
-      print("count $count");
 
       for (int i = 0; i < 8 - count; i++) {
         addressPart0.add("0000");
@@ -81,5 +101,42 @@ class AddressIPV6 {
       return cleanAddressIPV6(addressPart0 + addressPart1);
     }
     return cleanAddressIPV6(address.split(":"));
+  }
+
+  /// Converts a List of hexadecimal numbers into a String of binaries
+  String hexListToBinaryString(List<String> address) {
+    final List<String> addressWithoutSuffix = address.length == 9 ? address.sublist(0, 8) : List<String>.from(address);
+    String s = addressWithoutSuffix.join("");
+    return s
+        .split('')
+        .map((c) {
+          int value = int.parse(c, radix: 16);
+          return value.toRadixString(2).padLeft(4, '0');
+        })
+        .join('');
+  }
+
+  /// From a list of String hex WITH SUFFIX returns the network address
+  List<String> networkAddress6ListString(List<String> address) {
+    if (address.length != 9) {
+      throw MyException("Erreur : format interne IPv6 invalide", address.toString());
+    }
+
+    final List<String> addressCopy = List<String>.from(address);
+    final int suffix = int.parse(addressCopy.last);
+    final String b = hexListToBinaryString(addressCopy).substring(0, suffix).padRight(128, '0');
+
+    return address6BinaryStringToListString(b);
+  }
+
+  List<String> address6BinaryStringToListString(String address) {
+    if (address.length != 128) {
+      throw MyException("Erreur : longueur binaire IPv6 invalide", address);
+    }
+    String s = (int.parse(address.substring(0, 16), radix: 2)).toRadixString(16).toString().padLeft(4, '0');
+    for (int i = 16; i < 128; i += 16) {
+      s += ":${(int.parse(address.substring(i, i + 16), radix: 2)).toRadixString(16).toString().padLeft(4, '0')}";
+    }
+    return s.split(":");
   }
 }
