@@ -96,7 +96,7 @@ void main() {
 
       expect(ipv6.addressWithoutSuffixString, '2001:db8::1234:1:2:3');
       expect(ipv6.suffix, '64');
-      expect(ipv6.numberOfAddresses, '18,446,744,073,709,551,616');
+      expect(ipv6.numberOfAddresses, BigInt.parse('18446744073709551616'));
       expect(
         ipv6.address6WithoutSuffixListString,
         ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003'],
@@ -110,7 +110,7 @@ void main() {
     test('keeps the same address as network for a /128 host address', () {
       final ipv6 = AddressIPV6('::1/128');
 
-      expect(ipv6.numberOfAddresses, '1');
+      expect(ipv6.numberOfAddresses, BigInt.one);
       expect(
         ipv6.networkAdress6,
         ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0001'],

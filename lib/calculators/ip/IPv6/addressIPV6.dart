@@ -1,4 +1,3 @@
-import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/my_exception.dart';
 
@@ -24,9 +23,9 @@ bool isValidIPv6Suffix(String cidr) {
 
 class AddressIPV6 {
   String address6 = "";
-  List<String> address6ListString = [];
+  List<String> address6ListString = []; // Formatted address with 4 digits and no ::
   List<String> address6WithoutSuffixListString = [];
-  String numberOfAddresses = "0";
+  BigInt numberOfAddresses = BigInt.zero;
   String addressWithoutSuffixString = "";
   String suffix = "";
   String address6BinaryString = "";
@@ -55,21 +54,14 @@ class AddressIPV6 {
       throw MyException("Erreur : adresse IPv6 invalide", addressWithoutSuffixString);
     }
 
-    numberOfAddresses = CalculatorLogic.calculateResult(
-      num1: "2",
-      num2: (128 - int.parse(suffix)).toString(),
-      operation: "^",
-    );
-
-    if (numberOfAddresses == "Error") {
-      throw MyException("Erreur : calcul du nombre d'adresses IPv6 impossible", address6);
-    }
+    final int hostBits = 128 - int.parse(suffix);
+    numberOfAddresses = BigInt.one << hostBits;
 
     address6WithoutSuffixListString = formatIPV6WithoutSuffix(addressWithoutSuffixString);
     address6ListString = [...address6WithoutSuffixListString, suffix];
     address6BinaryString = hexListToBinaryString(address6WithoutSuffixListString);
     networkAdress6 = networkAddress6ListString(address6ListString);
-
+    print("network : $networkAdress6");
   }
 
   /// Formats a condensed IPV6 address into a full format list of strings

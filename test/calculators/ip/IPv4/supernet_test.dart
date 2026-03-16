@@ -10,28 +10,28 @@ void main() {
   group('Supernet.isAListOfContiguousAddresses', () {
     test('returns true for adjacent /24 networks', () {
       final addresses = _buildSortedSupernets(['192.168.1.0/24', '192.168.0.0/24']);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isTrue);
+      expect(isAListOfContiguousAddresses(addresses), isTrue);
     });
 
     test('returns false when a gap exists between networks', () {
       final addresses = _buildSortedSupernets(['192.168.0.0/24', '192.168.2.0/24']);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isFalse);
+      expect(isAListOfContiguousAddresses(addresses), isFalse);
     });
 
     test('returns true for contiguous host addresses (/32)', () {
       final addresses = _buildSortedSupernets(['10.0.0.1/32', '10.0.0.0/32']);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isTrue);
+      expect(isAListOfContiguousAddresses(addresses), isTrue);
     });
 
     test('returns true for a single address (trivially contiguous)', () {
       final addresses = _buildSortedSupernets(['172.16.0.0/16']);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isTrue);
+      expect(isAListOfContiguousAddresses(addresses), isTrue);
     });
 
     test('returns true for four contiguous /26 networks', () {
       // Sort is done on addressNetworkStringBinary (numeric) → correct order.
       final addresses = _buildSortedSupernets(['10.0.0.64/26', '10.0.0.128/26', '10.0.0.0/26', '10.0.0.192/26']);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isTrue);
+      expect(isAListOfContiguousAddresses(addresses), isTrue);
     });
 
     test('returns false for /26 networks with a gap in the middle', () {
@@ -39,7 +39,7 @@ void main() {
         '10.0.0.0/26',
         '10.0.0.128/26', // gap: 10.0.0.64/26 is missing
       ]);
-      expect(Supernet.isAListOfContiguousAddresses(addresses), isFalse);
+      expect(isAListOfContiguousAddresses(addresses), isFalse);
     });
   });
 
@@ -88,7 +88,7 @@ void main() {
   group('process_duplicate_addresses', () {
     test('removes exact duplicate addresses', () {
       final relations = <Relation>[];
-      final result = Supernet.processDuplicateAddresses(
+      final result = processDuplicateAddresses(
         Supernet.regexpList(['192.168.0.0/24', '192.168.0.0/24', '192.168.1.0/24']),
         relations,
       );
@@ -99,7 +99,7 @@ void main() {
 
     test('keeps a single address when all entries are duplicates', () {
       final relations = <Relation>[];
-      final result = Supernet.processDuplicateAddresses(
+      final result = processDuplicateAddresses(
         Supernet.regexpList([
           '10.0.0.0/8',
           '10.0.0.0/8',
@@ -118,7 +118,7 @@ void main() {
     // to index j, but j++ would skip it, leaving one duplicate behind.
     test('removes all duplicates when 3 consecutive identical addresses (j-- edge case)', () {
       final relations = <Relation>[];
-      final result = Supernet.processDuplicateAddresses(
+      final result = processDuplicateAddresses(
         Supernet.regexpList(['10.0.0.0/8', '10.0.0.0/8', '10.0.0.0/8']),
         relations,
       );
@@ -128,7 +128,7 @@ void main() {
 
     test('removes non-consecutive duplicates scattered in the list', () {
       final relations = <Relation>[];
-      final result = Supernet.processDuplicateAddresses(
+      final result = processDuplicateAddresses(
         Supernet.regexpList([
           '10.0.0.0/8',
           '192.168.0.0/24',
@@ -209,7 +209,7 @@ void main() {
 /// Builds a sorted list of [Supernet] objects from raw CIDR strings,
 /// deduplicating entries first (mirroring the real app flow).
 List<Supernet> _buildSortedSupernets(List<String> rawAddresses) {
-  final normalized = Supernet.processDuplicateAddresses(
+  final normalized = processDuplicateAddresses(
     Supernet.regexpList(List<String>.from(rawAddresses)),
     <Relation>[],
   );

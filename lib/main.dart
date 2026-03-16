@@ -1,3 +1,4 @@
+import 'package:calculators/calculators/ip/IPv6/supernetIPv6.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,9 @@ void main() async {
 
   //runApp(address() as Widget);
 
-  runApp(addressIPv6() as Widget);
+  //runApp(addressIPv6() as Widget);
+
+  runApp(supernetIPv6() as Widget);
 }
 
 class CalculatorApp extends StatelessWidget {

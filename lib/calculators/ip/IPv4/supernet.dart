@@ -6,9 +6,9 @@ void main() {
   String supernetAddress = "", result = "";
   List<Relation> relations = [];
 
-  // Always normalize and deduplicate first.
+  // Deduplicates the list of addresses
   addressesListUniques = Supernet.regexpList(addressesListUniques);
-  addressesListUniques = Supernet.processDuplicateAddresses(addressesListUniques, relations);
+  addressesListUniques = processDuplicateAddresses(addressesListUniques, relations);
 
   if (addressesListUniques.length == 1) {
     supernetAddress = addressesListUniques[0];
@@ -30,7 +30,7 @@ void main() {
     print(addressesObject.map((obj) => obj.addressNetwork).toList());
 
     // Tests if there is a contiguity in all the addresses of the list
-    if (Supernet.isAListOfContiguousAddresses(addressesObject)) {
+    if (isAListOfContiguousAddresses(addressesObject)) {
       print("Good news ! All networks are contiguous.");
     } else {
       print("Beware ! some networks are not contiguous !!!");
@@ -47,7 +47,7 @@ void main() {
           topAddressB = addressesObjectRelations[j].addressBroadcastList;
           result = Supernet.testOfIntersections(bottomAddressA, topAddressA, bottomAddressB, topAddressB);
           relations.add(
-            implementationObjetRelation(
+            Relation.implementationObjetRelation(
               addressesObject[i].addressToProcess,
               result,
               addressesObject[j].addressToProcess,
@@ -88,10 +88,6 @@ void main() {
 // Building objects
 Supernet implementationObjectSupernet(String address) {
   return Supernet(address);
-}
-
-Relation implementationObjetRelation(String addressA, String relationAB, String addressB) {
-  return Relation(addressA, relationAB, addressB);
 }
 
 /// Calculates the supernet
@@ -179,44 +175,46 @@ class Supernet extends Address {
   }
 
   /// Tests if an address A is higher or lower than an address B
-  static String testPosition(List<String> listA, List<String> listB) {
-    for (int i = 0; i < 4; i++) {
+  /// For IPV4 and IPV6 (TODO: test)
+  static String testPosition(List<String> listA, List<String> listB, {String IPVersion = "4"}) {
+    int numberOfLoops = IPVersion == "4" ? 4 : 8;
+    for (int i = 0; i < numberOfLoops; i++) {
       if (int.parse(listA[i]) > int.parse(listB[i])) return "higher";
       if (int.parse(listA[i]) < int.parse(listB[i])) return "lower";
     }
     return "equal";
   }
+}
 
-  /// Detects if there are duplicate addresses and removes them from the list
-  static List<String> processDuplicateAddresses(List<String> listToProcess, List<Relation> relations) {
-    int duplicates;
-    for (int i = 0; i < listToProcess.length; i++) {
-      duplicates = 1;
-      for (int j = i + 1; j < listToProcess.length; j++) {
-        if (listToProcess[i] == listToProcess[j]) {
-          duplicates++;
-          listToProcess.removeAt(j);
-          j--;
-        }
-      }
-      if (duplicates > 1) {
-        print(
-          "Warning ! Duplicate IP range detected : ${listToProcess[i]} is duplicated $duplicates times - removed duplicates",
-        );
+/// Detects if there are duplicate addresses and removes them from the list
+List<String> processDuplicateAddresses(List<String> listToProcess, List<Relation> relations) {
+  int duplicates;
+  for (int i = 0; i < listToProcess.length; i++) {
+    duplicates = 1;
+    for (int j = i + 1; j < listToProcess.length; j++) {
+      if (listToProcess[i] == listToProcess[j]) {
+        duplicates++;
+        listToProcess.removeAt(j);
+        j--;
       }
     }
-    print(listToProcess);
-    return listToProcess;
-  }
-
-  /// Tests if the networks in a list are all contiguous or not
-  static bool isAListOfContiguousAddresses(List<Address> list) {
-    for (int i = 0; i < list.length - 1; i++) {
-      if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
-          int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {
-        return false;
-      }
+    if (duplicates > 1) {
+      print(
+        "Warning ! Duplicate IP range detected : ${listToProcess[i]} is duplicated $duplicates times - removed duplicates",
+      );
     }
-    return true;
   }
+  print(listToProcess);
+  return listToProcess;
+}
+
+/// Tests if the networks in a list are all contiguous or not
+bool isAListOfContiguousAddresses(List<Address> list) {
+  for (int i = 0; i < list.length - 1; i++) {
+    if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
+        int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {
+      return false;
+    }
+  }
+  return true;
 }
