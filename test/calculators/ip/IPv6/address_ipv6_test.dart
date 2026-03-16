@@ -19,49 +19,62 @@ void main() {
 
   group('IPv6 helpers', () {
     test('cleanAddressIPV6 uppercases and pads each hextet to 4 chars', () {
-      final result = cleanAddressIPV6(['db8', '1', '00af', 'abcd']);
+      final result = AddressIPV6.cleanAddressIPV6(['db8', '1', '00af', 'abcd']);
 
       expect(result, ['0DB8', '0001', '00AF', 'ABCD']);
     });
 
     test('isValidIPv6Suffix accepts only values from 0 to 128', () {
-      expect(isValidIPv6Suffix('0'), isTrue);
-      expect(isValidIPv6Suffix('64'), isTrue);
-      expect(isValidIPv6Suffix('128'), isTrue);
+      expect(AddressIPV6.isValidIPv6Suffix('0'), isTrue);
+      expect(AddressIPV6.isValidIPv6Suffix('64'), isTrue);
+      expect(AddressIPV6.isValidIPv6Suffix('128'), isTrue);
 
-      expect(isValidIPv6Suffix('-1'), isFalse);
-      expect(isValidIPv6Suffix('129'), isFalse);
-      expect(isValidIPv6Suffix('abc'), isFalse);
-      expect(isValidIPv6Suffix(''), isFalse);
+      expect(AddressIPV6.isValidIPv6Suffix('-1'), isFalse);
+      expect(AddressIPV6.isValidIPv6Suffix('129'), isFalse);
+      expect(AddressIPV6.isValidIPv6Suffix('abc'), isFalse);
+      expect(AddressIPV6.isValidIPv6Suffix(''), isFalse);
     });
 
     test('formatIPV6WithoutSuffix expands special shorthand addresses', () {
-      final ipv6 = AddressIPV6('::1/128');
-
-      expect(
-        ipv6.formatIPV6WithoutSuffix('::'),
-        ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0000'],
-      );
-      expect(
-        ipv6.formatIPV6WithoutSuffix('::1'),
-        ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0001'],
-      );
+      expect(AddressIPV6.formatIPV6WithoutSuffix('::'), [
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+      ]);
+      expect(AddressIPV6.formatIPV6WithoutSuffix('::1'), [
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0000',
+        '0001',
+      ]);
     });
 
     test('formatIPV6WithoutSuffix expands condensed addresses in the middle', () {
-      final ipv6 = AddressIPV6('2001:db8::1234:1:2:3/64');
-
-      expect(
-        ipv6.formatIPV6WithoutSuffix('2001:db8::1234:1:2:3'),
-        ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003'],
-      );
+      expect(AddressIPV6.formatIPV6WithoutSuffix('2001:db8::1234:1:2:3'), [
+        '2001',
+        '0DB8',
+        '0000',
+        '0000',
+        '1234',
+        '0001',
+        '0002',
+        '0003',
+      ]);
     });
 
     test('hexListToBinaryString returns 128 bits and ignores an optional suffix item', () {
-      final ipv6 = AddressIPV6('::1/128');
       final addressWithSuffix = ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003', '64'];
 
-      final binary = ipv6.hexListToBinaryString(List<String>.from(addressWithSuffix));
+      final binary = AddressIPV6.hexListToBinaryString(List<String>.from(addressWithSuffix));
 
       expect(binary.length, 128);
       expect(binary.startsWith('0010000000000001'), isTrue);
@@ -69,24 +82,28 @@ void main() {
     });
 
     test('hexListToBinaryString does not mutate the input list', () {
-      final ipv6 = AddressIPV6('::1/128');
       final addressWithSuffix = ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003', '64'];
 
-      ipv6.hexListToBinaryString(addressWithSuffix);
+      AddressIPV6.hexListToBinaryString(addressWithSuffix);
 
       expect(addressWithSuffix, ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003', '64']);
     });
 
     test('address6BinaryStringToListString converts a 128-bit binary string back to hextets', () {
-      final ipv6 = AddressIPV6('::1/128');
       final binary =
           '0010000000000001000011011011100000000000000000000000000000000000'
           '0001001000110100000000000000000100000000000000100000000000000011';
 
-      expect(
-        ipv6.address6BinaryStringToListString(binary),
-        ['2001', '0db8', '0000', '0000', '1234', '0001', '0002', '0003'],
-      );
+      expect(AddressIPV6.address6BinaryStringToListString(binary), [
+        '2001',
+        '0db8',
+        '0000',
+        '0000',
+        '1234',
+        '0001',
+        '0002',
+        '0003',
+      ]);
     });
   });
 
@@ -97,24 +114,15 @@ void main() {
       expect(ipv6.addressWithoutSuffixString, '2001:db8::1234:1:2:3');
       expect(ipv6.suffix, '64');
       expect(ipv6.numberOfAddresses, BigInt.parse('18446744073709551616'));
-      expect(
-        ipv6.address6WithoutSuffixListString,
-        ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003'],
-      );
-      expect(
-        ipv6.networkAdress6,
-        ['2001', '0db8', '0000', '0000', '0000', '0000', '0000', '0000'],
-      );
+      expect(ipv6.address6WithoutSuffixListString, ['2001', '0DB8', '0000', '0000', '1234', '0001', '0002', '0003']);
+      expect(ipv6.networkAdress6, ['2001', '0db8', '0000', '0000', '0000', '0000', '0000', '0000']);
     });
 
     test('keeps the same address as network for a /128 host address', () {
       final ipv6 = AddressIPV6('::1/128');
 
       expect(ipv6.numberOfAddresses, BigInt.one);
-      expect(
-        ipv6.networkAdress6,
-        ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0001'],
-      );
+      expect(ipv6.networkAdress6, ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0001']);
     });
 
     test('keeps address6WithoutSuffixListString independent from address6ListString', () {
@@ -161,4 +169,3 @@ void main() {
     });
   });
 }
-

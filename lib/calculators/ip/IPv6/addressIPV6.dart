@@ -1,26 +1,6 @@
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/my_exception.dart';
 
-void addressIPv6() {
-  String address = "2001:db8::1234:1:2:3/64";
-  print(address);
-
-  AddressIPV6 addressIPV6 = AddressIPV6(address);
-  print(addressIPV6.address6ListString);
-  print(addressIPV6.hexListToBinaryString(addressIPV6.address6ListString));
-  print(addressIPV6.numberOfAddresses);
-  print("network address : ${addressIPV6.networkAdress6}");
-}
-
-/// Fills the elements of the address with 0 at the beginning
-List<String> cleanAddressIPV6(List<String> address) =>
-    address.map((element) => element.toUpperCase().padLeft(4, '0')).toList();
-
-bool isValidIPv6Suffix(String cidr) {
-  int? i = int.tryParse(cidr);
-  return i != null && i >= 0 && i <= 128;
-}
-
 class AddressIPV6 {
   String address6 = "";
   List<String> address6ListString = []; // Formatted address with 4 digits and no ::
@@ -64,8 +44,18 @@ class AddressIPV6 {
     print("network : $networkAdress6");
   }
 
-  /// Formats a condensed IPV6 address into a full format list of strings
-  List<String> formatIPV6WithoutSuffix(String address) {
+  /// Fills each hextet with leading zeros and uppercases it
+  static List<String> cleanAddressIPV6(List<String> address) =>
+      address.map((element) => element.toUpperCase().padLeft(4, '0')).toList();
+
+  /// Returns true if the given string is a valid IPv6 prefix length (0–128)
+  static bool isValidIPv6Suffix(String cidr) {
+    int? i = int.tryParse(cidr);
+    return i != null && i >= 0 && i <= 128;
+  }
+
+  /// Formats a condensed IPv6 address into a full 8-hextet list of strings
+  static List<String> formatIPV6WithoutSuffix(String address) {
     if (address == "::1") {
       return ["0000", "0000", "0000", "0000", "0000", "0000", "0000", "0001"];
     }
@@ -95,8 +85,8 @@ class AddressIPV6 {
     return cleanAddressIPV6(address.split(":"));
   }
 
-  /// Converts a List of hexadecimal numbers into a String of binaries
-  String hexListToBinaryString(List<String> address) {
+  /// Converts a list of hexadecimal hextets into a 128-bit binary string
+  static String hexListToBinaryString(List<String> address) {
     final List<String> addressWithoutSuffix = address.length == 9 ? address.sublist(0, 8) : List<String>.from(address);
     String s = addressWithoutSuffix.join("");
     return s
@@ -108,8 +98,8 @@ class AddressIPV6 {
         .join('');
   }
 
-  /// From a list of String hex WITH SUFFIX returns the network address
-  List<String> networkAddress6ListString(List<String> address) {
+  /// From a list of hex strings WITH SUFFIX returns the network address as a hextet list
+  static List<String> networkAddress6ListString(List<String> address) {
     if (address.length != 9) {
       throw MyException("Erreur : format interne IPv6 invalide", address.toString());
     }
@@ -121,7 +111,8 @@ class AddressIPV6 {
     return address6BinaryStringToListString(b);
   }
 
-  List<String> address6BinaryStringToListString(String address) {
+  /// Converts a 128-bit binary string into a list of 8 lowercase hex hextets
+  static List<String> address6BinaryStringToListString(String address) {
     if (address.length != 128) {
       throw MyException("Erreur : longueur binaire IPv6 invalide", address);
     }

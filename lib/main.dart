@@ -27,13 +27,13 @@ void main() async {
     GetIt.I.registerSingleton<shared_theme.ThemeManager>(shared_theme.ThemeManager());
   }
 
-  //   runApp(const CalculatorApp());
+  runApp(const CalculatorApp());
 
   //runApp(address() as Widget);
 
   //runApp(addressIPv6() as Widget);
 
-  runApp(supernetIPv6() as Widget);
+  //runApp(supernetIPv6() as Widget);
 }
 
 class CalculatorApp extends StatelessWidget {

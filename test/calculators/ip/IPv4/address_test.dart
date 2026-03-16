@@ -61,15 +61,15 @@ void main() {
 
   group('Address helpers', () {
     test('regexpProcess removes spaces and keeps a valid CIDR', () {
-      expect(regexpProcess(' 192.168.1.0 /24 '), '192.168.1.0/24');
+      expect(Address.regexpProcess(' 192.168.1.0 /24 '), '192.168.1.0/24');
     });
 
     test('stringToListStrings splits address and suffix', () {
-      expect(stringToListStrings('10.20.30.40/16'), ['10', '20', '30', '40', '16']);
+      expect(Address.stringToListStrings('10.20.30.40/16'), ['10', '20', '30', '40', '16']);
     });
 
     test('listStringsDecimalToStringBinary converts octets to 32-bit binary string', () {
-      final result = listStringsDecimalToStringBinary(['192', '168', '1', '5']);
+      final result = Address.listStringsDecimalToStringBinary(['192', '168', '1', '5']);
       expect(result, '11000000101010000000000100000101');
     });
 
@@ -79,12 +79,12 @@ void main() {
     });
 
     test('addressShift increments and decrements with carry/borrow', () {
-      expect(addressShift(['10', '0', '0', '255'], 1), ['10', '0', '1', '0']);
-      expect(addressShift(['10', '0', '1', '0'], -1), ['10', '0', '0', '255']);
+      expect(Address.addressShift(['10', '0', '0', '255'], 1), ['10', '0', '1', '0']);
+      expect(Address.addressShift(['10', '0', '1', '0'], -1), ['10', '0', '0', '255']);
     });
 
     test('regexpProcess throws for invalid CIDR format', () {
-      expect(() => regexpProcess('192.168.1/24'), throwsA(isA<MyException>()));
+      expect(() => Address.regexpProcess('192.168.1/24'), throwsA(isA<MyException>()));
     });
 
     test('Address throws for suffix out of range', () {
@@ -96,12 +96,12 @@ void main() {
     });
 
     test('regexpProcess throws for too-long input', () {
-      expect(() => regexpProcess('123.123.123.123/1234'), throwsA(isA<MyException>()));
+      expect(() => Address.regexpProcess('123.123.123.123/1234'), throwsA(isA<MyException>()));
     });
 
     test('MyException keeps a readable message', () {
       try {
-        regexpProcess('bad');
+        Address.regexpProcess('bad');
         fail('Expected MyException');
       } on MyException catch (e) {
         expect(e.toString(), contains('Erreur'));

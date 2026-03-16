@@ -1,118 +1,15 @@
 import 'address.dart';
 import 'relation.dart';
 
-void main() {
-  List<String> addressesList = [" 192.168.1.0/24", " 192.168.0.0/24"], addressesListUniques = addressesList.sublist(0);
-  String supernetAddress = "", result = "";
-  List<Relation> relations = [];
-
-  // Deduplicates the list of addresses
-  addressesListUniques = Supernet.regexpList(addressesListUniques);
-  addressesListUniques = processDuplicateAddresses(addressesListUniques, relations);
-
-  if (addressesListUniques.length == 1) {
-    supernetAddress = addressesListUniques[0];
-  } else {
-    List<Supernet> addressesObject = [], addressesObjectRelations = [];
-    List<String> listToBeProcessed = [];
-    List<String> bottomAddressA, topAddressA, bottomAddressB, topAddressB;
-
-    int addressCount = addressesListUniques.length;
-    int supernetAddressSuffix = 0;
-
-    // Creates a list of objects
-    for (String address in addressesListUniques) {
-      addressesObject.add(implementationObjectSupernet(address));
-    }
-
-    // Sorts the list of objects : binary sort guarantees numeric order
-    addressesObject.sort((a, b) => a.addressNetworkStringBinary.compareTo(b.addressNetworkStringBinary));
-    print(addressesObject.map((obj) => obj.addressNetwork).toList());
-
-    // Tests if there is a contiguity in all the addresses of the list
-    if (isAListOfContiguousAddresses(addressesObject)) {
-      print("Good news ! All networks are contiguous.");
-    } else {
-      print("Beware ! some networks are not contiguous !!!");
-
-      // Hard copy this list to use it for relations
-      addressesObjectRelations = addressesObject.sublist(0);
-
-      // Tests if there are duplicate addresses and if an address is inside another one
-      for (int i = 0; i < addressesObjectRelations.length; i++) {
-        for (int j = i + 1; j < addressesObjectRelations.length; j++) {
-          bottomAddressA = addressesObjectRelations[i].addressNetworkList;
-          topAddressA = addressesObjectRelations[i].addressBroadcastList;
-          bottomAddressB = addressesObjectRelations[j].addressNetworkList;
-          topAddressB = addressesObjectRelations[j].addressBroadcastList;
-          result = Supernet.testOfIntersections(bottomAddressA, topAddressA, bottomAddressB, topAddressB);
-          relations.add(
-            Relation.implementationObjetRelation(
-              addressesObject[i].addressToProcess,
-              result,
-              addressesObject[j].addressToProcess,
-            ),
-          );
-        }
-      }
-    }
-
-    // Creation of the list to submit to calculation of the supernet
-    for (Supernet address in addressesObject) {
-      if (address.suffix == 32) {
-        listToBeProcessed.add(address.addressOnlyString);
-      } else {
-        listToBeProcessed.add(address.addressNetworkStringBinary);
-      }
-    }
-
-    // Calculation of the supernet address
-    supernetAddress = supernetCalculation(addressCount, listToBeProcessed, supernetAddress = "");
-    supernetAddressSuffix = supernetAddress.length;
-    print(addressCount);
-    print("list to be processed : $listToBeProcessed");
-    print(supernetAddress);
-    print(supernetAddressSuffix);
-
-    supernetAddress += "0" * (32 - supernetAddressSuffix);
-    supernetAddress = "${stringBinaryToStringDecimalDots(supernetAddress)}/$supernetAddressSuffix";
-
-    // Prints the relations object
-    for (Relation relation in relations) {
-      print("${relation.addressA} ${relation.relationAB} ${relation.addressB}");
-    }
-  }
-  print("L'adresse supernet est : $supernetAddress");
-}
-
-// Building objects
-Supernet implementationObjectSupernet(String address) {
-  return Supernet(address);
-}
-
-/// Calculates the supernet
-/// Beware ! must be more than one address !
-String supernetCalculation(int addressCount, List<String> list, String supernetAddress) {
-  if (addressCount == 1) throw StateError("supernetCalculation requires at least 2 addresses");
-  for (int i = 0; i < 32; i++) {
-    for (int addressNumber = 0; addressNumber < addressCount - 1; addressNumber++) {
-      if (list[addressNumber][i] != list[addressNumber + 1][i]) {
-        return supernetAddress;
-      }
-    }
-    supernetAddress += list[0][i];
-  }
-  return supernetAddress;
-}
-
 class Supernet extends Address {
   String addressTemp;
 
   Supernet(this.addressTemp) : super(addressTemp, "supernet");
 
+  /// Applies [Address.regexpProcess] to every address in the list
   static List<String> regexpList(List<String> listToProcess) {
     for (int i = 0; i < listToProcess.length; i++) {
-      listToProcess[i] = regexpProcess(listToProcess[i]);
+      listToProcess[i] = Address.regexpProcess(listToProcess[i]);
     }
     return listToProcess;
   }
@@ -184,37 +81,52 @@ class Supernet extends Address {
     }
     return "equal";
   }
-}
 
-/// Detects if there are duplicate addresses and removes them from the list
-List<String> processDuplicateAddresses(List<String> listToProcess, List<Relation> relations) {
-  int duplicates;
-  for (int i = 0; i < listToProcess.length; i++) {
-    duplicates = 1;
-    for (int j = i + 1; j < listToProcess.length; j++) {
-      if (listToProcess[i] == listToProcess[j]) {
-        duplicates++;
-        listToProcess.removeAt(j);
-        j--;
+  /// Calculates the common supernet prefix.
+  /// Beware! must receive more than one address.
+  static String supernetCalculation(int addressCount, List<String> list, String supernetAddress) {
+    if (addressCount == 1) throw StateError("supernetCalculation requires at least 2 addresses");
+    for (int i = 0; i < 32; i++) {
+      for (int addressNumber = 0; addressNumber < addressCount - 1; addressNumber++) {
+        if (list[addressNumber][i] != list[addressNumber + 1][i]) {
+          return supernetAddress;
+        }
+      }
+      supernetAddress += list[0][i];
+    }
+    return supernetAddress;
+  }
+
+  /// Detects and removes duplicate addresses from the list
+  static List<String> processDuplicateAddresses(List<String> listToProcess, List<Relation> relations) {
+    int duplicates;
+    for (int i = 0; i < listToProcess.length; i++) {
+      duplicates = 1;
+      for (int j = i + 1; j < listToProcess.length; j++) {
+        if (listToProcess[i] == listToProcess[j]) {
+          duplicates++;
+          listToProcess.removeAt(j);
+          j--;
+        }
+      }
+      if (duplicates > 1) {
+        print(
+          "Warning ! Duplicate IP range detected : ${listToProcess[i]} is duplicated $duplicates times - removed duplicates",
+        );
       }
     }
-    if (duplicates > 1) {
-      print(
-        "Warning ! Duplicate IP range detected : ${listToProcess[i]} is duplicated $duplicates times - removed duplicates",
-      );
-    }
+    print(listToProcess);
+    return listToProcess;
   }
-  print(listToProcess);
-  return listToProcess;
-}
 
-/// Tests if the networks in a list are all contiguous or not
-bool isAListOfContiguousAddresses(List<Address> list) {
-  for (int i = 0; i < list.length - 1; i++) {
-    if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
-        int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {
-      return false;
+  /// Tests if all networks in a sorted list are contiguous
+  static bool isAListOfContiguousAddresses(List<Address> list) {
+    for (int i = 0; i < list.length - 1; i++) {
+      if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
+          int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {
+        return false;
+      }
     }
+    return true;
   }
-  return true;
 }
