@@ -19,14 +19,7 @@ void main() {
     });
 
     test('returns false for invalid IPv6 addresses', () {
-      const invalid = <String>[
-        '2001:db8:::1',
-        '2001:db8::g1',
-        '12345::',
-        '1:2:3:4:5:6:7:8:9',
-        ':1:2:3:4:5:6:7',
-        '',
-      ];
+      const invalid = <String>['2001:db8:::1', '2001:db8::g1', '12345::', '1:2:3:4:5:6:7:8:9', ':1:2:3:4:5:6:7', ''];
 
       for (final address in invalid) {
         expect(address.isValidIPv6, isFalse, reason: 'Should be invalid: $address');
@@ -34,4 +27,3 @@ void main() {
     });
   });
 }
-

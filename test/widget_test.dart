@@ -14,6 +14,12 @@ import 'package:get_it/get_it.dart';
 
 void main() {
   testWidgets('Calculator app smoke test', (WidgetTester tester) async {
+    // Use a logical resolution that avoids layout overflow (DPR=1 → logical=physical).
+    // Height 1000 → keyboardHeight = clamp(500, 360, 720) = 500 > 7 rows × ~65 px.
+    tester.view.physicalSize = const Size(411, 1000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     // Setup GetIt before building the app
     if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
       GetIt.I.unregister<LocalNumberSymbols>();
