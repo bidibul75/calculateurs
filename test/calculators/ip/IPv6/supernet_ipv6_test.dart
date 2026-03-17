@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:calculators/calculators/ip/IPv6/supernetIPv6.dart';
+import 'package:calculators/calculators/ip/IPv6/supernet_ipv6.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -95,6 +95,40 @@ void main() {
       final deduped = _removeDuplicates(list);
 
       expect(deduped.length, 2);
+    });
+  });
+
+  group('SupernetIPv6.supernetCalc', () {
+    test('returns the same CIDR when a single network is provided', () {
+      final list = [SupernetIPv6('2001:db8::/64')];
+
+      final result = SupernetIPv6.supernetCalc(list);
+
+      expect(result, '2001:0db8:0000:0000:0000:0000:0000:0000/64');
+    });
+
+    test('computes common prefix supernet for two adjacent /32 networks', () {
+      final list = [
+        SupernetIPv6('2001:db8::/32'),
+        SupernetIPv6('2001:db9::/32'),
+      ]..sort((a, b) => a.address6BinaryString.compareTo(b.address6BinaryString));
+
+      final result = SupernetIPv6.supernetCalc(list);
+
+      expect(result, '2001:0db8:0000:0000:0000:0000:0000:0000/31');
+    });
+
+    test('computes /32 supernet for db8..dbb range', () {
+      final list = [
+        SupernetIPv6('2001:db8::/32'),
+        SupernetIPv6('2001:db9::/32'),
+        SupernetIPv6('2001:dba::/32'),
+        SupernetIPv6('2001:dbb::/32'),
+      ]..sort((a, b) => a.address6BinaryString.compareTo(b.address6BinaryString));
+
+      final result = SupernetIPv6.supernetCalc(list);
+
+      expect(result, '2001:0db8:0000:0000:0000:0000:0000:0000/30');
     });
   });
 }

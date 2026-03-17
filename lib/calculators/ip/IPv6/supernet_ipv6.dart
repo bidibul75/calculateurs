@@ -1,7 +1,7 @@
 import 'package:calculators/calculators/ip/IPv4/relation.dart';
 import 'package:collection/collection.dart';
 
-import 'addressIPV6.dart';
+import 'address_ipv6.dart';
 
 class SupernetIPv6 extends AddressIPV6 {
   String address6Temp;
@@ -43,5 +43,34 @@ class SupernetIPv6 extends AddressIPV6 {
       }
     }
     return relations;
+  }
+
+  /// Calculates the supernet address with 2001:db8::/32 format
+  static String supernetCalc(List<SupernetIPv6> list) {
+    if (list.isEmpty) {
+      throw ArgumentError('SupernetIPv6 list cannot be empty');
+    }
+
+    if (list.length == 1) {
+      return '${list.first.networkAdress6.join(':')}/${list.first.suffix}';
+    }
+
+    final String firstBinary = list.first.address6BinaryString;
+    int prefixLength = 0;
+    for (int bitIndex = 0; bitIndex < 128; bitIndex++) {
+      final String bit = firstBinary[bitIndex];
+      if (list.every((s) => s.address6BinaryString[bitIndex] == bit)) {
+        prefixLength++;
+      } else {
+        break;
+      }
+    }
+
+    final List<String> addressListFormat = AddressIPV6.address6BinaryStringToListString(
+      firstBinary.substring(0, prefixLength).padRight(128, '0'),
+    );
+    final String supernetHexResult = '${addressListFormat.join(':')}/$prefixLength';
+
+    return supernetHexResult;
   }
 }

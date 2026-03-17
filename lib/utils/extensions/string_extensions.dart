@@ -140,7 +140,8 @@ extension StringExtensions on String {
     return false;
   }
 
-  /// Replaces the last occurrence of a pattern in a string.
+  /// Replaces the last occurrence of a pattern in a string
+  /// or suppress the last occurrence if only one parameter is given
   String replaceLast(String from, [String to = ""]) {
     if (isEmpty || length < from.length) return this;
     String resultTemp = "";
@@ -179,7 +180,7 @@ extension StringExtensions on String {
     return RegExp(r'[+\-*÷]').hasMatch(this);
   }
 
-  // Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
+  /// Local function to format a raw number (e.g: "1000.5" -> "1 000,5")
   String get format {
     try {
       if (isNotANumber) return this;

@@ -1,5 +1,6 @@
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/my_exception.dart';
+import 'package:flutter/cupertino.dart';
 
 class AddressIPV6 {
   String address6 = "";
@@ -45,14 +46,22 @@ class AddressIPV6 {
   }
 
   /// Fills each hextet with leading zeros and uppercases it
-  static List<String> cleanAddressIPV6(List<String> address) =>
-      address.map((element) => element.toUpperCase().padLeft(4, '0')).toList();
+  static List<String> fourDigitsAddressIPV6(List<String> address) =>
+      address.map((e) => e.toUpperCase().padLeft(4, '0')).toList();
+
+  static List<String> simplifiesAddressIPV6(List<String> address) =>
+      address.map((e) => int.parse(e, radix: 16).toRadixString(16)).toList();
 
   /// Returns true if the given string is a valid IPv6 prefix length (0–128)
   static bool isValidIPv6Suffix(String cidr) {
     int? i = int.tryParse(cidr);
     return i != null && i >= 0 && i <= 128;
   }
+
+  /// CIDR suffix remover (String)
+  static String cidrSuffixRemover(String cidr) => cidr.split('/')[0];
+
+  static String cidrSuffixGetter(String cidr) => cidr.split('/')[1];
 
   /// Formats a condensed IPv6 address into a full 8-hextet list of strings
   static List<String> formatIPV6WithoutSuffix(String address) {
@@ -80,9 +89,9 @@ class AddressIPV6 {
         addressPart0.add("0000");
       }
 
-      return cleanAddressIPV6(addressPart0 + addressPart1);
+      return fourDigitsAddressIPV6(addressPart0 + addressPart1);
     }
-    return cleanAddressIPV6(address.split(":"));
+    return fourDigitsAddressIPV6(address.split(":"));
   }
 
   /// Converts a list of hexadecimal hextets into a 128-bit binary string
@@ -121,5 +130,32 @@ class AddressIPV6 {
       s += ":${(int.parse(address.substring(i, i + 16), radix: 2)).toRadixString(16).toString().padLeft(4, '0')}";
     }
     return s.split(":");
+  }
+
+  /// Replaces multiple 0000 sequences in a String representing a CIDR address
+  static String cidrSimplifier(String cidr) {
+    if (cidr.contains('::')) return cidr;
+    String suffix = cidrSuffixGetter(cidr);
+    String prefix = cidrSuffixRemover(cidr);
+    String formattedPrefix = simplifiesAddressIPV6(prefix.split(':')).join(':');
+    String s;
+    List<String> l = [];
+    for (int i = 7; i > 0; i--) {
+      s = "0${":0" * i}"; // format style 0:0:0
+
+      if (formattedPrefix.contains(s)) {
+        l = formattedPrefix.split(s);
+        // If the left part of the address has elements we remove the last :
+        if (l[0].endsWith(":")) {
+          l[0] = l[0].characters.skipLast(1).toString();
+        }
+        // If the right part of the address has elements we remove the first :
+        if (l[1].startsWith(":")) {
+          l[1] = l[1].substring(1);
+        }
+        return "${l[0]}::${l[1]}/$suffix";
+      }
+    }
+    return "$formattedPrefix/$suffix";
   }
 }

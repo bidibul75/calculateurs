@@ -1,4 +1,4 @@
-import 'package:calculators/calculators/ip/IPv6/addressIPV6.dart';
+import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:calculators/utils/my_exception.dart';
 import 'package:flutter_test/flutter_test.dart';
