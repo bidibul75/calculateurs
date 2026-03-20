@@ -65,13 +65,6 @@ class AddressIPV6 {
 
   /// Formats a condensed IPv6 address into a full 8-hextet list of strings
   static List<String> formatIPV6WithoutSuffix(String address) {
-    if (address == "::1") {
-      return ["0000", "0000", "0000", "0000", "0000", "0000", "0000", "0001"];
-    }
-    if (address == "::") {
-      return ["0000", "0000", "0000", "0000", "0000", "0000", "0000", "0000"];
-    }
-
     if (address.contains("::")) {
       int count = 0;
       List<String> addressPart0 = [], addressPart1 = [];
@@ -134,9 +127,15 @@ class AddressIPV6 {
 
   /// Replaces multiple 0000 sequences in a String representing a CIDR address
   static String cidrSimplifier(String cidr) {
-    if (cidr.contains('::')) return cidr;
     String suffix = cidrSuffixGetter(cidr);
     String prefix = cidrSuffixRemover(cidr);
+
+    // if an address has ::, to be sure that the elements of the address
+    // don't begin by 0, we first replace the address by its 4 digits format
+    // before compressing the address
+    if (prefix.contains('::')) {
+      prefix = formatIPV6WithoutSuffix(prefix).join(':');
+    }
     String formattedPrefix = simplifiesAddressIPV6(prefix.split(':')).join(':');
     String s;
     List<String> l = [];
@@ -157,5 +156,32 @@ class AddressIPV6 {
       }
     }
     return "$formattedPrefix/$suffix";
+  }
+
+  /// Converts a MAC address to the 64-bit interface identifier used in IPv6 (EUI-64 style).
+  ///
+  /// Accepted input formats:
+  /// - classic with separators: `00:1A:2B:3C:4D:5E` or `00-1A-2B-3C-4D-5E`
+  /// - Cisco style: `001A.2B3C.4D5E`
+  /// - raw 12-hex format: `001A2B3C4D5E`
+  ///
+  /// The output is normalized in uppercase grouped as `XXXX:XXXX:XXXX:XXXX`.
+  /// Throws [MyException] when the input is not a valid MAC format.
+  static String macConversion(String macAddress) {
+    macAddress = macAddress.trim().toUpperCase();
+    if (!macAddress.isValidMACAddress) {
+      throw MyException("Erreur : format interne IPv6 invalide", macAddress);
+    }
+    macAddress = macAddress.replaceAll(":", "");
+    macAddress = macAddress.replaceAll("-", "");
+    macAddress = macAddress.replaceAll(".", "");
+    macAddress = macAddress.insert(6, "FFFE");
+    macAddress = macAddress.insert(4, ":");
+    int val = int.parse(macAddress.substring(0, 2), radix: 16);
+    int valReversed = val ^ 2;
+    String newHex = valReversed.toRadixString(16).padLeft(2, '0');
+    macAddress = newHex + macAddress.substring(2);
+
+    return macAddress;
   }
 }

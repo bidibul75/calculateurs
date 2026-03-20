@@ -1,7 +1,10 @@
 // lib/utils/extensions/string_extensions.dart
 
+import 'dart:ffi';
+
 import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
+import 'package:calculators/utils/my_exception.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
@@ -41,6 +44,15 @@ extension StringExtensions on String {
       r':(?::[0-9a-fA-F]{1,4}){1,7}|'
       r'::'
       r')$',
+    );
+    return regex.hasMatch(trim());
+  }
+
+  /// Checks if the string is a valid MAC address
+  /// Valid formats : classic (Windows and Linux), Cisco, raw (no separators)
+  bool get isValidMACAddress {
+    final regex = RegExp(
+      r'^(?:[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\1){4}[0-9A-Fa-f]{2}|(?:[0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4}|[0-9A-Fa-f]{12})$',
     );
     return regex.hasMatch(trim());
   }
@@ -189,5 +201,24 @@ extension StringExtensions on String {
     } catch (e) {
       return this;
     }
+  }
+
+  /// Inserts one or several characters each n character in a string
+  /// except end of string
+  /// Warning : the string length must be a multiple of n and
+  /// have dans 2 * n characters
+  /// "123456".insert(2,":") -> 12:34:56
+  String insert(int n, String s) {
+    if (length < 2 * n) {
+      throw MyException("Error : string must have more than 2 * n elements", this);
+    }
+    if (length % n != 0) {
+      throw MyException("Error : string must be a multiple of pattern", this);
+    }
+    String s2 = substring(0, n);
+    for (int j = n; j < length; j += n) {
+      s2 += "$s${substring(j, j + n)}";
+    }
+    return s2;
   }
 }

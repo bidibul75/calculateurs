@@ -18,8 +18,8 @@ void main() {
   });
 
   group('IPv6 helpers', () {
-    test('cleanAddressIPV6 uppercases and pads each hextet to 4 chars', () {
-      final result = AddressIPV6.cleanAddressIPV6(['db8', '1', '00af', 'abcd']);
+    test('fourDigitsAddressIPV6 uppercases and pads each hextet to 4 chars', () {
+      final result = AddressIPV6.fourDigitsAddressIPV6(['db8', '1', '00af', 'abcd']);
 
       expect(result, ['0DB8', '0001', '00AF', 'ABCD']);
     });
@@ -105,6 +105,38 @@ void main() {
         '0003',
       ]);
     });
+
+    group('cidrSimplifier', () {
+      test('Compressed address with an element beginning by 0', () {
+        final result = AddressIPV6.cidrSimplifier('2001:0db8::ff00:42:8329/64');
+
+        expect(result, '2001:db8::ff00:42:8329/64');
+      });
+
+      test('compresses the longest zero-run for a non-condensed CIDR', () {
+        final result = AddressIPV6.cidrSimplifier('2001:0db8:0000:0000:0000:ff00:0042:8329/64');
+
+        expect(result, '2001:db8::ff00:42:8329/64');
+      });
+
+      test('returns unchanged CIDR when input already contains ::', () {
+        const cidr = '2001:db8::1/64';
+
+        expect(AddressIPV6.cidrSimplifier(cidr), cidr);
+      });
+
+      test('keeps CIDR uncompressed when there is no zero hextet to compress', () {
+        final result = AddressIPV6.cidrSimplifier('2001:0db8:0001:0002:0003:0004:0005:0006/64');
+
+        expect(result, '2001:db8:1:2:3:4:5:6/64');
+      });
+
+      test('compresses an all-zero IPv6 CIDR to canonical double-colon form', () {
+        final result = AddressIPV6.cidrSimplifier('0000:0000:0000:0000:0000:0000:0000:0000/0');
+
+        expect(result, '::/0');
+      });
+    });
   });
 
   group('AddressIPV6', () {
@@ -167,5 +199,42 @@ void main() {
     test('throws when more than one slash is present', () {
       expect(() => AddressIPV6('2001:db8::1/64/extra'), throwsA(isA<MyException>()));
     });
+  });
+
+  group('MAC address invalid inputs', () {
+    test('throws when the MAC address is invalid', () {
+      expect(() => AddressIPV6.macConversion('001A2B3C4D'), throwsA(isA<MyException>()));
+    });
+
+    test('Returns a valid IPV6 address from a MAC address', () {
+      final result = AddressIPV6.macConversion('001A2B3C4D5E');
+      expect(result, '021A:2BFF:FE3C:4D5E');
+    });
+
+    test('accepts Linux/Windows formats with separators', () {
+      final colon = AddressIPV6.macConversion('00:1A:2B:3C:4D:5E');
+      final dash = AddressIPV6.macConversion('00-1A-2B-3C-4D-5E');
+
+      expect(colon, '021A:2BFF:FE3C:4D5E');
+      expect(dash, '021A:2BFF:FE3C:4D5E');
+    });
+
+    test('accepts Cisco format', () {
+      final result = AddressIPV6.macConversion('001A.2B3C.4D5E');
+
+      expect(result, '021A:2BFF:FE3C:4D5E');
+    });
+
+    test('throws for invalid hex characters and mixed separators', () {
+      expect(() => AddressIPV6.macConversion('00:1A:2B:3C:4D:5G'), throwsA(isA<MyException>()));
+      expect(() => AddressIPV6.macConversion('00-1A:2B-3C:4D-5E'), throwsA(isA<MyException>()));
+    });
+
+    test('normalizes lower case and surrounding spaces', () {
+      final result = AddressIPV6.macConversion('  00:1a:2b:3c:4d:5e  ');
+
+      expect(result, '021A:2BFF:FE3C:4D5E');
+    });
+
   });
 }
