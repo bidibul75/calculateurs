@@ -208,7 +208,7 @@ extension StringExtensions on String {
   /// Warning : the string length must be a multiple of n and
   /// have dans 2 * n characters
   /// "123456".insert(2,":") -> 12:34:56
-  String insert(int n, String s) {
+  String insertRep(int n, String s) {
     if (length < 2 * n) {
       throw MyException("Error : string must have more than 2 * n elements", this);
     }
@@ -220,5 +220,14 @@ extension StringExtensions on String {
       s2 += "$s${substring(j, j + n)}";
     }
     return s2;
+  }
+
+  /// Insert a String inside another one at the position given
+  String insert(int pos, String s) {
+    throwIf(
+      pos > length,
+      MyException("Error : the position of the insertion is not inside the string", pos.toString()),
+    );
+    return substring(0, pos) + s + substring(pos);
   }
 }

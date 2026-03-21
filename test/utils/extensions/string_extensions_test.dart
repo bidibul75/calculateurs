@@ -7,10 +7,12 @@ void main() {
       const valid = <String>[
         '::',
         '::1',
+        '  ::1  ',
         '2001:db8::1',
         '2001:db8:85a3::8a2e:370:7334',
         '2001:0db8:0000:0000:0000:ff00:0042:8329',
         '1:2:3:4:5:6:7:8',
+        '2001:db8:0:1:1:1:1:1',
       ];
 
       for (final address in valid) {
@@ -19,7 +21,17 @@ void main() {
     });
 
     test('returns false for invalid IPv6 addresses', () {
-      const invalid = <String>['2001:db8:::1', '2001:db8::g1', '12345::', '1:2:3:4:5:6:7:8:9', ':1:2:3:4:5:6:7', ''];
+      const invalid = <String>[
+        '2001:db8:::1',
+        '2001:db8::g1',
+        '12345::',
+        '1:2:3:4:5:6:7:8:9',
+        ':1:2:3:4:5:6:7',
+        '2001:db8::1::',
+        'fe80::1%eth0',
+        '::ffff:192.0.2.128',
+        '',
+      ];
 
       for (final address in invalid) {
         expect(address.isValidIPv6, isFalse, reason: 'Should be invalid: $address');
@@ -58,10 +70,13 @@ void main() {
     test('returns false for invalid MAC strings', () {
       const invalid = <String>[
         '',
+        '  ',
         'AA:BB:CC:DD:EE',
         'AA:BB:CC:DD:EE:FF:11',
         'AA:BB:CC:DD:EE:FG',
         'AA-BB:CC-DD:EE-FF',
+        'AA-BB-CC-DD-EE-FF-',
+        '.AABB.CCDD.EEFF',
         'AABB.CCDD.EEF',
         'AABB.CCDD.EEFF.0011',
         'AABBCCDDEEF',

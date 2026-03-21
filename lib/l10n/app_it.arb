@@ -51,5 +51,20 @@
   "bmiCategoryUnderweight": "Sottopeso",
   "bmiCategoryNormal": "Peso normale",
   "bmiCategoryOverweight": "Sovrappeso",
-  "bmiCategoryObese": "Obesità"
+  "bmiCategoryObese": "Obesità",
+
+  "@_module.ip.ipv6": {
+    "description": "Vocabolario modulo: IP > IPv6"
+  },
+  "ipv6TypeLoopback": "Indirizzo loopback.",
+  "ipv6TypeLinkLocal": "Indirizzo link-local (comunicazione sullo stesso switch, non instradabile).",
+  "ipv6TypeGlobalUnicast": "Indirizzo global unicast (indirizzo pubblico instradabile su Internet).",
+  "ipv6TypeUniqueLocal": "Indirizzo unique local (equivalente agli indirizzi privati IPv4).",
+  "ipv6TypeMulticast": "Indirizzo multicast.",
+  "ipv6TypeUnspecified": "Indirizzo non specificato.",
+  "ipv6ErrorInvalidCidrFormat": "Formato CIDR IPv6 non valido.",
+  "ipv6ErrorEmptyAddress": "Indirizzo IPv6 vuoto.",
+  "ipv6ErrorInvalidSuffix": "Suffisso IPv6 non valido.",
+  "ipv6ErrorInvalidAddress": "Indirizzo IPv6 non valido.",
+  "ipv6ErrorInvalidMacFormat": "Formato dell'indirizzo MAC non valido."
 }

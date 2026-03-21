@@ -1,4 +1,5 @@
 import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
+import 'package:calculators/l10n/app_localizations_en.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:calculators/utils/my_exception.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,6 +107,20 @@ void main() {
       ]);
     });
 
+    test('networkAddress6ListString throws StateError on invalid internal list shape', () {
+      expect(
+        () => AddressIPV6.networkAddress6ListString(['2001', '0DB8']),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('address6BinaryStringToListString throws ArgumentError on invalid binary length', () {
+      expect(
+        () => AddressIPV6.address6BinaryStringToListString('1010'),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     group('cidrSimplifier', () {
       test('Compressed address with an element beginning by 0', () {
         final result = AddressIPV6.cidrSimplifier('2001:0db8::ff00:42:8329/64');
@@ -135,6 +150,83 @@ void main() {
         final result = AddressIPV6.cidrSimplifier('0000:0000:0000:0000:0000:0000:0000:0000/0');
 
         expect(result, '::/0');
+      });
+    });
+
+    group('typeIdentification', () {
+      final l10n = AppLocalizationsEn();
+
+      test('detects loopback addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, '::1/128');
+
+        expect(result, 'Loopback address.');
+      });
+
+      test('detects link-local addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, 'fe80::1/64');
+
+        expect(result, 'Link-Local address (communication on the same switch, non routable).');
+      });
+
+      test('detects global unicast addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, '2001:db8::1/64');
+
+        expect(result, 'Global Unicast address (public address routable on Internet).');
+      });
+
+      test('detects unique local addresses', () {
+        final resultFd = AddressIPV6.typeIdentification(l10n, 'fd00::1/64');
+        final resultFc = AddressIPV6.typeIdentification(l10n, 'fc00::1/64');
+
+        expect(resultFd, 'Unique Local address (equivalent to IPv4 private addresses).');
+        expect(resultFc, 'Unique Local address (equivalent to IPv4 private addresses).');
+      });
+
+      test('detects multicast addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, 'ff02::1/16');
+
+        expect(result, 'Multicast address.');
+      });
+
+      test('detects unspecified addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, '::/128');
+
+        expect(result, 'Unspecified address.');
+      });
+
+      test('returns empty string for unclassified addresses', () {
+        final result = AddressIPV6.typeIdentification(l10n, '1000::1/64');
+
+        expect(result, '');
+      });
+    });
+
+    group('identifyType', () {
+      test('returns enum values for known classes and unknown fallback', () {
+        expect(AddressIPV6.identifyType('::1/128'), IPv6AddressType.loopback);
+        expect(AddressIPV6.identifyType('fe80::1/64'), IPv6AddressType.linkLocal);
+        expect(AddressIPV6.identifyType('2001:db8::1/64'), IPv6AddressType.globalUnicast);
+        expect(AddressIPV6.identifyType('fd00::1/64'), IPv6AddressType.uniqueLocal);
+        expect(AddressIPV6.identifyType('ff02::1/16'), IPv6AddressType.multicast);
+        expect(AddressIPV6.identifyType('::/128'), IPv6AddressType.unspecified);
+        expect(AddressIPV6.identifyType('1000::1/64'), IPv6AddressType.unknown);
+      });
+    });
+
+    group('localizeError', () {
+      final l10n = AppLocalizationsEn();
+
+      test('localizes only user-facing IPv6 error keys', () {
+        expect(AddressIPV6.localizeError(l10n, AddressIPV6.errorInvalidCidrFormat), 'Invalid IPv6 CIDR format.');
+        expect(AddressIPV6.localizeError(l10n, AddressIPV6.errorEmptyAddress), 'Empty IPv6 address.');
+        expect(AddressIPV6.localizeError(l10n, AddressIPV6.errorInvalidSuffix), 'Invalid IPv6 suffix.');
+        expect(AddressIPV6.localizeError(l10n, AddressIPV6.errorInvalidAddress), 'Invalid IPv6 address.');
+        expect(AddressIPV6.localizeError(l10n, AddressIPV6.errorInvalidMacFormat), 'Invalid MAC address format.');
+      });
+
+      test('returns raw key for internal/unknown errors', () {
+        expect(AddressIPV6.localizeError(l10n, 'ipv6ErrorInvalidBinaryLength'), 'ipv6ErrorInvalidBinaryLength');
+        expect(AddressIPV6.localizeError(l10n, 'someUnknownKey'), 'someUnknownKey');
       });
     });
   });

@@ -141,4 +141,41 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get bmiCategoryObese => 'Obesità';
+
+  @override
+  String get ipv6TypeLoopback => 'Indirizzo loopback.';
+
+  @override
+  String get ipv6TypeLinkLocal =>
+      'Indirizzo link-local (comunicazione sullo stesso switch, non instradabile).';
+
+  @override
+  String get ipv6TypeGlobalUnicast =>
+      'Indirizzo global unicast (indirizzo pubblico instradabile su Internet).';
+
+  @override
+  String get ipv6TypeUniqueLocal =>
+      'Indirizzo unique local (equivalente agli indirizzi privati IPv4).';
+
+  @override
+  String get ipv6TypeMulticast => 'Indirizzo multicast.';
+
+  @override
+  String get ipv6TypeUnspecified => 'Indirizzo non specificato.';
+
+  @override
+  String get ipv6ErrorInvalidCidrFormat => 'Formato CIDR IPv6 non valido.';
+
+  @override
+  String get ipv6ErrorEmptyAddress => 'Indirizzo IPv6 vuoto.';
+
+  @override
+  String get ipv6ErrorInvalidSuffix => 'Suffisso IPv6 non valido.';
+
+  @override
+  String get ipv6ErrorInvalidAddress => 'Indirizzo IPv6 non valido.';
+
+  @override
+  String get ipv6ErrorInvalidMacFormat =>
+      'Formato dell\'indirizzo MAC non valido.';
 }

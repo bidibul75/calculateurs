@@ -1,8 +1,25 @@
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/utils/my_exception.dart';
 import 'package:flutter/cupertino.dart';
 
+enum IPv6AddressType {
+  loopback,
+  linkLocal,
+  globalUnicast,
+  uniqueLocal,
+  multicast,
+  unspecified,
+  unknown,
+}
+
 class AddressIPV6 {
+  static const String errorInvalidCidrFormat = 'ipv6ErrorInvalidCidrFormat';
+  static const String errorEmptyAddress = 'ipv6ErrorEmptyAddress';
+  static const String errorInvalidSuffix = 'ipv6ErrorInvalidSuffix';
+  static const String errorInvalidAddress = 'ipv6ErrorInvalidAddress';
+  static const String errorInvalidMacFormat = 'ipv6ErrorInvalidMacFormat';
+
   String address6 = "";
   List<String> address6ListString = []; // Formatted address with 4 digits and no ::
   List<String> address6WithoutSuffixListString = [];
@@ -17,22 +34,22 @@ class AddressIPV6 {
     List<String> addressList = address6.split("/");
 
     if (addressList.length != 2) {
-      throw MyException("Erreur : format CIDR IPv6 invalide", address6);
+      throw MyException(errorInvalidCidrFormat, address6);
     }
 
     addressWithoutSuffixString = addressList[0];
     suffix = addressList[1];
 
     if (addressWithoutSuffixString.isEmpty) {
-      throw MyException("Erreur : adresse IPv6 vide", address6);
+      throw MyException(errorEmptyAddress, address6);
     }
 
     if (suffix.isEmpty || !isValidIPv6Suffix(suffix)) {
-      throw MyException("Erreur : suffixe IPv6 invalide", address6);
+      throw MyException(errorInvalidSuffix, address6);
     }
 
     if (!addressWithoutSuffixString.isValidIPv6) {
-      throw MyException("Erreur : adresse IPv6 invalide", addressWithoutSuffixString);
+      throw MyException(errorInvalidAddress, addressWithoutSuffixString);
     }
 
     final int hostBits = 128 - int.parse(suffix);
@@ -42,7 +59,6 @@ class AddressIPV6 {
     address6ListString = [...address6WithoutSuffixListString, suffix];
     address6BinaryString = hexListToBinaryString(address6WithoutSuffixListString);
     networkAdress6 = networkAddress6ListString(address6ListString);
-    print("network : $networkAdress6");
   }
 
   /// Fills each hextet with leading zeros and uppercases it
@@ -67,7 +83,8 @@ class AddressIPV6 {
   static List<String> formatIPV6WithoutSuffix(String address) {
     if (address.contains("::")) {
       int count = 0;
-      List<String> addressPart0 = [], addressPart1 = [];
+      List<String> addressPart0 = [],
+          addressPart1 = [];
       List<String> addressParts = address.split("::");
       if (addressParts[0] != "") {
         addressPart0 = addressParts[0].split(":");
@@ -94,16 +111,16 @@ class AddressIPV6 {
     return s
         .split('')
         .map((c) {
-          int value = int.parse(c, radix: 16);
-          return value.toRadixString(2).padLeft(4, '0');
-        })
+      int value = int.parse(c, radix: 16);
+      return value.toRadixString(2).padLeft(4, '0');
+    })
         .join('');
   }
 
   /// From a list of hex strings WITH SUFFIX returns the network address as a hextet list
   static List<String> networkAddress6ListString(List<String> address) {
     if (address.length != 9) {
-      throw MyException("Erreur : format interne IPv6 invalide", address.toString());
+      throw StateError('Invalid internal IPv6 shape: expected 9 elements (8 hextets + suffix), got ${address.length}.');
     }
 
     final List<String> addressCopy = List<String>.from(address);
@@ -116,7 +133,7 @@ class AddressIPV6 {
   /// Converts a 128-bit binary string into a list of 8 lowercase hex hextets
   static List<String> address6BinaryStringToListString(String address) {
     if (address.length != 128) {
-      throw MyException("Erreur : longueur binaire IPv6 invalide", address);
+      throw ArgumentError.value(address.length, 'address.length', 'Expected a 128-bit IPv6 binary string.');
     }
     String s = (int.parse(address.substring(0, 16), radix: 2)).toRadixString(16).toString().padLeft(4, '0');
     for (int i = 16; i < 128; i += 16) {
@@ -170,13 +187,13 @@ class AddressIPV6 {
   static String macConversion(String macAddress) {
     macAddress = macAddress.trim().toUpperCase();
     if (!macAddress.isValidMACAddress) {
-      throw MyException("Erreur : format interne IPv6 invalide", macAddress);
+      throw MyException(errorInvalidMacFormat, macAddress);
     }
     macAddress = macAddress.replaceAll(":", "");
     macAddress = macAddress.replaceAll("-", "");
     macAddress = macAddress.replaceAll(".", "");
     macAddress = macAddress.insert(6, "FFFE");
-    macAddress = macAddress.insert(4, ":");
+    macAddress = macAddress.insertRep(4, ":");
     int val = int.parse(macAddress.substring(0, 2), radix: 16);
     int valReversed = val ^ 2;
     String newHex = valReversed.toRadixString(16).padLeft(2, '0');
@@ -184,4 +201,77 @@ class AddressIPV6 {
 
     return macAddress;
   }
+
+  /// IPv6 address type indicator
+  static IPv6AddressType identifyType(String address) {
+    final String prefix = cidrSuffixRemover(address).trim();
+    final List<String> expanded = formatIPV6WithoutSuffix(prefix);
+
+    const String loopbackExpanded = '0000:0000:0000:0000:0000:0000:0000:0001';
+    const String unspecifiedExpanded = '0000:0000:0000:0000:0000:0000:0000:0000';
+
+    final String expandedAddress = expanded.join(':');
+    if (expandedAddress == loopbackExpanded) {
+      return IPv6AddressType.loopback;
+    }
+    if (expandedAddress == unspecifiedExpanded) {
+      return IPv6AddressType.unspecified;
+    }
+
+    final int firstElement = int.parse(expanded[0], radix: 16);
+    if (firstElement >= 0xFE80 && firstElement <= 0xFEBF) {
+      return IPv6AddressType.linkLocal;
+    }
+    if (firstElement >= 0x2000 && firstElement <= 0x3FFF) {
+      return IPv6AddressType.globalUnicast;
+    }
+    if ((firstElement & 0xFE00) == 0xFC00) {
+      return IPv6AddressType.uniqueLocal;
+    }
+    if ((firstElement & 0xFF00) == 0xFF00) {
+      return IPv6AddressType.multicast;
+    }
+    return IPv6AddressType.unknown;
+  }
+
+  static String typeIdentification(AppLocalizations l10n, String address) {
+    return typeLabel(l10n, identifyType(address));
+  }
+
+  static String typeLabel(AppLocalizations l10n, IPv6AddressType type) {
+    switch (type) {
+      case IPv6AddressType.loopback:
+        return l10n.ipv6TypeLoopback;
+      case IPv6AddressType.linkLocal:
+        return l10n.ipv6TypeLinkLocal;
+      case IPv6AddressType.globalUnicast:
+        return l10n.ipv6TypeGlobalUnicast;
+      case IPv6AddressType.uniqueLocal:
+        return l10n.ipv6TypeUniqueLocal;
+      case IPv6AddressType.multicast:
+        return l10n.ipv6TypeMulticast;
+      case IPv6AddressType.unspecified:
+        return l10n.ipv6TypeUnspecified;
+      case IPv6AddressType.unknown:
+        return '';
+    }
+  }
+
+  static String localizeError(AppLocalizations l10n, String errorKey) {
+    switch (errorKey) {
+      case errorInvalidCidrFormat:
+        return l10n.ipv6ErrorInvalidCidrFormat;
+      case errorEmptyAddress:
+        return l10n.ipv6ErrorEmptyAddress;
+      case errorInvalidSuffix:
+        return l10n.ipv6ErrorInvalidSuffix;
+      case errorInvalidAddress:
+        return l10n.ipv6ErrorInvalidAddress;
+      case errorInvalidMacFormat:
+        return l10n.ipv6ErrorInvalidMacFormat;
+      default:
+        return errorKey;
+    }
+  }
 }
+
