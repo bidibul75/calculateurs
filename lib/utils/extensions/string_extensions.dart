@@ -1,7 +1,5 @@
 // lib/utils/extensions/string_extensions.dart
 
-import 'dart:ffi';
-
 import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:calculators/utils/my_exception.dart';
@@ -33,19 +31,82 @@ extension StringExtensions on String {
     // RFC-style IPv6 forms (full + compressed), without IPv4-mapped and zone id.
     final regex = RegExp(
       r'^(?:'
-      r'(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,7}:|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|'
-      r'(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|'
-      r'[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}|'
-      r':(?::[0-9a-fA-F]{1,4}){1,7}|'
+      r'(?:[0-9A-F]{1,4}:){7}[0-9A-F]{1,4}|'
+      r'(?:[0-9A-F]{1,4}:){1,7}:|'
+      r'(?:[0-9A-F]{1,4}:){1,6}:[0-9A-F]{1,4}|'
+      r'(?:[0-9A-F]{1,4}:){1,5}(?::[0-9A-F]{1,4}){1,2}|'
+      r'(?:[0-9A-F]{1,4}:){1,4}(?::[0-9A-F]{1,4}){1,3}|'
+      r'(?:[0-9A-F]{1,4}:){1,3}(?::[0-9A-F]{1,4}){1,4}|'
+      r'(?:[0-9A-F]{1,4}:){1,2}(?::[0-9A-F]{1,4}){1,5}|'
+      r'[0-9A-F]{1,4}:(?::[0-9A-F]{1,4}){1,6}|'
+      r':(?::[0-9A-F]{1,4}){1,7}|'
       r'::'
       r')$',
     );
+    return regex.hasMatch(trim().toUpperCase());
+  }
+
+  /// Checks if the string is a valid IPv6 address in CIDR format
+  bool get isValidIPv6CIDR {
+    // RFC-style IPv6 forms (full + compressed), without IPv4-mapped and zone id.
+    final regex = RegExp(
+      r'^(?:'
+      r'(?:[0-9A-F]{1,4}:){7}[0-9A-F]{1,4}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,7}:/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,6}:[0-9A-F]{1,4}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,5}(?::[0-9A-F]{1,4}){1,2}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,4}(?::[0-9A-F]{1,4}){1,3}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,3}(?::[0-9A-F]{1,4}){1,4}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'(?:[0-9A-F]{1,4}:){1,2}(?::[0-9A-F]{1,4}){1,5}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'[0-9A-F]{1,4}:(?::[0-9A-F]{1,4}){1,6}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r':(?::[0-9A-F]{1,4}){1,7}/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])|'
+      r'::/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9])'
+      r')$',
+    );
+    return regex.hasMatch(trim().toUpperCase());
+  }
+
+  /// Checks if the string is a valid IPv4 address
+  bool get isValidIPv4 {
+    final regex = RegExp(
+      r'^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$',
+    );
     return regex.hasMatch(trim());
+  }
+
+  /// Checks is the string is a valid IPv4 address in CIDR format
+  bool get isValidIPv4CIDR {
+    final regex = RegExp(
+      r'^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])/(3[0-2]|[12]?[0-9])$',
+    );
+    return regex.hasMatch(trim());
+  }
+
+  /// Checks if the address is an obsolete IPv4-mapped to IPV6 address
+  bool get isObsoleteIPV4Mapped {
+    String s = trim();
+    if (!s.startsWith('::')) return false;
+    s = s.substring(2);
+    return s.isValidIPv4;
+  }
+
+  /// Checks if the address is a valid IPv4-mapped address
+  /// Obsolete format (::IPv4) => false
+  bool get isValidMappedIPv4 {
+    String s = trim().toUpperCase();
+    if (!s.contains('FFFF:')) return false;
+
+    String firstPart = "${s.split('FFFF:')[0]}FFFF";
+    String secondPart = s.split('FFFF:')[1];
+
+    final regexFirst = RegExp(
+      r'^(?:'
+      r'::FFF|'
+      r'(?:[0]{4}:){5}FFFF|'
+      r')$',
+    );
+    if (!regexFirst.hasMatch(firstPart)) return false;
+    return secondPart.isValidIPv4 ? true : false;
   }
 
   /// Checks if the string is a valid MAC address

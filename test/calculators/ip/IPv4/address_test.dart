@@ -62,6 +62,8 @@ void main() {
   group('Address helpers', () {
     test('regexpProcess removes spaces and keeps a valid CIDR', () {
       expect(Address.regexpProcess(' 192.168.1.0 /24 '), '192.168.1.0/24');
+      expect(Address.regexpProcess('  0.0.0.0/0  '), '0.0.0.0/0');
+      expect(Address.regexpProcess('255.255.255.255/32'), '255.255.255.255/32');
     });
 
     test('stringToListStrings splits address and suffix', () {
@@ -85,6 +87,9 @@ void main() {
 
     test('regexpProcess throws for invalid CIDR format', () {
       expect(() => Address.regexpProcess('192.168.1/24'), throwsA(isA<MyException>()));
+      expect(() => Address.regexpProcess('192.168.1.1'), throwsA(isA<MyException>()));
+      expect(() => Address.regexpProcess('192,168,1,1/24'), throwsA(isA<MyException>()));
+      expect(() => Address.regexpProcess('/24'), throwsA(isA<MyException>()));
     });
 
     test('Address throws for suffix out of range', () {
@@ -104,7 +109,8 @@ void main() {
         Address.regexpProcess('bad');
         fail('Expected MyException');
       } on MyException catch (e) {
-        expect(e.toString(), contains('Erreur'));
+        expect(e.toString(), isNotEmpty);
+        expect(e.toString(), contains('bad'));
       }
     });
   });
