@@ -51,5 +51,20 @@
   "bmiCategoryUnderweight": "Underweight",
   "bmiCategoryNormal": "Normal weight",
   "bmiCategoryOverweight": "Overweight",
-  "bmiCategoryObese": "Obese"
+  "bmiCategoryObese": "Obese",
+
+  "@_module.ip.ipv6": {
+    "description": "Module vocabulary: IP > IPv6"
+  },
+  "ipv6TypeLoopback": "Loopback address.",
+  "ipv6TypeLinkLocal": "Link-Local address (communication on the same switch, non routable).",
+  "ipv6TypeGlobalUnicast": "Global Unicast address (public address routable on Internet).",
+  "ipv6TypeUniqueLocal": "Unique Local address (equivalent to IPv4 private addresses).",
+  "ipv6TypeMulticast": "Multicast address.",
+  "ipv6TypeUnspecified": "Unspecified address.",
+  "ipv6ErrorInvalidCidrFormat": "Invalid IPv6 CIDR format.",
+  "ipv6ErrorEmptyAddress": "Empty IPv6 address.",
+  "ipv6ErrorInvalidSuffix": "Invalid IPv6 suffix.",
+  "ipv6ErrorInvalidAddress": "Invalid IPv6 address.",
+  "ipv6ErrorInvalidMacFormat": "Invalid MAC address format."
 }

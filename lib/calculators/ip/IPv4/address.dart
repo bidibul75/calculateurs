@@ -78,17 +78,12 @@ class Address {
   }
 
   /// Validates format and strips spaces from a raw CIDR IPv4 string
-  static String regexpProcess(String addressToProcessString) {
-    addressToProcessString = addressToProcessString.replaceAll(" ", "");
-    if (addressToProcessString.length > 18) {
-      throw MyException("Erreur ! l'adresse entrée comporte trop de caractères", addressToProcessString);
+  static String regexpProcess(String address) {
+    address = address.replaceAll(" ", "");
+    if (!address.isValidIPv4CIDR) {
+      throw MyException("REGEXP error at address :", address);
     }
-    RegExp exp = RegExp(r"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]+/[0-9]+");
-    if (exp.firstMatch(addressToProcessString) == null) {
-      throw MyException("Erreur REGEXP à l'adresse :", addressToProcessString);
-    } else {
-      return addressToProcessString;
-    }
+    return address;
   }
 
   /// Converts a CIDR string into a list of 5 strings (4 octets + suffix)

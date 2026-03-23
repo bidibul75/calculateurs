@@ -365,6 +365,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Obese'**
   String get bmiCategoryObese;
+
+  /// No description provided for @ipv6TypeLoopback.
+  ///
+  /// In en, this message translates to:
+  /// **'Loopback address.'**
+  String get ipv6TypeLoopback;
+
+  /// No description provided for @ipv6TypeLinkLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Link-Local address (communication on the same switch, non routable).'**
+  String get ipv6TypeLinkLocal;
+
+  /// No description provided for @ipv6TypeGlobalUnicast.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Unicast address (public address routable on Internet).'**
+  String get ipv6TypeGlobalUnicast;
+
+  /// No description provided for @ipv6TypeUniqueLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Unique Local address (equivalent to IPv4 private addresses).'**
+  String get ipv6TypeUniqueLocal;
+
+  /// No description provided for @ipv6TypeMulticast.
+  ///
+  /// In en, this message translates to:
+  /// **'Multicast address.'**
+  String get ipv6TypeMulticast;
+
+  /// No description provided for @ipv6TypeUnspecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Unspecified address.'**
+  String get ipv6TypeUnspecified;
+
+  /// No description provided for @ipv6ErrorInvalidCidrFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv6 CIDR format.'**
+  String get ipv6ErrorInvalidCidrFormat;
+
+  /// No description provided for @ipv6ErrorEmptyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty IPv6 address.'**
+  String get ipv6ErrorEmptyAddress;
+
+  /// No description provided for @ipv6ErrorInvalidSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv6 suffix.'**
+  String get ipv6ErrorInvalidSuffix;
+
+  /// No description provided for @ipv6ErrorInvalidAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv6 address.'**
+  String get ipv6ErrorInvalidAddress;
+
+  /// No description provided for @ipv6ErrorInvalidMacFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid MAC address format.'**
+  String get ipv6ErrorInvalidMacFormat;
 }
 
 class _AppLocalizationsDelegate
