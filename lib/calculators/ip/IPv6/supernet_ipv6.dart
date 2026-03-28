@@ -8,6 +8,11 @@ class SupernetIPv6 extends AddressIPV6 {
 
   SupernetIPv6(this.address6Temp) : super(address6Temp);
 
+  /// Sorts a list of List<Address>
+  static void sortAddress6List(List<AddressIPV6> list) {
+    list.sort((a, b) => a.address6BinaryString.compareTo(b.address6BinaryString));
+  }
+
   /// Returns true if two expanded IPv6 address lists represent the same network
   static bool sameLists(List<String> a, List<String> b) => const ListEquality<String>().equals(a, b);
 
@@ -15,6 +20,7 @@ class SupernetIPv6 extends AddressIPV6 {
   /// The list MUST BE SORTED (by [AddressIPV6.address6BinaryString]) before calling.
   /// Returns a [Relation] for each consecutive pair.
   static List<Relation> computeRelations(List<SupernetIPv6> list) {
+    sortAddress6List(list);
     final relations = <Relation>[];
     for (int i = 0; i < (list.length - 1); i++) {
       final netA = list[i];

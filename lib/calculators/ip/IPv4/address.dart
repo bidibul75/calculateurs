@@ -92,21 +92,15 @@ class Address {
     String suffixStr = addressParts[1];
     addressParts = addressParts[0].split(".");
     addressParts.add(suffixStr);
-    print("adresseList : $addressParts");
     return addressParts;
   }
 
   /// Validates each octet (0–255) and the suffix (0–32)
-  static void _testsNumbersInList(List<String> addressListString) {
-    int suffixValue = int.parse(addressListString[4]);
-    if (suffixValue < 0 || suffixValue > 32) {
-      throw MyException("Erreur ! suffixe incorrect ", addressListString.toString());
-    }
-    for (int i = 0; i < 4; i++) {
-      if (int.parse(addressListString[i]) < 0 || int.parse(addressListString[i]) > 255) {
-        throw MyException("Erreur : L'adresse comporte une erreur sur un(des) nombres", addressListString.toString());
-      }
-    }
+  static void _testsNumbersInList(List<String> a) {
+    List<String> a2 = a.sublist(0);
+    String s = a2.removeLast();
+    s="${a2.join('.')}/$s";
+    if (!s.isValidIPv4CIDR) throw("Error in address : not a valid IPv4 address",s);
   }
 
   /// Casts a list of 4 decimal strings into a 32-bit binary string (mutates input)
@@ -133,7 +127,7 @@ class Address {
       return address;
     }
     throw MyException(
-      "Erreur : décalage impossible car en dehors plage 0.0.0.0 / 255.255.255.255 de l'adresse ",
+      "Error : impossible shift has outside 0.0.0.0 - 255.255.255.255 range.",
       address.join("."),
     );
   }

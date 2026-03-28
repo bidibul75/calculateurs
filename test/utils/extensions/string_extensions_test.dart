@@ -223,4 +223,12 @@ void main() {
       }
     });
   });
-}
+
+  group('StringExtensions.removeLastChar', () {
+    test('removes last character', () {
+      expect('123456'.removeLastChar, "12345");
+      expect('abc'.removeLastChar, "ab");
+      expect('a'.removeLastChar, "");
+      });
+  });
+  }

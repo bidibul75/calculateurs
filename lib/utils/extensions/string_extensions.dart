@@ -233,6 +233,11 @@ extension StringExtensions on String {
     return isEmpty ? "" : this[length - 1];
   }
 
+  /// Removes last character
+  String get removeLastChar {
+    return isEmpty ? "": substring(0,length-1);
+  }
+
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
   String get toCleanMathString {
     final symbols = GetIt.I<LocalNumberSymbols>();

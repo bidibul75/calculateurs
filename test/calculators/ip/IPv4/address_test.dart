@@ -83,6 +83,7 @@ void main() {
     test('addressShift increments and decrements with carry/borrow', () {
       expect(Address.addressShift(['10', '0', '0', '255'], 1), ['10', '0', '1', '0']);
       expect(Address.addressShift(['10', '0', '1', '0'], -1), ['10', '0', '0', '255']);
+      expect(Address.addressShift(['10', '0', '0', '0'], -1), ['9', '255', '255', '255']);
     });
 
     test('regexpProcess throws for invalid CIDR format', () {
