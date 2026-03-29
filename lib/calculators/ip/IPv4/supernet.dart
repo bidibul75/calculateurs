@@ -4,7 +4,7 @@ import 'relation.dart';
 class Supernet extends Address {
   String addressTemp;
 
-  Supernet(this.addressTemp) : super(addressTemp, "supernet");
+  Supernet(this.addressTemp) : super(addressTemp);
 
   /// Applies [Address.regexpProcess] to every address in the list
   static List<String> regexpList(List<String> listToProcess) {

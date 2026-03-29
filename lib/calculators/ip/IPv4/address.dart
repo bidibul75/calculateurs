@@ -22,11 +22,8 @@ class Address {
       addressAvailableFirstOne = [],
       addressAvailableLastOne = [];
 
-  Address(this.addressToProcess, String origin) {
-    if (origin == "address") {
-      addressToProcess = regexpProcess(addressToProcess);
-    }
-    print("origin : $origin");
+  Address(this.addressToProcess) {
+    addressToProcess = regexpProcess(addressToProcess);
     addressList = stringToListStrings(addressToProcess);
 
     _testsNumbersInList(addressList);
