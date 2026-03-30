@@ -131,6 +131,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmiPromptResult => 'BMI:';
 
   @override
+  String get bmiActionEnter => 'Enter';
+
+  @override
+  String get bmiErrorInvalidHeight => 'Error: incorrect height';
+
+  @override
+  String get bmiErrorInvalidWeight => 'Error: incorrect weight';
+
+  @override
+  String get bmiErrorGeneric => 'Error';
+
+  @override
   String get bmiCategoryUnderweight => 'Underweight';
 
   @override

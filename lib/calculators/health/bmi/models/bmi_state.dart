@@ -7,6 +7,7 @@ class BmiState {
   final String? height; // Height in meters
   final String? weight; // Weight in kg
   final bool isHeightComplete;
+  final bool hasError;
   final String prompt;
 
   const BmiState({
@@ -15,6 +16,7 @@ class BmiState {
     this.height,
     this.weight,
     this.isHeightComplete = false,
+    this.hasError = false,
     this.prompt = '',
   });
 
@@ -24,6 +26,7 @@ class BmiState {
     String? height,
     String? weight,
     bool? isHeightComplete,
+    bool? hasError,
     String? prompt,
   }) {
     return BmiState(
@@ -32,6 +35,7 @@ class BmiState {
       height: height ?? this.height,
       weight: weight ?? this.weight,
       isHeightComplete: isHeightComplete ?? this.isHeightComplete,
+      hasError: hasError ?? this.hasError,
       prompt: prompt ?? this.prompt,
     );
   }

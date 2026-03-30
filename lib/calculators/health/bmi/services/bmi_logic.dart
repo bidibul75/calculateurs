@@ -6,6 +6,8 @@ import 'package:get_it/get_it.dart';
 
 /// BMI calculation logic
 class BmiLogic {
+  static const String errorToken = '__bmi_error__';
+
   static String _normalizeInput(String value, String decimalSep) {
     return value.replaceAll(decimalSep, '.').trim();
   }
@@ -22,14 +24,14 @@ class BmiLogic {
       final weight = Decimal.parse(normalizedWeight);
 
       if (height <= Decimal.zero || weight <= Decimal.zero) {
-        return 'Error';
+        return errorToken;
       }
 
       final bmi = weight / (height * height);
       final String formatted = bmi.toDouble().toStringAsFixed(2);
       return formatted.replaceAll('.', symbols.decimalSep);
     } catch (e) {
-      return 'Error';
+      return errorToken;
     }
   }
 
@@ -52,5 +54,21 @@ class BmiLogic {
     } catch (e) {
       return '';
     }
+  }
+
+  /// Checks if the height is correct
+  static bool isHeightCorrect(String heightStr) {
+    final symbols = GetIt.I<LocalNumberSymbols>();
+    final String normalizedHeight = _normalizeInput(heightStr, symbols.decimalSep);
+    final double? normalizedHeightDouble = double.tryParse(normalizedHeight);
+    return normalizedHeightDouble == null ? false : normalizedHeightDouble > 0.0 && normalizedHeightDouble < 2.73;
+  }
+
+  /// Checks if the weight is correct
+  static bool isWeightCorrect(String weightStr) {
+    final symbols = GetIt.I<LocalNumberSymbols>();
+    final String normalizedWeight = _normalizeInput(weightStr, symbols.decimalSep);
+    final double? normalizedWeightDouble = double.tryParse(normalizedWeight);
+    return normalizedWeightDouble == null ? false : normalizedWeightDouble > 0.0 && normalizedWeightDouble < 600.0;
   }
 }

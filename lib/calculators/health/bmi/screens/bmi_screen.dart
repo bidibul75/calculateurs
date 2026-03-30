@@ -36,7 +36,14 @@ class _BmiScreenState extends State<BmiScreen> {
     // Initialize controller with localized prompts only once
     if (!_isInitialized) {
       final l10n = AppLocalizations.of(context);
-      _controller.initialize(l10n.bmiPromptHeight, l10n.bmiPromptWeight, l10n.bmiPromptResult);
+      _controller.initialize(
+        l10n.bmiPromptHeight,
+        l10n.bmiPromptWeight,
+        l10n.bmiPromptResult,
+        l10n.bmiErrorInvalidHeight,
+        l10n.bmiErrorInvalidWeight,
+        l10n.bmiErrorGeneric,
+      );
       _isInitialized = true;
     }
   }
@@ -62,7 +69,6 @@ class _BmiScreenState extends State<BmiScreen> {
 
   /// Determines category text color based on BMI category
   Color _getCategoryColor(String bmiOutput) {
-    print(bmiOutput);
     final category = BmiLogic.getBmiCategory(bmiOutput);
     switch (category) {
       case 'underweight':
@@ -104,7 +110,7 @@ class _BmiScreenState extends State<BmiScreen> {
   }
 
   /// Builds the large Enter button
-  Widget _buildEnterButton() {
+  Widget _buildEnterButton(String label) {
     return Padding(
       padding: const EdgeInsets.all(6.0),
       child: ElevatedButton(
@@ -119,8 +125,8 @@ class _BmiScreenState extends State<BmiScreen> {
           ),
           padding: const EdgeInsets.all(12),
         ),
-        onPressed: () => _controller.onButtonPressed('Enter'),
-        child: Text('Enter', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        onPressed: () => _controller.onButtonPressed(BmiController.actionEnter),
+        child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -212,8 +218,8 @@ class _BmiScreenState extends State<BmiScreen> {
                                     state.output,
                                     maxLines: 1,
                                     style: TextStyle(
-                                      color: _themeManager.displayTextColor,
-                                      fontSize: 50,
+                                      color: state.hasError ? Colors.red : _themeManager.displayTextColor,
+                                      fontSize: state.hasError ? 30 : 50,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -273,7 +279,7 @@ class _BmiScreenState extends State<BmiScreen> {
                               ),
 
                               // Right side: large Enter button
-                              Expanded(flex: 1, child: _buildEnterButton()),
+                              Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
                             ],
                           ),
                         ),
