@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Address', () {
     test('calculates IPv4 /22 network details correctly', () {
-      final address = Address('90.16.84.82/22', 'address');
+      final address = Address('90.16.84.82/22');
 
       expect(address.suffix, 22);
       expect(address.mask, '255.255.252.0');
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('keeps a single available address for /32', () {
-      final address = Address('192.168.1.42/32', 'address');
+      final address = Address('192.168.1.42/32');
 
       expect(address.addressNetwork, '192.168.1.42');
       expect(address.addressBroadcast, '192.168.1.42');
@@ -28,10 +28,10 @@ void main() {
     });
 
     test('counts total addresses correctly for very large ranges', () {
-      final slash0 = Address('0.0.0.0/0', 'address');
-      final slash1 = Address('0.0.0.0/1', 'address');
-      final slash8 = Address('10.0.0.0/8', 'address');
-      final slash31 = Address('10.0.0.0/31', 'address');
+      final slash0 = Address('0.0.0.0/0');
+      final slash1 = Address('0.0.0.0/1');
+      final slash8 = Address('10.0.0.0/8');
+      final slash31 = Address('10.0.0.0/31');
 
       expect(slash0.numberAvailableAddresses, 4294967296);
       expect(slash1.numberAvailableAddresses, 2147483648);
@@ -40,17 +40,17 @@ void main() {
     });
 
     test('computes /0 bounds correctly', () {
-      final address = Address('123.45.67.89/0', 'address');
+      final address = Address('123.45.67.89/0');
 
       expect(address.addressNetwork, '0.0.0.0');
       expect(address.addressBroadcast, '255.255.255.255');
     });
 
     test('computes usable host count with /31 and /32 edge rules', () {
-      final slash24 = Address('192.168.1.42/24', 'address');
-      final slash31 = Address('10.0.0.0/31', 'address');
-      final slash32 = Address('10.0.0.1/32', 'address');
-      final slash0 = Address('0.0.0.0/0', 'address');
+      final slash24 = Address('192.168.1.42/24');
+      final slash31 = Address('10.0.0.0/31');
+      final slash32 = Address('10.0.0.1/32');
+      final slash0 = Address('0.0.0.0/0');
 
       expect(slash24.numberUsableAddresses, 254);
       expect(slash31.numberUsableAddresses, 2);
@@ -83,6 +83,7 @@ void main() {
     test('addressShift increments and decrements with carry/borrow', () {
       expect(Address.addressShift(['10', '0', '0', '255'], 1), ['10', '0', '1', '0']);
       expect(Address.addressShift(['10', '0', '1', '0'], -1), ['10', '0', '0', '255']);
+      expect(Address.addressShift(['10', '0', '0', '0'], -1), ['9', '255', '255', '255']);
     });
 
     test('regexpProcess throws for invalid CIDR format', () {
@@ -93,11 +94,11 @@ void main() {
     });
 
     test('Address throws for suffix out of range', () {
-      expect(() => Address('10.0.0.1/33', 'address'), throwsA(isA<MyException>()));
+      expect(() => Address('10.0.0.1/33'), throwsA(isA<MyException>()));
     });
 
     test('Address throws for octet out of range', () {
-      expect(() => Address('256.1.1.1/24', 'address'), throwsA(isA<MyException>()));
+      expect(() => Address('256.1.1.1/24'), throwsA(isA<MyException>()));
     });
 
     test('regexpProcess throws for too-long input', () {

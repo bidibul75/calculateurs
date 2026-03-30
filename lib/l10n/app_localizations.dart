@@ -342,6 +342,30 @@ abstract class AppLocalizations {
   /// **'BMI:'**
   String get bmiPromptResult;
 
+  /// No description provided for @bmiActionEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get bmiActionEnter;
+
+  /// No description provided for @bmiErrorInvalidHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: incorrect height'**
+  String get bmiErrorInvalidHeight;
+
+  /// No description provided for @bmiErrorInvalidWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: incorrect weight'**
+  String get bmiErrorInvalidWeight;
+
+  /// No description provided for @bmiErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get bmiErrorGeneric;
+
   /// No description provided for @bmiCategoryUnderweight.
   ///
   /// In en, this message translates to:

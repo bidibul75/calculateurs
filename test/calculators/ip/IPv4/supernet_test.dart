@@ -216,7 +216,7 @@ List<Supernet> _buildSortedSupernets(List<String> rawAddresses) {
   final addresses = normalized.map(Supernet.new).toList();
   // Sort on the binary representation of the network address (numeric order),
   // matching the sort used in supernet.dart.
-  addresses.sort((a, b) => a.addressNetworkStringBinary.compareTo(b.addressNetworkStringBinary));
+  Supernet.sortAddressList(addresses);
   return addresses;
 }
 

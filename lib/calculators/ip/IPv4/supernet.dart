@@ -4,7 +4,7 @@ import 'relation.dart';
 class Supernet extends Address {
   String addressTemp;
 
-  Supernet(this.addressTemp) : super(addressTemp, "supernet");
+  Supernet(this.addressTemp) : super(addressTemp);
 
   /// Applies [Address.regexpProcess] to every address in the list
   static List<String> regexpList(List<String> listToProcess) {
@@ -37,7 +37,6 @@ class Supernet extends Address {
           case "equal":
             return "overlaps";
           case "higher":
-            print(bottomAddressA);
             return "outside";
           case "lower":
             switch (testPosition(bottomAddressA, bottomAddressB)) {
@@ -73,8 +72,8 @@ class Supernet extends Address {
 
   /// Tests if an address A is higher or lower than an address B
   /// For IPV4 and IPV6 (TODO: test)
-  static String testPosition(List<String> listA, List<String> listB, {String IPVersion = "4"}) {
-    int numberOfLoops = IPVersion == "4" ? 4 : 8;
+  static String testPosition(List<String> listA, List<String> listB, {String iPVersion = "4"}) {
+    int numberOfLoops = iPVersion == "4" ? 4 : 8;
     for (int i = 0; i < numberOfLoops; i++) {
       if (int.parse(listA[i]) > int.parse(listB[i])) return "higher";
       if (int.parse(listA[i]) < int.parse(listB[i])) return "lower";
@@ -115,12 +114,17 @@ class Supernet extends Address {
         );
       }
     }
-    print(listToProcess);
     return listToProcess;
+  }
+
+  /// Sorts a list of List<Address>
+  static void sortAddressList(List<Address> list) {
+    list.sort((a, b) => a.addressNetworkStringBinary.compareTo(b.addressNetworkStringBinary));
   }
 
   /// Tests if all networks in a sorted list are contiguous
   static bool isAListOfContiguousAddresses(List<Address> list) {
+    sortAddressList(list);
     for (int i = 0; i < list.length - 1; i++) {
       if (int.parse(list[i].addressBroadcastStringBinary, radix: 2) !=
           int.parse(list[i + 1].addressNetworkStringBinary, radix: 2) - 1) {

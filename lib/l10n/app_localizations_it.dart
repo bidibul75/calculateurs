@@ -131,6 +131,18 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bmiPromptResult => 'BMI:';
 
   @override
+  String get bmiActionEnter => 'Invio';
+
+  @override
+  String get bmiErrorInvalidHeight => 'Errore: altezza non valida';
+
+  @override
+  String get bmiErrorInvalidWeight => 'Errore: peso non valido';
+
+  @override
+  String get bmiErrorGeneric => 'Errore';
+
+  @override
   String get bmiCategoryUnderweight => 'Sottopeso';
 
   @override

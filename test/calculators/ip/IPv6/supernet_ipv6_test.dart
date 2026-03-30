@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:calculators/calculators/ip/IPv6/supernet_ipv6.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -108,10 +106,7 @@ void main() {
     });
 
     test('computes common prefix supernet for two adjacent /32 networks', () {
-      final list = [
-        SupernetIPv6('2001:db8::/32'),
-        SupernetIPv6('2001:db9::/32'),
-      ]..sort((a, b) => a.address6BinaryString.compareTo(b.address6BinaryString));
+      final list = [SupernetIPv6('2001:db8::/32'), SupernetIPv6('2001:db9::/32')];
 
       final result = SupernetIPv6.supernetCalc(list);
 
@@ -124,7 +119,7 @@ void main() {
         SupernetIPv6('2001:db9::/32'),
         SupernetIPv6('2001:dba::/32'),
         SupernetIPv6('2001:dbb::/32'),
-      ]..sort((a, b) => a.address6BinaryString.compareTo(b.address6BinaryString));
+      ];
 
       final result = SupernetIPv6.supernetCalc(list);
 
