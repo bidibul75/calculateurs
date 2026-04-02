@@ -57,6 +57,38 @@
   "bmiCategoryOverweight": "Overweight",
   "bmiCategoryObese": "Obese",
 
+  "@_module.ip.ipv4": {
+    "description": "Module vocabulary: IP > IPv4 Address"
+  },
+  "menuIpv4Address": "IPv4 Address",
+  "ipv4Title": "IPv4 Address",
+  "ipv4InputLabel": "IPv4 CIDR address",
+  "ipv4InputHint": "Example: 192.168.1.34/24",
+  "ipv4ActionCalculate": "Calculate",
+  "ipv4ActionClear": "Clear",
+  "ipv4ErrorEmptyCidr": "Please enter an IPv4 CIDR address.",
+  "ipv4ErrorInvalidCidr": "Invalid IPv4 CIDR format.",
+  "ipv4ErrorGeneric": "Unable to process this IPv4 CIDR.",
+  "ipv4InfoPrefix": "Prefix",
+  "ipv4InfoClass": "Class",
+  "ipv4InfoScope": "Scope",
+  "ipv4InfoMask": "Subnet mask",
+  "ipv4InfoWildcard": "Wildcard mask",
+  "ipv4InfoNetwork": "Network address",
+  "ipv4InfoBroadcast": "Broadcast address",
+  "ipv4InfoFirstHost": "First usable host",
+  "ipv4InfoLastHost": "Last usable host",
+  "ipv4InfoTotalAddresses": "Total addresses",
+  "ipv4InfoUsableHosts": "Usable hosts",
+  "ipv4InfoNetworkBinary": "Network (binary)",
+  "ipv4InfoBroadcastBinary": "Broadcast (binary)",
+  "ipv4ScopePrivate": "Private",
+  "ipv4ScopePublic": "Public",
+  "ipv4ScopeLoopback": "Loopback",
+  "ipv4ScopeLinkLocal": "Link-local",
+  "ipv4ScopeMulticast": "Multicast",
+  "ipv4ScopeReserved": "Reserved/Experimental",
+
   "@_module.ip.ipv6": {
     "description": "Module vocabulary: IP > IPv6"
   },

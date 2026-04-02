@@ -57,6 +57,38 @@
   "bmiCategoryOverweight": "Sovrappeso",
   "bmiCategoryObese": "Obesità",
 
+  "@_module.ip.ipv4": {
+    "description": "Vocabolario modulo: IP > Indirizzo IPv4"
+  },
+  "menuIpv4Address": "Indirizzo IPv4",
+  "ipv4Title": "Indirizzo IPv4",
+  "ipv4InputLabel": "Indirizzo IPv4 in CIDR",
+  "ipv4InputHint": "Esempio: 192.168.1.34/24",
+  "ipv4ActionCalculate": "Calcola",
+  "ipv4ActionClear": "Cancella",
+  "ipv4ErrorEmptyCidr": "Inserisci un indirizzo IPv4 in CIDR.",
+  "ipv4ErrorInvalidCidr": "Formato CIDR IPv4 non valido.",
+  "ipv4ErrorGeneric": "Impossibile elaborare questo CIDR IPv4.",
+  "ipv4InfoPrefix": "Prefisso",
+  "ipv4InfoClass": "Classe",
+  "ipv4InfoScope": "Ambito",
+  "ipv4InfoMask": "Maschera di sottorete",
+  "ipv4InfoWildcard": "Maschera wildcard",
+  "ipv4InfoNetwork": "Indirizzo di rete",
+  "ipv4InfoBroadcast": "Indirizzo broadcast",
+  "ipv4InfoFirstHost": "Primo host utilizzabile",
+  "ipv4InfoLastHost": "Ultimo host utilizzabile",
+  "ipv4InfoTotalAddresses": "Totale indirizzi",
+  "ipv4InfoUsableHosts": "Host utilizzabili",
+  "ipv4InfoNetworkBinary": "Rete (binario)",
+  "ipv4InfoBroadcastBinary": "Broadcast (binario)",
+  "ipv4ScopePrivate": "Privata",
+  "ipv4ScopePublic": "Pubblica",
+  "ipv4ScopeLoopback": "Loopback",
+  "ipv4ScopeLinkLocal": "Link-local",
+  "ipv4ScopeMulticast": "Multicast",
+  "ipv4ScopeReserved": "Riservata/Sperimentale",
+
   "@_module.ip.ipv6": {
     "description": "Vocabolario modulo: IP > IPv6"
   },

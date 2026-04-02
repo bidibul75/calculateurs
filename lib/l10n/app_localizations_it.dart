@@ -155,6 +155,90 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bmiCategoryObese => 'Obesità';
 
   @override
+  String get menuIpv4Address => 'Indirizzo IPv4';
+
+  @override
+  String get ipv4Title => 'Indirizzo IPv4';
+
+  @override
+  String get ipv4InputLabel => 'Indirizzo IPv4 in CIDR';
+
+  @override
+  String get ipv4InputHint => 'Esempio: 192.168.1.34/24';
+
+  @override
+  String get ipv4ActionCalculate => 'Calcola';
+
+  @override
+  String get ipv4ActionClear => 'Cancella';
+
+  @override
+  String get ipv4ErrorEmptyCidr => 'Inserisci un indirizzo IPv4 in CIDR.';
+
+  @override
+  String get ipv4ErrorInvalidCidr => 'Formato CIDR IPv4 non valido.';
+
+  @override
+  String get ipv4ErrorGeneric => 'Impossibile elaborare questo CIDR IPv4.';
+
+  @override
+  String get ipv4InfoPrefix => 'Prefisso';
+
+  @override
+  String get ipv4InfoClass => 'Classe';
+
+  @override
+  String get ipv4InfoScope => 'Ambito';
+
+  @override
+  String get ipv4InfoMask => 'Maschera di sottorete';
+
+  @override
+  String get ipv4InfoWildcard => 'Maschera wildcard';
+
+  @override
+  String get ipv4InfoNetwork => 'Indirizzo di rete';
+
+  @override
+  String get ipv4InfoBroadcast => 'Indirizzo broadcast';
+
+  @override
+  String get ipv4InfoFirstHost => 'Primo host utilizzabile';
+
+  @override
+  String get ipv4InfoLastHost => 'Ultimo host utilizzabile';
+
+  @override
+  String get ipv4InfoTotalAddresses => 'Totale indirizzi';
+
+  @override
+  String get ipv4InfoUsableHosts => 'Host utilizzabili';
+
+  @override
+  String get ipv4InfoNetworkBinary => 'Rete (binario)';
+
+  @override
+  String get ipv4InfoBroadcastBinary => 'Broadcast (binario)';
+
+  @override
+  String get ipv4ScopePrivate => 'Privata';
+
+  @override
+  String get ipv4ScopePublic => 'Pubblica';
+
+  @override
+  String get ipv4ScopeLoopback => 'Loopback';
+
+  @override
+  String get ipv4ScopeLinkLocal => 'Link-local';
+
+  @override
+  String get ipv4ScopeMulticast => 'Multicast';
+
+  @override
+  String get ipv4ScopeReserved => 'Riservata/Sperimentale';
+
+  @override
   String get ipv6TypeLoopback => 'Indirizzo loopback.';
 
   @override

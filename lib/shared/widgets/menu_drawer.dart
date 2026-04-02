@@ -131,6 +131,7 @@ class MenuDrawer extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final modules = buildModuleMenuCatalog(l10n);
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
+    final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
 
     showModalBottomSheet<void>(
       context: context,
@@ -179,6 +180,22 @@ class MenuDrawer extends StatelessWidget {
                   title: Text(sectionTitle(ModuleSection.health, l10n)),
                   children: [
                     for (final module in healthModules)
+                      ListTile(
+                        contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                        title: Text(module.label),
+                        onTap: () {
+                          Navigator.of(sheetContext).pop();
+                          _navigateToRoute(context, module.routeName);
+                        },
+                      ),
+                  ],
+                ),
+              if (conversionModules.isNotEmpty)
+                ExpansionTile(
+                  leading: const Icon(Icons.swap_horiz_outlined),
+                  title: Text(sectionTitle(ModuleSection.conversions, l10n)),
+                  children: [
+                    for (final module in conversionModules)
                       ListTile(
                         contentPadding: const EdgeInsets.only(left: 56, right: 16),
                         title: Text(module.label),

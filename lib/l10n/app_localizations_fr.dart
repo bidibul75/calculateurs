@@ -156,6 +156,90 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bmiCategoryObese => 'Obésité';
 
   @override
+  String get menuIpv4Address => 'Adresse IPv4';
+
+  @override
+  String get ipv4Title => 'Adresse IPv4';
+
+  @override
+  String get ipv4InputLabel => 'Adresse IPv4 en CIDR';
+
+  @override
+  String get ipv4InputHint => 'Exemple : 192.168.1.34/24';
+
+  @override
+  String get ipv4ActionCalculate => 'Calculer';
+
+  @override
+  String get ipv4ActionClear => 'Effacer';
+
+  @override
+  String get ipv4ErrorEmptyCidr => 'Veuillez saisir une adresse IPv4 en CIDR.';
+
+  @override
+  String get ipv4ErrorInvalidCidr => 'Format CIDR IPv4 invalide.';
+
+  @override
+  String get ipv4ErrorGeneric => 'Impossible de traiter ce CIDR IPv4.';
+
+  @override
+  String get ipv4InfoPrefix => 'Préfixe';
+
+  @override
+  String get ipv4InfoClass => 'Classe';
+
+  @override
+  String get ipv4InfoScope => 'Portée';
+
+  @override
+  String get ipv4InfoMask => 'Masque de sous-réseau';
+
+  @override
+  String get ipv4InfoWildcard => 'Masque wildcard';
+
+  @override
+  String get ipv4InfoNetwork => 'Adresse réseau';
+
+  @override
+  String get ipv4InfoBroadcast => 'Adresse de diffusion';
+
+  @override
+  String get ipv4InfoFirstHost => 'Premier hôte utilisable';
+
+  @override
+  String get ipv4InfoLastHost => 'Dernier hôte utilisable';
+
+  @override
+  String get ipv4InfoTotalAddresses => 'Nombre total d\'adresses';
+
+  @override
+  String get ipv4InfoUsableHosts => 'Hôtes utilisables';
+
+  @override
+  String get ipv4InfoNetworkBinary => 'Réseau (binaire)';
+
+  @override
+  String get ipv4InfoBroadcastBinary => 'Diffusion (binaire)';
+
+  @override
+  String get ipv4ScopePrivate => 'Privée';
+
+  @override
+  String get ipv4ScopePublic => 'Publique';
+
+  @override
+  String get ipv4ScopeLoopback => 'Loopback';
+
+  @override
+  String get ipv4ScopeLinkLocal => 'Link-local';
+
+  @override
+  String get ipv4ScopeMulticast => 'Multicast';
+
+  @override
+  String get ipv4ScopeReserved => 'Réservée/Expérimentale';
+
+  @override
   String get ipv6TypeLoopback => 'Adresse loopback.';
 
   @override

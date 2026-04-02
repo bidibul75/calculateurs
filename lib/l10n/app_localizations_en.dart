@@ -155,6 +155,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmiCategoryObese => 'Obese';
 
   @override
+  String get menuIpv4Address => 'IPv4 Address';
+
+  @override
+  String get ipv4Title => 'IPv4 Address';
+
+  @override
+  String get ipv4InputLabel => 'IPv4 CIDR address';
+
+  @override
+  String get ipv4InputHint => 'Example: 192.168.1.34/24';
+
+  @override
+  String get ipv4ActionCalculate => 'Calculate';
+
+  @override
+  String get ipv4ActionClear => 'Clear';
+
+  @override
+  String get ipv4ErrorEmptyCidr => 'Please enter an IPv4 CIDR address.';
+
+  @override
+  String get ipv4ErrorInvalidCidr => 'Invalid IPv4 CIDR format.';
+
+  @override
+  String get ipv4ErrorGeneric => 'Unable to process this IPv4 CIDR.';
+
+  @override
+  String get ipv4InfoPrefix => 'Prefix';
+
+  @override
+  String get ipv4InfoClass => 'Class';
+
+  @override
+  String get ipv4InfoScope => 'Scope';
+
+  @override
+  String get ipv4InfoMask => 'Subnet mask';
+
+  @override
+  String get ipv4InfoWildcard => 'Wildcard mask';
+
+  @override
+  String get ipv4InfoNetwork => 'Network address';
+
+  @override
+  String get ipv4InfoBroadcast => 'Broadcast address';
+
+  @override
+  String get ipv4InfoFirstHost => 'First usable host';
+
+  @override
+  String get ipv4InfoLastHost => 'Last usable host';
+
+  @override
+  String get ipv4InfoTotalAddresses => 'Total addresses';
+
+  @override
+  String get ipv4InfoUsableHosts => 'Usable hosts';
+
+  @override
+  String get ipv4InfoNetworkBinary => 'Network (binary)';
+
+  @override
+  String get ipv4InfoBroadcastBinary => 'Broadcast (binary)';
+
+  @override
+  String get ipv4ScopePrivate => 'Private';
+
+  @override
+  String get ipv4ScopePublic => 'Public';
+
+  @override
+  String get ipv4ScopeLoopback => 'Loopback';
+
+  @override
+  String get ipv4ScopeLinkLocal => 'Link-local';
+
+  @override
+  String get ipv4ScopeMulticast => 'Multicast';
+
+  @override
+  String get ipv4ScopeReserved => 'Reserved/Experimental';
+
+  @override
   String get ipv6TypeLoopback => 'Loopback address.';
 
   @override
