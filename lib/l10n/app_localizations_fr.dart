@@ -108,7 +108,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuSectionHealth => 'Santé';
 
   @override
-  String get menuSectionConversions => 'Conversions';
+  String get menuSectionConversions => 'Outils IP';
 
   @override
   String get menuSectionFinance => 'Finances';

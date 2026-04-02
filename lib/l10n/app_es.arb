@@ -36,7 +36,7 @@
     "description": "Etiquetas de secciones para agrupar modulos en el menu"
   },
   "menuSectionHealth": "Salud",
-  "menuSectionConversions": "Conversiones",
+  "menuSectionConversions": "Herramientas IP",
   "menuSectionFinance": "Finanzas",
   "menuSectionRealEstate": "Inmobiliario",
 

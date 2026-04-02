@@ -6,6 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 
+const Key mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
+const Key clearButtonKey = ValueKey<String>('ipv4.key.clear');
+const Key backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
+const Key enterButtonKey = ValueKey<String>('ipv4.key.enter');
+
 void main() {
   setUp(() {
     if (GetIt.I.isRegistered<ThemeManager>()) {
@@ -75,12 +80,29 @@ void main() {
 
   testWidgets('shows custom keypad on mobile only', (tester) async {
     await pumpScreen(tester, platform: TargetPlatform.android);
-    expect(find.text('Enter'), findsOneWidget);
-    expect(find.byIcon(Icons.keyboard_return), findsOneWidget);
+    expect(find.byKey(mobileKeypadContainerKey), findsOneWidget);
+    expect(find.byKey(enterButtonKey), findsOneWidget);
 
     await pumpScreen(tester, platform: TargetPlatform.windows);
-    expect(find.text('Enter'), findsNothing);
-    expect(find.byIcon(Icons.keyboard_return), findsNothing);
+    expect(find.byKey(mobileKeypadContainerKey), findsNothing);
+    expect(find.byKey(enterButtonKey), findsNothing);
+  });
+
+  testWidgets('mobile shows Clear action only when keypad is hidden; desktop shows both actions', (tester) async {
+    await pumpScreen(tester, platform: TargetPlatform.android);
+    expect(find.text('Calculate'), findsNothing);
+    expect(find.text('Clear'), findsNothing);
+
+    for (final key in ['1', '9', '2', '.', '1', '6', '8', '.', '1', '.', '3', '4', '/', '2', '4']) {
+      await tapKey(tester, key);
+    }
+    await tester.tap(find.byKey(enterButtonKey));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Clear'), findsOneWidget);
+
+    await pumpScreen(tester, platform: TargetPlatform.windows);
+    expect(find.text('Calculate'), findsOneWidget);
+    expect(find.text('Clear'), findsOneWidget);
   });
 
   testWidgets('mobile keypad supports delete and compact layouts', (tester) async {
@@ -94,29 +116,62 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('2'));
     await tester.pump();
-    await tester.tap(find.text('⌫'));
+    await tester.tap(find.byKey(backspaceButtonKey));
     await tester.pump();
 
     final textField = tester.widget<TextField>(find.byType(TextField));
     expect(textField.controller?.text, '1');
-    expect(find.text('C'), findsOneWidget);
-    expect(find.text('⌫'), findsOneWidget);
+    expect(find.byKey(clearButtonKey), findsOneWidget);
+    expect(find.byKey(backspaceButtonKey), findsOneWidget);
+    expect(find.byIcon(Icons.backspace_outlined), findsOneWidget);
   });
 
-  testWidgets('mobile keypad hides after Enter and shows the result area', (tester) async {
+  testWidgets('mobile keypad uses consistent key height', (tester) async {
+    await pumpScreen(tester, platform: TargetPlatform.android, surfaceSize: const Size(375, 812));
+
+    final Size digitSize = tester.getSize(find.widgetWithText(ElevatedButton, '1'));
+    final Size clearSize = tester.getSize(find.byKey(clearButtonKey));
+    final Size enterSize = tester.getSize(find.byKey(enterButtonKey));
+
+    expect(digitSize.height, clearSize.height);
+    expect(clearSize.height, enterSize.height);
+  });
+
+  testWidgets('mobile keypad hides with animation after Enter and shows the result area', (tester) async {
     await pumpScreen(tester, platform: TargetPlatform.android, surfaceSize: const Size(375, 812));
 
     for (final key in ['1', '9', '2', '.', '1', '6', '8', '.', '1', '.', '3', '4', '/', '2', '4']) {
       await tapKey(tester, key);
     }
 
-    await tapKey(tester, 'Enter');
-    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(enterButtonKey));
+    await tester.pump();
+    expect(find.byKey(mobileKeypadContainerKey), findsOneWidget);
 
-    expect(find.text('C'), findsNothing);
-    expect(find.text('⌫'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byKey(mobileKeypadContainerKey), findsNothing);
     expect(find.text('Network address'), findsOneWidget);
     expect(find.text('192.168.1.0'), findsOneWidget);
+  });
+
+  testWidgets('tapping the input re-shows keypad after it has been hidden', (tester) async {
+    await pumpScreen(tester, platform: TargetPlatform.android, surfaceSize: const Size(375, 812));
+
+    for (final key in ['1', '9', '2', '.', '1', '6', '8', '.', '1', '.', '3', '4', '/', '2', '4']) {
+      await tapKey(tester, key);
+    }
+
+    await tester.tap(find.byKey(enterButtonKey));
+    await tester.pump();
+    expect(find.byKey(mobileKeypadContainerKey), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(mobileKeypadContainerKey), findsNothing);
+
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+    expect(find.byKey(mobileKeypadContainerKey), findsOneWidget);
   });
 }
 

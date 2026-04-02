@@ -16,6 +16,13 @@ class Ipv4AddressScreen extends StatefulWidget {
 }
 
 class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
+  static const double _mobileKeyHeight = 52;
+  static const Duration _mobileKeypadAnimationDuration = Duration(milliseconds: 220);
+  static const Key _mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
+  static const Key _clearButtonKey = ValueKey<String>('ipv4.key.clear');
+  static const Key _backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
+  static const Key _enterButtonKey = ValueKey<String>('ipv4.key.enter');
+
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final TextEditingController _inputController = TextEditingController();
 
@@ -62,6 +69,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       return;
     }
 
+    // Accept harmless spaces in user input, then validate the canonical CIDR form.
     final normalizedInput = rawInput.replaceAll(' ', '');
     if (!normalizedInput.isValidIPv4CIDR) {
       setState(() {
@@ -88,6 +96,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     }
   }
 
+  /// Returns true only on Android and iOS to enable the custom mobile keypad.
   bool _isMobilePlatform(TargetPlatform platform) {
     return platform == TargetPlatform.android || platform == TargetPlatform.iOS;
   }
@@ -132,38 +141,68 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding}) {
+  Widget _buildKeyButton(
+    String label, {
+    required double fontSize,
+    required EdgeInsets padding,
+    Key? buttonKey,
+  }) {
     return Expanded(
       child: Padding(
         padding: padding,
-        child: ElevatedButton(
-          style: _keyButtonStyle(),
-          onPressed: () => _appendToInput(label),
-          child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+        child: SizedBox(
+          height: _mobileKeyHeight,
+          width: double.infinity,
+          child: ElevatedButton(
+            key: buttonKey,
+            style: _keyButtonStyle(),
+            onPressed: () => _appendToInput(label),
+            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildActionKeyButton({
-    required String label,
-    required IconData icon,
+    String? label,
+    IconData? icon,
     required VoidCallback onPressed,
     required double fontSize,
     required EdgeInsets padding,
+    Key? buttonKey,
     bool expanded = true,
     Color? backgroundColor,
   }) {
+    final bool hasLabel = label != null && label.isNotEmpty;
+    final bool hasIcon = icon != null;
+
+    Widget child;
+    if (hasIcon && hasLabel) {
+      child = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon),
+          const SizedBox(width: 8),
+          Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+        ],
+      );
+    } else if (hasIcon) {
+      child = Icon(icon);
+    } else {
+      child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
+    }
+
     final button = Padding(
       padding: padding,
       child: SizedBox(
-        height: 52,
+        height: _mobileKeyHeight,
         width: double.infinity,
-        child: ElevatedButton.icon(
+        child: ElevatedButton(
+          key: buttonKey,
           style: _keyButtonStyle(backgroundColor: backgroundColor),
           onPressed: onPressed,
-          icon: Icon(icon),
-          label: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+          child: child,
         ),
       ),
     );
@@ -184,6 +223,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         final EdgeInsets actionPadding = EdgeInsets.all(compact ? 3 : 4);
 
         return Container(
+          key: _mobileKeypadContainerKey,
           margin: const EdgeInsets.only(top: 12),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -196,18 +236,18 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                 children: [
                   _buildActionKeyButton(
                     label: 'C',
-                    icon: Icons.clear,
                     onPressed: _clearInputOnly,
                     fontSize: fontSize,
                     padding: actionPadding,
+                    buttonKey: _clearButtonKey,
                     backgroundColor: Colors.redAccent,
                   ),
                   _buildActionKeyButton(
-                    label: '⌫',
                     icon: Icons.backspace_outlined,
                     onPressed: _deleteLastChar,
                     fontSize: fontSize,
                     padding: actionPadding,
+                    buttonKey: _backspaceButtonKey,
                     backgroundColor: Colors.redAccent,
                   ),
                 ],
@@ -223,6 +263,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                 onPressed: () => _calculate(hideMobileKeypad: true),
                 fontSize: fontSize,
                 padding: actionPadding,
+                buttonKey: _enterButtonKey,
                 expanded: false,
                 backgroundColor: Colors.green,
               ),
@@ -237,6 +278,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     final int first = int.parse(address.addressOnlyList[0]);
     final int second = int.parse(address.addressOnlyList[1]);
 
+    // Classify common IPv4 scopes used by admins (private, loopback, link-local, multicast, reserved).
     if (first == 10 || (first == 172 && second >= 16 && second <= 31) || (first == 192 && second == 168)) {
       return l10n.ipv4ScopePrivate;
     }
@@ -320,7 +362,9 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final bool showMobileKeypad = !kIsWeb && _isMobilePlatform(Theme.of(context).platform) && _isMobileKeypadVisible;
+    // Mobile app uses the custom keypad; desktop/web keeps standard text input behavior.
+    final bool isMobileApp = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
+    final bool showMobileKeypad = isMobileApp && _isMobileKeypadVisible;
 
     return Container(
       decoration: const BoxDecoration(
@@ -384,25 +428,63 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                             errorText: _errorText,
                           ),
                         ),
-                        if (showMobileKeypad) _buildMobileKeypad(),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => _calculate(hideMobileKeypad: showMobileKeypad),
-                                child: Text(l10n.ipv4ActionCalculate),
+                        AnimatedSwitcher(
+                          duration: _mobileKeypadAnimationDuration,
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          transitionBuilder: (child, animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: SizeTransition(
+                                axisAlignment: -1,
+                                sizeFactor: animation,
+                                child: child,
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: OutlinedButton(
+                            );
+                          },
+                          child: showMobileKeypad
+                              ? _buildMobileKeypad()
+                              : const SizedBox(key: ValueKey<String>('ipv4.mobileKeypad.hidden')),
+                        ),
+                        const SizedBox(height: 12),
+                        if (isMobileApp)
+                          if (!showMobileKeypad)
+                            SizedBox(
+                              height: _mobileKeyHeight,
+                              child: ElevatedButton(
+                                style: _keyButtonStyle(backgroundColor: Colors.redAccent),
                                 onPressed: _clear,
                                 child: Text(l10n.ipv4ActionClear),
                               ),
-                            ),
-                          ],
-                        ),
+                            )
+                          else
+                            const SizedBox.shrink()
+                        else
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: _mobileKeyHeight,
+                                  child: ElevatedButton(
+                                    style: _keyButtonStyle(),
+                                    onPressed: () => _calculate(hideMobileKeypad: showMobileKeypad),
+                                    child: Text(l10n.ipv4ActionCalculate),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: SizedBox(
+                                  height: _mobileKeyHeight,
+                                  child: ElevatedButton(
+                                    style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                                    onPressed: _clear,
+                                    child: Text(l10n.ipv4ActionClear),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         if (_result != null) ...[
                           const SizedBox(height: 16),
                           _buildResultCard(l10n, _result!),

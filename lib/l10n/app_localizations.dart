@@ -297,7 +297,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuSectionConversions.
   ///
   /// In en, this message translates to:
-  /// **'Conversions'**
+  /// **'IP Tools'**
   String get menuSectionConversions;
 
   /// No description provided for @menuSectionFinance.
