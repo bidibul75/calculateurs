@@ -149,29 +149,16 @@ void main() {
   // testOfIntersections
   // ------------------------------------------------------------------ //
   group('Supernet.testOfIntersections (range relations)', () {
-    List<String> networkList(String cidr) => Supernet(cidr).addressNetworkList;
-    List<String> broadcastList(String cidr) => Supernet(cidr).addressBroadcastList;
-
     test('detects equal networks', () {
       expect(
-        Supernet.testOfIntersections(
-          networkList('10.0.0.0/24'),
-          broadcastList('10.0.0.0/24'),
-          networkList('10.0.0.0/24'),
-          broadcastList('10.0.0.0/24'),
-        ),
+        Supernet.testOfIntersections(Supernet('10.0.0.0/24'), Supernet('10.0.0.0/24')),
         'equal',
       );
     });
 
     test('detects A outside B (no overlap)', () {
       expect(
-        Supernet.testOfIntersections(
-          networkList('10.0.2.0/24'),
-          broadcastList('10.0.2.0/24'),
-          networkList('10.0.0.0/24'),
-          broadcastList('10.0.0.0/24'),
-        ),
+        Supernet.testOfIntersections(Supernet('10.0.2.0/24'), Supernet('10.0.0.0/24')),
         'outside',
       );
     });
@@ -179,10 +166,8 @@ void main() {
     test('detects B inside A (A contains B)', () {
       expect(
         Supernet.testOfIntersections(
-          networkList('10.0.0.0/22'),
-          broadcastList('10.0.0.0/22'), // larger network A
-          networkList('10.0.0.0/24'),
-          broadcastList('10.0.0.0/24'), // smaller network B
+          Supernet('10.0.0.0/22'), // larger network A
+          Supernet('10.0.0.0/24'), // smaller network B
         ),
         'B_inside_A',
       );
@@ -191,10 +176,8 @@ void main() {
     test('detects A inside B (B contains A)', () {
       expect(
         Supernet.testOfIntersections(
-          networkList('10.0.0.0/24'),
-          broadcastList('10.0.0.0/24'), // smaller network A
-          networkList('10.0.0.0/22'),
-          broadcastList('10.0.0.0/22'), // larger network B
+          Supernet('10.0.0.0/24'), // smaller network A
+          Supernet('10.0.0.0/22'), // larger network B
         ),
         'A_inside_B',
       );

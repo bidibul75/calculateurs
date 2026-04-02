@@ -15,12 +15,12 @@ class Supernet extends Address {
   }
 
   /// Tests if 2 addresses are colliding each other or not and returns the result
-  static String testOfIntersections(
-    List<String> bottomAddressA,
-    List<String> topAddressA,
-    List<String> bottomAddressB,
-    List<String> topAddressB,
-  ) {
+  static String testOfIntersections(Address addressA, Address addressB) {
+    List<String> bottomAddressA = addressA.addressNetworkList;
+    List<String> bottomAddressB = addressB.addressNetworkList;
+    List<String> topAddressA = addressA.addressBroadcastList;
+    List<String> topAddressB = addressB.addressBroadcastList;
+
     switch (testPosition(topAddressA, topAddressB)) {
       case "equal":
         switch (testPosition(bottomAddressA, bottomAddressB)) {
@@ -64,7 +64,8 @@ class Supernet extends Address {
             }
             break;
           case "lower":
-            return "outside";
+            List<Address> list = [addressA, addressB];
+            return isAListOfContiguousAddresses(list) ? "contiguous" : "outside";
         }
     }
     return "Erreur de test des ensembles.";
