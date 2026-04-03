@@ -80,6 +80,13 @@ void main() {
     test('addresses at the edge of the address space (high octets)', () {
       expect(_calculateSupernet(['255.255.254.0/24', '255.255.255.0/24']), '255.255.254.0/23');
     });
+
+    test('calculates 0.0.0.0/0 for entirely disjoint networks (different first bits)', () {
+      // 10.0.0.0/24 starts with 0... (first bit = 0)
+      // 172.16.0.0/24 starts with 1... (first bit = 1)
+      // These differ at the first bit, so the supernet must be 0.0.0.0/0
+      expect(_calculateSupernet(['10.0.0.0/24', '172.16.0.0/24']), '0.0.0.0/0');
+    });
   });
 
   // ------------------------------------------------------------------ //

@@ -307,7 +307,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get relationContiguous => 'contigui';
 
   @override
-  String get relationAInsideB => 'A dentro B';
+  String get relationAInsideB => 'dentro';
 
   @override
   String get relationBInsideA => 'B dentro A';

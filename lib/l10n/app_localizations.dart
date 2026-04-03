@@ -687,7 +687,7 @@ abstract class AppLocalizations {
   /// No description provided for @relationAInsideB.
   ///
   /// In en, this message translates to:
-  /// **'A inside B'**
+  /// **'inside'**
   String get relationAInsideB;
 
   /// No description provided for @relationBInsideA.

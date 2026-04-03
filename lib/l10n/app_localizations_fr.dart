@@ -309,7 +309,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get relationContiguous => 'contiguës';
 
   @override
-  String get relationAInsideB => 'A incluse dans B';
+  String get relationAInsideB => 'incluse dans';
 
   @override
   String get relationBInsideA => 'B incluse dans A';

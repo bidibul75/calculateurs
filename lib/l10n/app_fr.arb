@@ -117,7 +117,7 @@
   "relationEqual": "égales",
   "relationOutside": "séparées",
   "relationContiguous": "contiguës",
-  "relationAInsideB": "A incluse dans B",
+  "relationAInsideB": "incluse dans",
   "relationBInsideA": "B incluse dans A",
   "relationOverlap": "chevauchement",
   "relationIntersecting": "intersection",

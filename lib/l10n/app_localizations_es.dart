@@ -310,7 +310,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get relationContiguous => 'contiguas';
 
   @override
-  String get relationAInsideB => 'A dentro de B';
+  String get relationAInsideB => 'dentro de';
 
   @override
   String get relationBInsideA => 'B dentro de A';
