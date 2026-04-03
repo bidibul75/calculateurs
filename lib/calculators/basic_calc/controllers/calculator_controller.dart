@@ -247,7 +247,11 @@ class CalculatorController extends ChangeNotifier {
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
-        result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1,
+          num2: result.toCleanMathString,
+          operation: _state.operation,
+        );
       }
 
       if (_state.history.contains("=")) {

@@ -15,7 +15,7 @@ class CalculatorLogic {
     String operation2 = "",
   }) {
     try {
-      // Convert clean Strings (1000.5) to Rational
+    // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
       Rational r2 = Rational.parse(num2);
 
@@ -38,7 +38,7 @@ class CalculatorLogic {
           result = r1 * r2;
           break;
         case "÷":
-          if (r2 == Rational.zero) return "Error";
+          if (r2 == Rational.zero) return "Error zero";
           result = r1 / r2;
           break;
         case "^":
@@ -48,17 +48,17 @@ class CalculatorLogic {
             int exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
           } catch (e) {
-            return "Error";
+            return "Error exp";
           }
           break;
         default:
-          return "Error";
+          return "Error default";
       }
 
       // Convert to Decimal with precision, then to formatted String
       return result.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
     } catch (e) {
-      return "Error";
+      return "Error end";
     }
   }
 

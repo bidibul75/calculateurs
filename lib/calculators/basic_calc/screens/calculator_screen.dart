@@ -50,10 +50,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   /// Builds an individual button
-  Widget _buildButton(String label) {
+  Widget _buildButton(String label, {required bool compact}) {
+    final double fontSize = compact ? 14 : 20;
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: EdgeInsets.all(compact ? 3.0 : 6.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: _getButtonColor(label),
@@ -65,13 +66,23 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               side: BorderSide(
                 // Border line
                 color: Colors.grey[200]!, // Color of border
-                width: 2.0, // Width of border
+                width: compact ? 1.2 : 2.0, // Width of border
               ),
             ),
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: compact ? 6 : 12),
+            minimumSize: Size.fromHeight(compact ? 34 : 44),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           onPressed: () => _controller.onButtonPressed(label),
-          child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              maxLines: 1,
+              softWrap: false,
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
       ),
     );
@@ -83,10 +94,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final l10n = AppLocalizations.of(context);
     final mediaSize = MediaQuery.sizeOf(context);
     final bool isDesktopLike = mediaSize.width >= 768;
-    final double keyboardHeight =
-        (mediaSize.height * (isDesktopLike ? 0.44 : 0.50))
-            .clamp(isDesktopLike ? 330.0 : 360.0, isDesktopLike ? 560.0 : 720.0)
-            .toDouble();
 
     return Container(
       decoration: BoxDecoration(
@@ -113,8 +120,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  children: [
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double availableHeight = constraints.maxHeight;
+                    final bool isCompactHeight = availableHeight < 700;
+                    // Compute keyboard height from actual available space to avoid vertical overflow.
+                    final double keyboardHeight =
+                        (availableHeight * (isDesktopLike ? 0.44 : (isCompactHeight ? 0.52 : 0.50)))
+                            .clamp(isDesktopLike ? 300.0 : (isCompactHeight ? 250.0 : 320.0), isDesktopLike ? 560.0 : 640.0)
+                            .toDouble();
+                    final double keyboardBottomPadding = isCompactHeight ? 8.0 : 50.0;
+
+                    return Column(
+                      children: [
                     // Display area with semi-transparent background
                     Expanded(
                       child: Container(
@@ -173,43 +191,98 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
                     // Button grid area
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
+                      padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
                       child: SizedBox(
                         height: keyboardHeight,
                         child: Column(
                           children: [
-                            Row(
-                              children: [_buildButton('MC'), _buildButton('MR'), _buildButton('M+'), _buildButton('M-')],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('MC', compact: isCompactHeight),
+                                  _buildButton('MR', compact: isCompactHeight),
+                                  _buildButton('M+', compact: isCompactHeight),
+                                  _buildButton('M-', compact: isCompactHeight),
+                                ],
+                              ),
                             ),
-                            Row(
-                              children: [_buildButton('x²'), _buildButton('√'), _buildButton('1/x'), _buildButton('x^y')],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('x²', compact: isCompactHeight),
+                                  _buildButton('√', compact: isCompactHeight),
+                                  _buildButton('1/x', compact: isCompactHeight),
+                                  _buildButton('x^y', compact: isCompactHeight),
+                                ],
+                              ),
                             ),
-                            Row(children: [_buildButton('C'), _buildButton('⌫'), _buildButton('+/-'), _buildButton('÷')]),
-                            Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('x')]),
-                            Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('-')]),
-                            Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('+')]),
-                            Row(
-                              children: [
-                                _buildButton('0'),
-                                _buildButton('00'),
-                                _buildButton(symbols.decimalSep),
-                                _buildButton('='),
-                              ],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('C', compact: isCompactHeight),
+                                  _buildButton('⌫', compact: isCompactHeight),
+                                  _buildButton('+/-', compact: isCompactHeight),
+                                  _buildButton('÷', compact: isCompactHeight),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('7', compact: isCompactHeight),
+                                  _buildButton('8', compact: isCompactHeight),
+                                  _buildButton('9', compact: isCompactHeight),
+                                  _buildButton('x', compact: isCompactHeight),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('4', compact: isCompactHeight),
+                                  _buildButton('5', compact: isCompactHeight),
+                                  _buildButton('6', compact: isCompactHeight),
+                                  _buildButton('-', compact: isCompactHeight),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('1', compact: isCompactHeight),
+                                  _buildButton('2', compact: isCompactHeight),
+                                  _buildButton('3', compact: isCompactHeight),
+                                  _buildButton('+', compact: isCompactHeight),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  _buildButton('0', compact: isCompactHeight),
+                                  _buildButton('00', compact: isCompactHeight),
+                                  _buildButton(symbols.decimalSep, compact: isCompactHeight),
+                                  _buildButton('=', compact: isCompactHeight),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
             // Photo credit at the bottom right
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: const PhotoCreditLink(),
-            ),
+            if (mediaSize.height >= 700)
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: const PhotoCreditLink(),
+              ),
           ],
         ),
       ),
