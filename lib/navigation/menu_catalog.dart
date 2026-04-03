@@ -32,6 +32,11 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       routeName: AppRoutes.ipv4Address,
       label: l10n.menuIpv4Address,
     ),
+    ModuleMenuItem(
+      section: ModuleSection.conversions,
+      routeName: AppRoutes.ipv4Supernet,
+      label: l10n.menuIpv4Supernet,
+    ),
   ];
 }
 

@@ -159,6 +159,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get menuIpv4Address => 'Direccion IPv4';
 
   @override
+  String get menuIpv4Supernet => 'Superred IPv4';
+
+  @override
   String get ipv4Title => 'Direccion IPv4';
 
   @override
@@ -238,6 +241,90 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ipv4ScopeReserved => 'Reservada/Experimental';
+
+  @override
+  String get ipv4SupernetTitle => 'Superred IPv4';
+
+  @override
+  String get ipv4SupernetInputLabel => 'Direccion IPv4 en CIDR';
+
+  @override
+  String get ipv4SupernetInputHint => 'Ejemplo: 192.168.1.0/24';
+
+  @override
+  String get ipv4SupernetActionAdd => 'Agregar';
+
+  @override
+  String get ipv4SupernetActionCalculate => 'Calcular superred';
+
+  @override
+  String get ipv4SupernetActionReset => 'Reiniciar';
+
+  @override
+  String get ipv4SupernetAddressesTitle => 'Direcciones';
+
+  @override
+  String get ipv4SupernetResultTitle => 'Resultado de superred';
+
+  @override
+  String get ipv4SupernetResultValue => 'Superred de cobertura';
+
+  @override
+  String get ipv4SupernetRelationsTitle => 'Relaciones entre direcciones';
+
+  @override
+  String get ipv4SupernetContiguousYes =>
+      'Todas las direcciones son contiguas.';
+
+  @override
+  String get ipv4SupernetContiguousNo =>
+      'No todas las direcciones son contiguas.';
+
+  @override
+  String get ipv4SupernetErrorEmptyAddress =>
+      'Introduce una direccion IPv4 en CIDR.';
+
+  @override
+  String get ipv4SupernetErrorInvalidCidr => 'Formato CIDR IPv4 invalido.';
+
+  @override
+  String get ipv4SupernetErrorNeedTwo =>
+      'Agrega al menos dos direcciones IPv4.';
+
+  @override
+  String get ipv4SupernetErrorGeneric =>
+      'No se puede calcular la superred para esta lista.';
+
+  @override
+  String ipv4SupernetDuplicateMessage(Object address, int count) {
+    return 'Duplicado eliminado: $address ($count entradas)';
+  }
+
+  @override
+  String get relationEqual => 'iguales';
+
+  @override
+  String get relationOutside => 'separadas';
+
+  @override
+  String get relationContiguous => 'contiguas';
+
+  @override
+  String get relationAInsideB => 'A dentro de B';
+
+  @override
+  String get relationBInsideA => 'B dentro de A';
+
+  @override
+  String get relationOverlap => 'solapamiento';
+
+  @override
+  String get relationIntersecting => 'interseccion';
+
+  @override
+  String relationUnknown(Object code) {
+    return 'relacion desconocida ($code)';
+  }
 
   @override
   String get ipv6TypeLoopback => 'Dirección loopback.';

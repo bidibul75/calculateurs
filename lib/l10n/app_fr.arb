@@ -61,6 +61,7 @@
     "description": "Vocabulaire module : IP > Adresse IPv4"
   },
   "menuIpv4Address": "Adresse IPv4",
+  "menuIpv4Supernet": "Supernet IPv4",
   "ipv4Title": "Adresse IPv4",
   "ipv4InputLabel": "Adresse IPv4 en CIDR",
   "ipv4InputHint": "Exemple : 192.168.1.34/24",
@@ -88,6 +89,44 @@
   "ipv4ScopeLinkLocal": "Link-local",
   "ipv4ScopeMulticast": "Multicast",
   "ipv4ScopeReserved": "Réservée/Expérimentale",
+
+  "ipv4SupernetTitle": "Supernet IPv4",
+  "ipv4SupernetInputLabel": "Adresse IPv4 en CIDR",
+  "ipv4SupernetInputHint": "Exemple : 192.168.1.0/24",
+  "ipv4SupernetActionAdd": "Ajouter",
+  "ipv4SupernetActionCalculate": "Calculer le supernet",
+  "ipv4SupernetActionReset": "Réinitialiser",
+  "ipv4SupernetAddressesTitle": "Adresses",
+  "ipv4SupernetResultTitle": "Résultat du supernet",
+  "ipv4SupernetResultValue": "Supernet couvrant",
+  "ipv4SupernetRelationsTitle": "Relations entre adresses",
+  "ipv4SupernetContiguousYes": "Toutes les adresses sont contiguës.",
+  "ipv4SupernetContiguousNo": "Les adresses ne sont pas toutes contiguës.",
+  "ipv4SupernetErrorEmptyAddress": "Veuillez saisir une adresse IPv4 en CIDR.",
+  "ipv4SupernetErrorInvalidCidr": "Format CIDR IPv4 invalide.",
+  "ipv4SupernetErrorNeedTwo": "Veuillez ajouter au moins deux adresses IPv4.",
+  "ipv4SupernetErrorGeneric": "Impossible de calculer le supernet pour cette liste.",
+  "ipv4SupernetDuplicateMessage": "Doublon retiré : {address} ({count} occurrences)",
+  "@ipv4SupernetDuplicateMessage": {
+    "placeholders": {
+      "address": {},
+      "count": {"type": "int"}
+    }
+  },
+
+  "relationEqual": "égales",
+  "relationOutside": "séparées",
+  "relationContiguous": "contiguës",
+  "relationAInsideB": "A incluse dans B",
+  "relationBInsideA": "B incluse dans A",
+  "relationOverlap": "chevauchement",
+  "relationIntersecting": "intersection",
+  "relationUnknown": "relation inconnue ({code})",
+  "@relationUnknown": {
+    "placeholders": {
+      "code": {}
+    }
+  },
 
   "@_module.ip.ipv6": {
     "description": "Vocabulaire module : IP > IPv6"

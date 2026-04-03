@@ -1,6 +1,16 @@
 import 'address.dart';
 import 'relation.dart';
 
+class DuplicateProcessResult {
+  final List<String> uniqueAddresses;
+  final Map<String, int> duplicateCounts;
+
+  const DuplicateProcessResult({
+    required this.uniqueAddresses,
+    required this.duplicateCounts,
+  });
+}
+
 class Supernet extends Address {
   String addressTemp;
 
@@ -99,23 +109,29 @@ class Supernet extends Address {
 
   /// Detects and removes duplicate addresses from the list
   static List<String> processDuplicateAddresses(List<String> listToProcess, List<Relation> relations) {
-    int duplicates;
-    for (int i = 0; i < listToProcess.length; i++) {
-      duplicates = 1;
-      for (int j = i + 1; j < listToProcess.length; j++) {
-        if (listToProcess[i] == listToProcess[j]) {
+    return deduplicateAddresses(listToProcess).uniqueAddresses;
+  }
+
+  /// Detects duplicates and returns both the unique list and duplicate counters.
+  static DuplicateProcessResult deduplicateAddresses(List<String> listToProcess) {
+    final unique = List<String>.from(listToProcess);
+    final duplicateCounts = <String, int>{};
+
+    for (int i = 0; i < unique.length; i++) {
+      int duplicates = 1;
+      for (int j = i + 1; j < unique.length; j++) {
+        if (unique[i] == unique[j]) {
           duplicates++;
-          listToProcess.removeAt(j);
+          unique.removeAt(j);
           j--;
         }
       }
       if (duplicates > 1) {
-        print(
-          "Warning ! Duplicate IP range detected : ${listToProcess[i]} is duplicated $duplicates times - removed duplicates",
-        );
+        duplicateCounts[unique[i]] = duplicates;
       }
     }
-    return listToProcess;
+
+    return DuplicateProcessResult(uniqueAddresses: unique, duplicateCounts: duplicateCounts);
   }
 
   /// Sorts a list of List<Address>
@@ -133,5 +149,23 @@ class Supernet extends Address {
       }
     }
     return true;
+  }
+
+  /// Computes pairwise relations between all addresses in the list.
+  static List<Relation> computeRelations(List<Address> list) {
+    sortAddressList(list);
+    final relations = <Relation>[];
+    for (int i = 0; i < list.length - 1; i++) {
+      for (int j = i + 1; j < list.length; j++) {
+        relations.add(
+          Relation.implementationObjetRelation(
+            list[i].addressToProcess,
+            testOfIntersections(list[i], list[j]),
+            list[j].addressToProcess,
+          ),
+        );
+      }
+    }
+    return relations;
   }
 }
