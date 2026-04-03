@@ -36,7 +36,7 @@
     "description": "Etiquetas de secciones para agrupar modulos en el menu"
   },
   "menuSectionHealth": "Salud",
-  "menuSectionConversions": "Conversiones",
+  "menuSectionConversions": "Herramientas IP",
   "menuSectionFinance": "Finanzas",
   "menuSectionRealEstate": "Inmobiliario",
 
@@ -56,6 +56,77 @@
   "bmiCategoryNormal": "Peso normal",
   "bmiCategoryOverweight": "Sobrepeso",
   "bmiCategoryObese": "Obesidad",
+
+  "@_module.ip.ipv4": {
+    "description": "Vocabulario del modulo: IP > Direccion IPv4"
+  },
+  "menuIpv4Address": "Direccion IPv4",
+  "menuIpv4Supernet": "Superred IPv4",
+  "ipv4Title": "Direccion IPv4",
+  "ipv4InputLabel": "Direccion IPv4 en CIDR",
+  "ipv4InputHint": "Ejemplo: 192.168.1.34/24",
+  "ipv4ActionCalculate": "Calcular",
+  "ipv4ActionClear": "Limpiar",
+  "ipv4ErrorEmptyCidr": "Introduce una direccion IPv4 en CIDR.",
+  "ipv4ErrorInvalidCidr": "Formato CIDR IPv4 invalido.",
+  "ipv4ErrorGeneric": "No se puede procesar este CIDR IPv4.",
+  "ipv4InfoPrefix": "Prefijo",
+  "ipv4InfoClass": "Clase",
+  "ipv4InfoScope": "Ambito",
+  "ipv4InfoMask": "Mascara de subred",
+  "ipv4InfoWildcard": "Mascara wildcard",
+  "ipv4InfoNetwork": "Direccion de red",
+  "ipv4InfoBroadcast": "Direccion de broadcast",
+  "ipv4InfoFirstHost": "Primer host util",
+  "ipv4InfoLastHost": "Ultimo host util",
+  "ipv4InfoTotalAddresses": "Total de direcciones",
+  "ipv4InfoUsableHosts": "Hosts utilizables",
+  "ipv4InfoNetworkBinary": "Red (binario)",
+  "ipv4InfoBroadcastBinary": "Broadcast (binario)",
+  "ipv4ScopePrivate": "Privada",
+  "ipv4ScopePublic": "Publica",
+  "ipv4ScopeLoopback": "Loopback",
+  "ipv4ScopeLinkLocal": "Link-local",
+  "ipv4ScopeMulticast": "Multicast",
+  "ipv4ScopeReserved": "Reservada/Experimental",
+
+  "ipv4SupernetTitle": "Superred IPv4",
+  "ipv4SupernetInputLabel": "Direccion IPv4 en CIDR",
+  "ipv4SupernetInputHint": "Ejemplo: 192.168.1.0/24",
+  "ipv4SupernetActionAdd": "Agregar",
+  "ipv4SupernetActionCalculate": "Calcular superred",
+  "ipv4SupernetActionReset": "Reiniciar",
+  "ipv4SupernetAddressesTitle": "Direcciones",
+  "ipv4SupernetResultTitle": "Resultado de superred",
+  "ipv4SupernetResultValue": "Superred de cobertura",
+  "ipv4SupernetRelationsTitle": "Relaciones entre direcciones",
+  "ipv4SupernetContiguousYes": "Todas las direcciones son contiguas.",
+  "ipv4SupernetContiguousNo": "No todas las direcciones son contiguas.",
+  "ipv4SupernetErrorEmptyAddress": "Introduce una direccion IPv4 en CIDR.",
+  "ipv4SupernetErrorInvalidCidr": "Formato CIDR IPv4 invalido.",
+  "ipv4SupernetErrorNeedTwo": "Agrega al menos dos direcciones IPv4.",
+  "ipv4SupernetErrorGeneric": "No se puede calcular la superred para esta lista.",
+  "ipv4SupernetDuplicateMessage": "Duplicado eliminado: {address} ({count} entradas)",
+  "@ipv4SupernetDuplicateMessage": {
+    "placeholders": {
+      "address": {},
+      "count": {"type": "int"}
+    }
+  },
+
+  "relationEqual": "iguales",
+  "relationOutside": "separadas",
+  "relationContiguous": "contiguas",
+  "relationAInsideB": "dentro de",
+  "relationBInsideA": "B dentro de A",
+  "relationOverlap": "solapamiento",
+  "relationIntersecting": "interseccion",
+  "relationUnknown": "relacion desconocida ({code})",
+  "@relationUnknown": {
+    "placeholders": {
+      "code": {}
+    }
+  },
 
   "@_module.ip.ipv6": {
     "description": "Vocabulario del modulo: IP > IPv6"

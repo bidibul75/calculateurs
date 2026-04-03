@@ -108,7 +108,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get menuSectionHealth => 'Salud';
 
   @override
-  String get menuSectionConversions => 'Conversiones';
+  String get menuSectionConversions => 'Herramientas IP';
 
   @override
   String get menuSectionFinance => 'Finanzas';
@@ -154,6 +154,177 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bmiCategoryObese => 'Obesidad';
+
+  @override
+  String get menuIpv4Address => 'Direccion IPv4';
+
+  @override
+  String get menuIpv4Supernet => 'Superred IPv4';
+
+  @override
+  String get ipv4Title => 'Direccion IPv4';
+
+  @override
+  String get ipv4InputLabel => 'Direccion IPv4 en CIDR';
+
+  @override
+  String get ipv4InputHint => 'Ejemplo: 192.168.1.34/24';
+
+  @override
+  String get ipv4ActionCalculate => 'Calcular';
+
+  @override
+  String get ipv4ActionClear => 'Limpiar';
+
+  @override
+  String get ipv4ErrorEmptyCidr => 'Introduce una direccion IPv4 en CIDR.';
+
+  @override
+  String get ipv4ErrorInvalidCidr => 'Formato CIDR IPv4 invalido.';
+
+  @override
+  String get ipv4ErrorGeneric => 'No se puede procesar este CIDR IPv4.';
+
+  @override
+  String get ipv4InfoPrefix => 'Prefijo';
+
+  @override
+  String get ipv4InfoClass => 'Clase';
+
+  @override
+  String get ipv4InfoScope => 'Ambito';
+
+  @override
+  String get ipv4InfoMask => 'Mascara de subred';
+
+  @override
+  String get ipv4InfoWildcard => 'Mascara wildcard';
+
+  @override
+  String get ipv4InfoNetwork => 'Direccion de red';
+
+  @override
+  String get ipv4InfoBroadcast => 'Direccion de broadcast';
+
+  @override
+  String get ipv4InfoFirstHost => 'Primer host util';
+
+  @override
+  String get ipv4InfoLastHost => 'Ultimo host util';
+
+  @override
+  String get ipv4InfoTotalAddresses => 'Total de direcciones';
+
+  @override
+  String get ipv4InfoUsableHosts => 'Hosts utilizables';
+
+  @override
+  String get ipv4InfoNetworkBinary => 'Red (binario)';
+
+  @override
+  String get ipv4InfoBroadcastBinary => 'Broadcast (binario)';
+
+  @override
+  String get ipv4ScopePrivate => 'Privada';
+
+  @override
+  String get ipv4ScopePublic => 'Publica';
+
+  @override
+  String get ipv4ScopeLoopback => 'Loopback';
+
+  @override
+  String get ipv4ScopeLinkLocal => 'Link-local';
+
+  @override
+  String get ipv4ScopeMulticast => 'Multicast';
+
+  @override
+  String get ipv4ScopeReserved => 'Reservada/Experimental';
+
+  @override
+  String get ipv4SupernetTitle => 'Superred IPv4';
+
+  @override
+  String get ipv4SupernetInputLabel => 'Direccion IPv4 en CIDR';
+
+  @override
+  String get ipv4SupernetInputHint => 'Ejemplo: 192.168.1.0/24';
+
+  @override
+  String get ipv4SupernetActionAdd => 'Agregar';
+
+  @override
+  String get ipv4SupernetActionCalculate => 'Calcular superred';
+
+  @override
+  String get ipv4SupernetActionReset => 'Reiniciar';
+
+  @override
+  String get ipv4SupernetAddressesTitle => 'Direcciones';
+
+  @override
+  String get ipv4SupernetResultTitle => 'Resultado de superred';
+
+  @override
+  String get ipv4SupernetResultValue => 'Superred de cobertura';
+
+  @override
+  String get ipv4SupernetRelationsTitle => 'Relaciones entre direcciones';
+
+  @override
+  String get ipv4SupernetContiguousYes =>
+      'Todas las direcciones son contiguas.';
+
+  @override
+  String get ipv4SupernetContiguousNo =>
+      'No todas las direcciones son contiguas.';
+
+  @override
+  String get ipv4SupernetErrorEmptyAddress =>
+      'Introduce una direccion IPv4 en CIDR.';
+
+  @override
+  String get ipv4SupernetErrorInvalidCidr => 'Formato CIDR IPv4 invalido.';
+
+  @override
+  String get ipv4SupernetErrorNeedTwo =>
+      'Agrega al menos dos direcciones IPv4.';
+
+  @override
+  String get ipv4SupernetErrorGeneric =>
+      'No se puede calcular la superred para esta lista.';
+
+  @override
+  String ipv4SupernetDuplicateMessage(Object address, int count) {
+    return 'Duplicado eliminado: $address ($count entradas)';
+  }
+
+  @override
+  String get relationEqual => 'iguales';
+
+  @override
+  String get relationOutside => 'separadas';
+
+  @override
+  String get relationContiguous => 'contiguas';
+
+  @override
+  String get relationAInsideB => 'dentro de';
+
+  @override
+  String get relationBInsideA => 'B dentro de A';
+
+  @override
+  String get relationOverlap => 'solapamiento';
+
+  @override
+  String get relationIntersecting => 'interseccion';
+
+  @override
+  String relationUnknown(Object code) {
+    return 'relacion desconocida ($code)';
+  }
 
   @override
   String get ipv6TypeLoopback => 'Dirección loopback.';

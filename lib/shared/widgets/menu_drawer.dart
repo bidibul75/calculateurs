@@ -3,10 +3,11 @@
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:calculators/navigation/menu_catalog.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:calculators/shared/theme/theme_dialog.dart' as shared_theme_dialog;
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Shows the "Who am I" dialog
 void showWhoAmIDialog(BuildContext context) {
@@ -46,7 +47,7 @@ void showWhoAmIDialog(BuildContext context) {
               InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
-                  showDonateDialog(context); // links to the donation dialog
+                  showDonateDialog(context);
                 },
                 child: Text(
                   l10n.whoAmIDonateCta,
@@ -119,6 +120,10 @@ class MenuDrawer extends StatelessWidget {
 
   const MenuDrawer({super.key, required this.themeManager});
 
+  bool _isMobilePlatform(TargetPlatform platform) {
+    return platform == TargetPlatform.android || platform == TargetPlatform.iOS;
+  }
+
   void _navigateToRoute(BuildContext context, String routeName) {
     final currentRoute = ModalRoute.of(context)?.settings.name;
     if (currentRoute == routeName) {
@@ -127,70 +132,106 @@ class MenuDrawer extends StatelessWidget {
     Navigator.of(context, rootNavigator: true).pushNamed(routeName);
   }
 
+  List<Widget> _buildMenuTiles(
+    BuildContext context,
+    BuildContext sheetContext,
+    AppLocalizations l10n,
+    List<ModuleMenuItem> healthModules,
+    List<ModuleMenuItem> conversionModules,
+  ) {
+    return [
+      ListTile(
+        leading: const Icon(Icons.palette_outlined),
+        title: Text(l10n.menuThemes),
+        onTap: () {
+          Navigator.of(sheetContext).pop();
+          shared_theme_dialog.showThemeDialog(context, themeManager);
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.badge_outlined),
+        title: Text(l10n.menuWhoAmI),
+        onTap: () {
+          Navigator.of(sheetContext).pop();
+          showWhoAmIDialog(context);
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.favorite_outline),
+        title: Text(l10n.menuDonate),
+        onTap: () {
+          Navigator.of(sheetContext).pop();
+          showDonateDialog(context);
+        },
+      ),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.calculate_outlined),
+        title: Text(l10n.appTitle),
+        onTap: () {
+          Navigator.of(sheetContext).pop();
+          _navigateToRoute(context, AppRoutes.home);
+        },
+      ),
+      if (healthModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.health_and_safety_outlined),
+          title: Text(sectionTitle(ModuleSection.health, l10n)),
+          children: [
+            for (final module in healthModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
+      if (conversionModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.swap_horiz_outlined),
+          title: Text(sectionTitle(ModuleSection.conversions, l10n)),
+          children: [
+            for (final module in conversionModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
+    ];
+  }
+
   void _showMenuSheet(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final modules = buildModuleMenuCatalog(l10n);
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
+    final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
+    final isMobileSheet = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
 
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: isMobileSheet,
       builder: (sheetContext) {
+        final menuList = ListView(
+          padding: EdgeInsets.only(top: isMobileSheet ? 8 : 0, bottom: isMobileSheet ? 16 : 0),
+          children: _buildMenuTiles(context, sheetContext, l10n, healthModules, conversionModules),
+        );
+
         return SafeArea(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.palette_outlined),
-                title: Text(l10n.menuThemes),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  shared_theme_dialog.showThemeDialog(context, themeManager);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.badge_outlined),
-                title: Text(l10n.menuWhoAmI),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  showWhoAmIDialog(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite_outline),
-                title: Text(l10n.menuDonate),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  showDonateDialog(context);
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.calculate_outlined),
-                title: Text(l10n.appTitle),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  _navigateToRoute(context, AppRoutes.home);
-                },
-              ),
-              if (healthModules.isNotEmpty)
-                ExpansionTile(
-                  leading: const Icon(Icons.health_and_safety_outlined),
-                  title: Text(sectionTitle(ModuleSection.health, l10n)),
-                  children: [
-                    for (final module in healthModules)
-                      ListTile(
-                        contentPadding: const EdgeInsets.only(left: 56, right: 16),
-                        title: Text(module.label),
-                        onTap: () {
-                          Navigator.of(sheetContext).pop();
-                          _navigateToRoute(context, module.routeName);
-                        },
-                      ),
-                  ],
-                ),
-            ],
-          ),
+          child: isMobileSheet
+              ? ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: MediaQuery.of(sheetContext).size.height * 0.92),
+                  child: Scrollbar(thumbVisibility: true, child: menuList),
+                )
+              : menuList,
         );
       },
     );

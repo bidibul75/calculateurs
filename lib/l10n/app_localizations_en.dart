@@ -107,7 +107,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuSectionHealth => 'Health';
 
   @override
-  String get menuSectionConversions => 'Conversions';
+  String get menuSectionConversions => 'IP Tools';
 
   @override
   String get menuSectionFinance => 'Finance';
@@ -153,6 +153,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bmiCategoryObese => 'Obese';
+
+  @override
+  String get menuIpv4Address => 'IPv4 Address';
+
+  @override
+  String get menuIpv4Supernet => 'IPv4 Supernet';
+
+  @override
+  String get ipv4Title => 'IPv4 Address';
+
+  @override
+  String get ipv4InputLabel => 'IPv4 CIDR address';
+
+  @override
+  String get ipv4InputHint => 'Example: 192.168.1.34/24';
+
+  @override
+  String get ipv4ActionCalculate => 'Calculate';
+
+  @override
+  String get ipv4ActionClear => 'Clear';
+
+  @override
+  String get ipv4ErrorEmptyCidr => 'Please enter an IPv4 CIDR address.';
+
+  @override
+  String get ipv4ErrorInvalidCidr => 'Invalid IPv4 CIDR format.';
+
+  @override
+  String get ipv4ErrorGeneric => 'Unable to process this IPv4 CIDR.';
+
+  @override
+  String get ipv4InfoPrefix => 'Prefix';
+
+  @override
+  String get ipv4InfoClass => 'Class';
+
+  @override
+  String get ipv4InfoScope => 'Scope';
+
+  @override
+  String get ipv4InfoMask => 'Subnet mask';
+
+  @override
+  String get ipv4InfoWildcard => 'Wildcard mask';
+
+  @override
+  String get ipv4InfoNetwork => 'Network address';
+
+  @override
+  String get ipv4InfoBroadcast => 'Broadcast address';
+
+  @override
+  String get ipv4InfoFirstHost => 'First usable host';
+
+  @override
+  String get ipv4InfoLastHost => 'Last usable host';
+
+  @override
+  String get ipv4InfoTotalAddresses => 'Total addresses';
+
+  @override
+  String get ipv4InfoUsableHosts => 'Usable hosts';
+
+  @override
+  String get ipv4InfoNetworkBinary => 'Network (binary)';
+
+  @override
+  String get ipv4InfoBroadcastBinary => 'Broadcast (binary)';
+
+  @override
+  String get ipv4ScopePrivate => 'Private';
+
+  @override
+  String get ipv4ScopePublic => 'Public';
+
+  @override
+  String get ipv4ScopeLoopback => 'Loopback';
+
+  @override
+  String get ipv4ScopeLinkLocal => 'Link-local';
+
+  @override
+  String get ipv4ScopeMulticast => 'Multicast';
+
+  @override
+  String get ipv4ScopeReserved => 'Reserved/Experimental';
+
+  @override
+  String get ipv4SupernetTitle => 'IPv4 Supernet';
+
+  @override
+  String get ipv4SupernetInputLabel => 'IPv4 CIDR address';
+
+  @override
+  String get ipv4SupernetInputHint => 'Example: 192.168.1.0/24';
+
+  @override
+  String get ipv4SupernetActionAdd => 'Add';
+
+  @override
+  String get ipv4SupernetActionCalculate => 'Calculate supernet';
+
+  @override
+  String get ipv4SupernetActionReset => 'Reset';
+
+  @override
+  String get ipv4SupernetAddressesTitle => 'Addresses';
+
+  @override
+  String get ipv4SupernetResultTitle => 'Supernet result';
+
+  @override
+  String get ipv4SupernetResultValue => 'Covering supernet';
+
+  @override
+  String get ipv4SupernetRelationsTitle => 'Address relations';
+
+  @override
+  String get ipv4SupernetContiguousYes => 'All addresses are contiguous.';
+
+  @override
+  String get ipv4SupernetContiguousNo => 'Addresses are not all contiguous.';
+
+  @override
+  String get ipv4SupernetErrorEmptyAddress =>
+      'Please enter an IPv4 CIDR address.';
+
+  @override
+  String get ipv4SupernetErrorInvalidCidr => 'Invalid IPv4 CIDR format.';
+
+  @override
+  String get ipv4SupernetErrorNeedTwo =>
+      'Please add at least two IPv4 addresses.';
+
+  @override
+  String get ipv4SupernetErrorGeneric =>
+      'Unable to compute supernet for this list.';
+
+  @override
+  String ipv4SupernetDuplicateMessage(Object address, int count) {
+    return 'Duplicate removed: $address ($count entries)';
+  }
+
+  @override
+  String get relationEqual => 'equal';
+
+  @override
+  String get relationOutside => 'outside';
+
+  @override
+  String get relationContiguous => 'contiguous';
+
+  @override
+  String get relationAInsideB => 'inside';
+
+  @override
+  String get relationBInsideA => 'B inside A';
+
+  @override
+  String get relationOverlap => 'overlap';
+
+  @override
+  String get relationIntersecting => 'intersecting';
+
+  @override
+  String relationUnknown(Object code) {
+    return 'unknown ($code)';
+  }
 
   @override
   String get ipv6TypeLoopback => 'Loopback address.';

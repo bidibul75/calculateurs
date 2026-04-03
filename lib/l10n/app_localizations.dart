@@ -297,7 +297,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuSectionConversions.
   ///
   /// In en, this message translates to:
-  /// **'Conversions'**
+  /// **'IP Tools'**
   String get menuSectionConversions;
 
   /// No description provided for @menuSectionFinance.
@@ -389,6 +389,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Obese'**
   String get bmiCategoryObese;
+
+  /// No description provided for @menuIpv4Address.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 Address'**
+  String get menuIpv4Address;
+
+  /// No description provided for @menuIpv4Supernet.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 Supernet'**
+  String get menuIpv4Supernet;
+
+  /// No description provided for @ipv4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 Address'**
+  String get ipv4Title;
+
+  /// No description provided for @ipv4InputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 CIDR address'**
+  String get ipv4InputLabel;
+
+  /// No description provided for @ipv4InputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 192.168.1.34/24'**
+  String get ipv4InputHint;
+
+  /// No description provided for @ipv4ActionCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate'**
+  String get ipv4ActionCalculate;
+
+  /// No description provided for @ipv4ActionClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get ipv4ActionClear;
+
+  /// No description provided for @ipv4ErrorEmptyCidr.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an IPv4 CIDR address.'**
+  String get ipv4ErrorEmptyCidr;
+
+  /// No description provided for @ipv4ErrorInvalidCidr.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv4 CIDR format.'**
+  String get ipv4ErrorInvalidCidr;
+
+  /// No description provided for @ipv4ErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to process this IPv4 CIDR.'**
+  String get ipv4ErrorGeneric;
+
+  /// No description provided for @ipv4InfoPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefix'**
+  String get ipv4InfoPrefix;
+
+  /// No description provided for @ipv4InfoClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Class'**
+  String get ipv4InfoClass;
+
+  /// No description provided for @ipv4InfoScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Scope'**
+  String get ipv4InfoScope;
+
+  /// No description provided for @ipv4InfoMask.
+  ///
+  /// In en, this message translates to:
+  /// **'Subnet mask'**
+  String get ipv4InfoMask;
+
+  /// No description provided for @ipv4InfoWildcard.
+  ///
+  /// In en, this message translates to:
+  /// **'Wildcard mask'**
+  String get ipv4InfoWildcard;
+
+  /// No description provided for @ipv4InfoNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network address'**
+  String get ipv4InfoNetwork;
+
+  /// No description provided for @ipv4InfoBroadcast.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast address'**
+  String get ipv4InfoBroadcast;
+
+  /// No description provided for @ipv4InfoFirstHost.
+  ///
+  /// In en, this message translates to:
+  /// **'First usable host'**
+  String get ipv4InfoFirstHost;
+
+  /// No description provided for @ipv4InfoLastHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Last usable host'**
+  String get ipv4InfoLastHost;
+
+  /// No description provided for @ipv4InfoTotalAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total addresses'**
+  String get ipv4InfoTotalAddresses;
+
+  /// No description provided for @ipv4InfoUsableHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Usable hosts'**
+  String get ipv4InfoUsableHosts;
+
+  /// No description provided for @ipv4InfoNetworkBinary.
+  ///
+  /// In en, this message translates to:
+  /// **'Network (binary)'**
+  String get ipv4InfoNetworkBinary;
+
+  /// No description provided for @ipv4InfoBroadcastBinary.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast (binary)'**
+  String get ipv4InfoBroadcastBinary;
+
+  /// No description provided for @ipv4ScopePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get ipv4ScopePrivate;
+
+  /// No description provided for @ipv4ScopePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get ipv4ScopePublic;
+
+  /// No description provided for @ipv4ScopeLoopback.
+  ///
+  /// In en, this message translates to:
+  /// **'Loopback'**
+  String get ipv4ScopeLoopback;
+
+  /// No description provided for @ipv4ScopeLinkLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Link-local'**
+  String get ipv4ScopeLinkLocal;
+
+  /// No description provided for @ipv4ScopeMulticast.
+  ///
+  /// In en, this message translates to:
+  /// **'Multicast'**
+  String get ipv4ScopeMulticast;
+
+  /// No description provided for @ipv4ScopeReserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserved/Experimental'**
+  String get ipv4ScopeReserved;
+
+  /// No description provided for @ipv4SupernetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 Supernet'**
+  String get ipv4SupernetTitle;
+
+  /// No description provided for @ipv4SupernetInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv4 CIDR address'**
+  String get ipv4SupernetInputLabel;
+
+  /// No description provided for @ipv4SupernetInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 192.168.1.0/24'**
+  String get ipv4SupernetInputHint;
+
+  /// No description provided for @ipv4SupernetActionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get ipv4SupernetActionAdd;
+
+  /// No description provided for @ipv4SupernetActionCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate supernet'**
+  String get ipv4SupernetActionCalculate;
+
+  /// No description provided for @ipv4SupernetActionReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get ipv4SupernetActionReset;
+
+  /// No description provided for @ipv4SupernetAddressesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses'**
+  String get ipv4SupernetAddressesTitle;
+
+  /// No description provided for @ipv4SupernetResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supernet result'**
+  String get ipv4SupernetResultTitle;
+
+  /// No description provided for @ipv4SupernetResultValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Covering supernet'**
+  String get ipv4SupernetResultValue;
+
+  /// No description provided for @ipv4SupernetRelationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Address relations'**
+  String get ipv4SupernetRelationsTitle;
+
+  /// No description provided for @ipv4SupernetContiguousYes.
+  ///
+  /// In en, this message translates to:
+  /// **'All addresses are contiguous.'**
+  String get ipv4SupernetContiguousYes;
+
+  /// No description provided for @ipv4SupernetContiguousNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses are not all contiguous.'**
+  String get ipv4SupernetContiguousNo;
+
+  /// No description provided for @ipv4SupernetErrorEmptyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an IPv4 CIDR address.'**
+  String get ipv4SupernetErrorEmptyAddress;
+
+  /// No description provided for @ipv4SupernetErrorInvalidCidr.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv4 CIDR format.'**
+  String get ipv4SupernetErrorInvalidCidr;
+
+  /// No description provided for @ipv4SupernetErrorNeedTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add at least two IPv4 addresses.'**
+  String get ipv4SupernetErrorNeedTwo;
+
+  /// No description provided for @ipv4SupernetErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to compute supernet for this list.'**
+  String get ipv4SupernetErrorGeneric;
+
+  /// No description provided for @ipv4SupernetDuplicateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate removed: {address} ({count} entries)'**
+  String ipv4SupernetDuplicateMessage(Object address, int count);
+
+  /// No description provided for @relationEqual.
+  ///
+  /// In en, this message translates to:
+  /// **'equal'**
+  String get relationEqual;
+
+  /// No description provided for @relationOutside.
+  ///
+  /// In en, this message translates to:
+  /// **'outside'**
+  String get relationOutside;
+
+  /// No description provided for @relationContiguous.
+  ///
+  /// In en, this message translates to:
+  /// **'contiguous'**
+  String get relationContiguous;
+
+  /// No description provided for @relationAInsideB.
+  ///
+  /// In en, this message translates to:
+  /// **'inside'**
+  String get relationAInsideB;
+
+  /// No description provided for @relationBInsideA.
+  ///
+  /// In en, this message translates to:
+  /// **'B inside A'**
+  String get relationBInsideA;
+
+  /// No description provided for @relationOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'overlap'**
+  String get relationOverlap;
+
+  /// No description provided for @relationIntersecting.
+  ///
+  /// In en, this message translates to:
+  /// **'intersecting'**
+  String get relationIntersecting;
+
+  /// No description provided for @relationUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown ({code})'**
+  String relationUnknown(Object code);
 
   /// No description provided for @ipv6TypeLoopback.
   ///
