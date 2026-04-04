@@ -123,11 +123,11 @@ class CalculatorController extends ChangeNotifier {
       if (_state.operation.isNotEmpty) {
         if (op != "^") {
           if (_state.operation2 == "^") {
-            inputClean = CalculatorLogic.calculateResult(num1: _state.num2, num2: inputClean, operation: "^");
+            inputClean = CalculatorLogic.calculateResult(num1: _state.num2.toCleanMathString, num2: inputClean, operation: "^");
           }
           // If there's already an operation pending, compute it first before setting the new operator
           String intermediateResult = CalculatorLogic.calculateResult(
-            num1: _state.num1,
+            num1: _state.num1.toCleanMathString,
             num2: inputClean,
             operation: _state.operation,
           );
@@ -187,20 +187,20 @@ class CalculatorController extends ChangeNotifier {
 
       if (_state.num2 == "") {
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
+          num1: _state.num1.toCleanMathString,
           num2: currentInputClean,
           operation: _state.operation,
         );
       } else {
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
-          num2: _state.num2,
+          num1: _state.num1.toCleanMathString,
+          num2: _state.num2.toCleanMathString,
           num3: currentInputClean,
           operation: _state.operation,
           operation2: "^",
         );
         secondOperandForHistory = CalculatorLogic.calculateResult(
-          num1: _state.num2,
+          num1: _state.num2.toCleanMathString,
           num2: currentInputClean,
           operation: "^",
         );
@@ -248,7 +248,7 @@ class CalculatorController extends ChangeNotifier {
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
+          num1: _state.num1.toCleanMathString,
           num2: result.toCleanMathString,
           operation: _state.operation,
         );
