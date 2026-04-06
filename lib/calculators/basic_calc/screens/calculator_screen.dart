@@ -1,5 +1,6 @@
 // lib/calculators/basic_calc/sreens/calculator_screen.dart
 
+import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
@@ -160,7 +161,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  state.history,
+                                  state.history.contains('= ≈')?state.history.replaceLast('= ≈','≈'):state.history,
                                   style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
                                   textAlign: TextAlign.right,
                                 ),

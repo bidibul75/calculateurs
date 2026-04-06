@@ -15,7 +15,7 @@ class CalculatorLogic {
     String operation2 = "",
   }) {
     try {
-    // Convert clean Strings (1000.5) to Rational
+      // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
       Rational r2 = Rational.parse(num2);
 
@@ -149,16 +149,22 @@ class CalculatorLogic {
     String? output, // Result already formatted
     String? operation2 = "",
   ]) {
-    String formattedNum1 = num1.format;
+    String formattedNum1 = num1.formatRound();
 
     // If num2 is provided, we're displaying the complete operation with result
     if (num2 != null) {
-      String formattedNum2 = num2.format;
+      String formattedNum2 = num2.formatRound();
       if (operation2 != "") {
         return "$currentHistory $formattedNum2 $operation2";
       } else {
         // output is already formatted by calculateResult
-        return "$formattedNum1 $operation $formattedNum2 = ${output ?? ""}";
+        String outputDisplay;
+        if (output == null) {
+          outputDisplay = "";
+        } else {
+          outputDisplay = output.formatRound();
+        }
+        return "$formattedNum1 $operation $formattedNum2 = $outputDisplay";
       }
     }
 
@@ -173,15 +179,7 @@ class CalculatorLogic {
     String resultFormatted, [
     String currentHistory = "",
   ]) {
-    String format(String n) {
-      try {
-        return Rational.parse(n).toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
-      } catch (e) {
-        return n;
-      }
-    }
-
-    String formattedInput = format(inputVal);
+    String formattedInput = inputVal.formatRound();
 
     switch (operation) {
       case "x²":

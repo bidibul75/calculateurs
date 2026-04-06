@@ -123,7 +123,11 @@ class CalculatorController extends ChangeNotifier {
       if (_state.operation.isNotEmpty) {
         if (op != "^") {
           if (_state.operation2 == "^") {
-            inputClean = CalculatorLogic.calculateResult(num1: _state.num2.toCleanMathString, num2: inputClean, operation: "^");
+            inputClean = CalculatorLogic.calculateResult(
+              num1: _state.num2.toCleanMathString,
+              num2: inputClean,
+              operation: "^",
+            );
           }
           // If there's already an operation pending, compute it first before setting the new operator
           String intermediateResult = CalculatorLogic.calculateResult(
@@ -255,10 +259,11 @@ class CalculatorController extends ChangeNotifier {
       }
 
       if (_state.history.contains("=")) {
-        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
         _state = _state.copyWith(currentInput: result, output: result, history: history);
       } else {
-        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
+        history =
+            "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} ${result.formatRound()}";
         _state = _state.copyWith(currentInput: result, output: result, history: history);
       }
     }

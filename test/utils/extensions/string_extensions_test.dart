@@ -231,4 +231,21 @@ void main() {
       expect('a'.removeLastChar, "");
       });
   });
+
+  group('StringExtensions.roundString', () {
+    test('rounds a String reprensenting a number', () {
+      expect('123456'.roundString(limit:5), "123456");
+      expect('123.456'.roundString(limit:2), "123.46");
+      expect('1234.499999'.roundString(limit:0), "1234");
+      expect('1234.54'.roundString(limit:1), "1234.5");
+      expect('1234.56'.roundString(limit:5), "1234.56");
+    });
+  });
+
+  group('StringExtensions.formatRound', () {
+    test('rounds a String reprensenting a number', () {
+      expect('123456'.formatRound(limit:5), "123456");
+      expect('10,123.456'.roundString(limit:2), "10,123.46");
+    });
+  });
   }
