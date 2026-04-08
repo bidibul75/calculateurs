@@ -129,15 +129,21 @@ class CalculatorController extends ChangeNotifier {
               operation: "^",
             );
           }
-          // If there's already an operation pending, compute it first before setting the new operator
-          String intermediateResult = CalculatorLogic.calculateResult(
-            num1: _state.num1.toCleanMathString,
-            num2: inputClean,
-            operation: _state.operation,
-          );
-
+          // if the history contains a =, uses the result as the first number of the new calculation
+          // else runs the calculation contained in the history
+          String intermediateResult;
+          if (_state.history.contains('=')) {
+            intermediateResult = _state.output;
+          } else {
+            // If there's already an operation pending, compute it first before setting the new operator
+            intermediateResult = CalculatorLogic.calculateResult(
+              num1: _state.num1.toCleanMathString,
+              num2: inputClean,
+              operation: _state.operation,
+            );
+          }
           // Update history with the intermediate result
-          String history = "$intermediateResult $op";
+          String history = "${intermediateResult.formatRound()} $op";
 
           // Set the intermediate result as the new num1 for the next operation
           _state = _state.copyWith(
