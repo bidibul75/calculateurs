@@ -51,6 +51,17 @@ void main() {
 
     expect(find.textContaining('3 x 4 = 12'), findsOneWidget);
     expect(find.textContaining('1 + 2 = 3'), findsOneWidget);
+
+    await tester.drag(find.textContaining('1 + 2 = 3'), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('1 + 2 = 3'), findsNothing);
+    expect(find.textContaining('3 x 4 = 12'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('basic.history.clear')));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('3 x 4 = 12'), findsNothing);
   });
 }
 

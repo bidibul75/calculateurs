@@ -371,6 +371,21 @@ class CalculatorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearHistory() {
+    _state = _state.copyWith(historyEntries: const []);
+    notifyListeners();
+  }
+
+  void removeHistoryEntryAt(int index) {
+    if (index < 0 || index >= _state.historyEntries.length) {
+      return;
+    }
+
+    final updatedEntries = List<CalculatorHistoryEntry>.from(_state.historyEntries)..removeAt(index);
+    _state = _state.copyWith(historyEntries: updatedEntries);
+    notifyListeners();
+  }
+
   List<CalculatorHistoryEntry> _prependHistoryEntry(String historyText, String resultDisplay) {
     if (resultDisplay.toCleanMathString.isNotANumber) {
       return _state.historyEntries;

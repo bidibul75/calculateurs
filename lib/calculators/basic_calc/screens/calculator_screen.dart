@@ -19,6 +19,8 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
+  static const Key _clearHistoryButtonKey = ValueKey<String>('basic.history.clear');
+
   final CalculatorController _controller = CalculatorController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
@@ -92,32 +94,46 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-  Widget _buildHistoryItem(CalculatorHistoryEntry entry) {
+  Widget _buildHistoryItem(CalculatorHistoryEntry entry, int index) {
     final historyText = entry.displayText.contains('= ≈') ? entry.displayText.replaceLast('= ≈', '≈') : entry.displayText;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: Colors.white.withAlpha(120),
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
+      child: Dismissible(
+        key: ValueKey<String>('history-$index-${entry.displayText}'),
+        direction: DismissDirection.endToStart,
+        onDismissed: (_) => _controller.removeHistoryEntryAt(index),
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.redAccent.withAlpha(220),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.delete_outline, color: Colors.white),
+        ),
+        child: Material(
+          color: Colors.white.withAlpha(120),
           borderRadius: BorderRadius.circular(8),
-          onTap: () => _controller.selectHistoryEntry(entry),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    historyText,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: _themeManager.displayTextColor, fontSize: 16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => _controller.selectHistoryEntry(entry),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      historyText,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: _themeManager.displayTextColor, fontSize: 16),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.replay_outlined, size: 18, color: _themeManager.displayTextColor),
-              ],
+                  const SizedBox(width: 8),
+                  Icon(Icons.replay_outlined, size: 18, color: _themeManager.displayTextColor),
+                ],
+              ),
             ),
           ),
         ),
@@ -130,14 +146,30 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       return const SizedBox.shrink();
     }
 
-    return Scrollbar(
-      controller: _historyScrollController,
-      thumbVisibility: true,
-      child: ListView.builder(
-        controller: _historyScrollController,
-        itemCount: entries.length,
-        itemBuilder: (context, index) => _buildHistoryItem(entries[index]),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            key: _clearHistoryButtonKey,
+            onPressed: _controller.clearHistory,
+            icon: const Icon(Icons.delete_sweep_outlined),
+            color: _themeManager.displayTextColor,
+          ),
+        ),
+        Expanded(
+          child: Scrollbar(
+            controller: _historyScrollController,
+            thumbVisibility: true,
+            child: ListView.builder(
+              controller: _historyScrollController,
+              itemCount: entries.length,
+              itemBuilder: (context, index) => _buildHistoryItem(entries[index], index),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
