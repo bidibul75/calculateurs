@@ -7,6 +7,7 @@
 
 import 'package:calculators/shared/theme/theme_manager.dart';
 import 'package:calculators/main.dart';
+import 'package:calculators/navigation/app_routes.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +35,7 @@ void main() {
     GetIt.I.registerSingleton<ThemeManager>(ThemeManager());
 
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const CalculatorApp());
+    await tester.pumpWidget(const CalculatorApp(initialRoute: AppRoutes.home));
     await tester.pumpAndSettle();
 
     // Verify that the app has a title

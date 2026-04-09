@@ -25,8 +25,9 @@ void main() async {
   }
 
   await GetIt.I<shared_theme.ThemeManager>().restoreBackgroundPreset();
+  final initialRoute = await AppRoutes.resolveInitialRoute();
 
-  runApp(const CalculatorApp());
+  runApp(CalculatorApp(initialRoute: initialRoute));
 
   //runApp(address() as Widget);
 
@@ -36,7 +37,9 @@ void main() async {
 }
 
 class CalculatorApp extends StatelessWidget {
-  const CalculatorApp({super.key});
+  final String initialRoute;
+
+  const CalculatorApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +73,7 @@ class CalculatorApp extends StatelessWidget {
       },
 
       // Define routes
-      initialRoute: AppRoutes.initialRoute,
+      initialRoute: initialRoute,
       routes: AppRoutes.routes,
     );
   }
