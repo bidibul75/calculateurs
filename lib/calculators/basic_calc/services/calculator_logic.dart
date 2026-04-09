@@ -38,7 +38,7 @@ class CalculatorLogic {
           result = r1 * r2;
           break;
         case "÷":
-          if (r2 == Rational.zero) return "Error zero";
+          if (r2 == Rational.zero) return "Error Div By Zero";
           result = r1 / r2;
           break;
         case "^":
@@ -98,7 +98,7 @@ class CalculatorLogic {
           result = r * r;
           break;
         case "1/x":
-          if (r == Rational.zero) return "Error";
+          if (r == Rational.zero) return "Error Div By Zero";
           result = Rational.one / r;
           break;
         case "√":
@@ -123,7 +123,7 @@ class CalculatorLogic {
               }
             }
           } else {
-            return 'Error: SQRT of a negative number';
+            return 'Error SQRT Of A Negative Number';
           }
 
           // Fall back to Newton-Raphson for irrational/complex cases
