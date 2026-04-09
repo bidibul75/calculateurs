@@ -44,8 +44,8 @@ class CalculatorController extends ChangeNotifier {
       case "x":
       case "÷":
       case "x^y":
-        // Avoid to use Error message with operators
-        if (_state.output.toCleanMathString.isNotANumber) break;
+        // Avoids to use Error message with operators (empty String allowed to allow to change the operator)
+        if (_state.output.toCleanMathString.isNotEmpty && _state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
@@ -54,6 +54,7 @@ class CalculatorController extends ChangeNotifier {
       case "=":
       case "M+":
       case "M-":
+        // Avoids to use Error message or empty String with equal or memory button
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = true;
@@ -80,6 +81,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "+/-":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -89,6 +91,7 @@ class CalculatorController extends ChangeNotifier {
       case "x²":
       case "1/x":
       case "√":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -96,6 +99,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "⌫":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -117,23 +121,34 @@ class CalculatorController extends ChangeNotifier {
     String op = (label == "x^y") ? "^" : label;
 
     if (_state.currentInput.isNotEmpty) {
+      print("current input not empty");
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString;
 
       if (_state.operation.isNotEmpty) {
         if (op != "^") {
           if (_state.operation2 == "^") {
-            inputClean = CalculatorLogic.calculateResult(num1: _state.num2, num2: inputClean, operation: "^");
+            inputClean = CalculatorLogic.calculateResult(
+              num1: _state.num2.toCleanMathString,
+              num2: inputClean,
+              operation: "^",
+            );
           }
-          // If there's already an operation pending, compute it first before setting the new operator
-          String intermediateResult = CalculatorLogic.calculateResult(
-            num1: _state.num1,
-            num2: inputClean,
-            operation: _state.operation,
-          );
-
+          // if the history contains a =, uses the result as the first number of the new calculation
+          // else runs the calculation contained in the history
+          String intermediateResult;
+          if (_state.history.contains('=')) {
+            intermediateResult = _state.output;
+          } else {
+            // If there's already an operation pending, compute it first before setting the new operator
+            intermediateResult = CalculatorLogic.calculateResult(
+              num1: _state.num1.toCleanMathString,
+              num2: inputClean,
+              operation: _state.operation,
+            );
+          }
           // Update history with the intermediate result
-          String history = "$intermediateResult $op";
+          String history = "${intermediateResult.formatRound()} $op";
 
           // Set the intermediate result as the new num1 for the next operation
           _state = _state.copyWith(
@@ -155,6 +170,8 @@ class CalculatorController extends ChangeNotifier {
           );
         }
       } else {
+        print("operation empty");
+        print("num 2 : ${_state.num2}");
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
@@ -164,6 +181,7 @@ class CalculatorController extends ChangeNotifier {
         );
       }
     } else if (_state.operation.isNotEmpty) {
+      print("current input empty but not state.operation");
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
       String currentHist = _state.history.trim();
@@ -171,7 +189,7 @@ class CalculatorController extends ChangeNotifier {
       if (currentHist.isNotEmpty) {
         String base = _state.num1;
         String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString ?? base;
-        String newHistory = "$formattedBase $op ";
+        String newHistory = "${formattedBase.formatRound()} $op ";
         _state = _state.copyWith(operation: op, history: newHistory);
       }
     }
@@ -187,20 +205,20 @@ class CalculatorController extends ChangeNotifier {
 
       if (_state.num2 == "") {
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
+          num1: _state.num1.toCleanMathString,
           num2: currentInputClean,
           operation: _state.operation,
         );
       } else {
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1,
-          num2: _state.num2,
+          num1: _state.num1.toCleanMathString,
+          num2: _state.num2.toCleanMathString,
           num3: currentInputClean,
           operation: _state.operation,
           operation2: "^",
         );
         secondOperandForHistory = CalculatorLogic.calculateResult(
-          num1: _state.num2,
+          num1: _state.num2.toCleanMathString,
           num2: currentInputClean,
           operation: "^",
         );
@@ -247,14 +265,19 @@ class CalculatorController extends ChangeNotifier {
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
-        result = CalculatorLogic.calculateResult(num1: _state.num1, num2: result, operation: _state.operation);
+        result = CalculatorLogic.calculateResult(
+          num1: _state.num1.toCleanMathString,
+          num2: result.toCleanMathString,
+          operation: _state.operation,
+        );
       }
 
       if (_state.history.contains("=")) {
-        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} $result";
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
         _state = _state.copyWith(currentInput: result, output: result, history: history);
       } else {
-        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} $result";
+        history =
+            "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} ${result.formatRound()}";
         _state = _state.copyWith(currentInput: result, output: result, history: history);
       }
     }

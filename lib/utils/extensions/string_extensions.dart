@@ -6,6 +6,7 @@ import 'package:calculators/utils/my_exception.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
+import 'double_extensions.dart';
 
 /// Utility extensions for the String class
 extension StringExtensions on String {
@@ -235,7 +236,7 @@ extension StringExtensions on String {
 
   /// Removes last character
   String get removeLastChar {
-    return isEmpty ? "": substring(0,length-1);
+    return isEmpty ? "" : substring(0, length - 1);
   }
 
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
@@ -267,6 +268,26 @@ extension StringExtensions on String {
     } catch (e) {
       return this;
     }
+  }
+
+  /// Rounds a String representing a decimal number
+  /// Beware ! Not for localized numbers !
+  /// But : returns a localized number !
+  String roundString({int limit = 10}) {
+    if (double.tryParse(this) == null) return format;
+    if (!contains('.')) return format;
+    double d = double.parse(this);
+    String r = "≈ ${d.roundTo(limit).toString().trim().format}";
+    return r.endsWith('.0') ? r.replaceLast('.0') : r;
+  }
+
+  /// Function to format a raw number (e.g: "1000.5" -> "1 000,5")
+  /// and rounds it
+  String formatRound({int limit = 10}) {
+    String s = toCleanMathString;
+    s = s.roundString(limit: limit);
+    print("s = ${s}");
+    return s;
   }
 
   /// Inserts one or several characters each n character in a string

@@ -38,7 +38,7 @@ class CalculatorLogic {
           result = r1 * r2;
           break;
         case "÷":
-          if (r2 == Rational.zero) return "Error";
+          if (r2 == Rational.zero) return "Error Div By Zero";
           result = r1 / r2;
           break;
         case "^":
@@ -48,17 +48,17 @@ class CalculatorLogic {
             int exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
           } catch (e) {
-            return "Error";
+            return "Error exp";
           }
           break;
         default:
-          return "Error";
+          return "Error default";
       }
 
       // Convert to Decimal with precision, then to formatted String
       return result.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
     } catch (e) {
-      return "Error";
+      return "Error end";
     }
   }
 
@@ -98,7 +98,7 @@ class CalculatorLogic {
           result = r * r;
           break;
         case "1/x":
-          if (r == Rational.zero) return "Error";
+          if (r == Rational.zero) return "Error Div By Zero";
           result = Rational.one / r;
           break;
         case "√":
@@ -123,7 +123,7 @@ class CalculatorLogic {
               }
             }
           } else {
-            return 'Error: SQRT of a negative number';
+            return 'Error SQRT Of A Negative Number';
           }
 
           // Fall back to Newton-Raphson for irrational/complex cases
@@ -149,16 +149,22 @@ class CalculatorLogic {
     String? output, // Result already formatted
     String? operation2 = "",
   ]) {
-    String formattedNum1 = num1.format;
+    String formattedNum1 = num1.formatRound();
 
     // If num2 is provided, we're displaying the complete operation with result
     if (num2 != null) {
-      String formattedNum2 = num2.format;
+      String formattedNum2 = num2.formatRound();
       if (operation2 != "") {
         return "$currentHistory $formattedNum2 $operation2";
       } else {
         // output is already formatted by calculateResult
-        return "$formattedNum1 $operation $formattedNum2 = ${output ?? ""}";
+        String outputDisplay;
+        if (output == null) {
+          outputDisplay = "";
+        } else {
+          outputDisplay = output.formatRound();
+        }
+        return "$formattedNum1 $operation $formattedNum2 = $outputDisplay";
       }
     }
 
@@ -173,15 +179,7 @@ class CalculatorLogic {
     String resultFormatted, [
     String currentHistory = "",
   ]) {
-    String format(String n) {
-      try {
-        return Rational.parse(n).toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
-      } catch (e) {
-        return n;
-      }
-    }
-
-    String formattedInput = format(inputVal);
+    String formattedInput = inputVal.formatRound();
 
     switch (operation) {
       case "x²":
