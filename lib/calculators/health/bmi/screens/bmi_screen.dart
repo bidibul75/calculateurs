@@ -1,5 +1,7 @@
 // lib/calculators/health/bmi/screens/bmi_screen.dart
 
+import 'dart:async';
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
@@ -22,6 +24,7 @@ class _BmiScreenState extends State<BmiScreen> {
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
   bool _isInitialized = false;
+  bool _isRestored = false;
 
   @override
   void initState() {
@@ -45,6 +48,11 @@ class _BmiScreenState extends State<BmiScreen> {
         l10n.bmiErrorGeneric,
       );
       _isInitialized = true;
+    }
+
+    if (!_isRestored) {
+      _isRestored = true;
+      unawaited(_controller.restorePersistedState());
     }
   }
 

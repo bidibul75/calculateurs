@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/calculators/ip/IPv4/relation.dart';
 import 'package:calculators/calculators/ip/IPv4/supernet.dart';
@@ -9,6 +11,7 @@ import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Ipv4SupernetScreen extends StatefulWidget {
   const Ipv4SupernetScreen({super.key});
@@ -19,6 +22,9 @@ class Ipv4SupernetScreen extends StatefulWidget {
 
 class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   static const double _mobileKeyHeight = 52;
+  static const String _addressesPreferenceKey = 'ipv4.supernet.addresses.v1';
+  static const String _inputPreferenceKey = 'ipv4.supernet.input.v1';
+  static const String _showMobileKeypadPreferenceKey = 'ipv4.supernet.mobileKeypadVisible.v1';
 
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final TextEditingController _inputController = TextEditingController();
@@ -37,6 +43,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   void initState() {
     super.initState();
     _themeManager.addListener(_updateUI);
+    unawaited(_restorePersistedState());
   }
 
   @override
@@ -62,6 +69,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _allContiguous = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
   }
 
   bool _isMobilePlatform(TargetPlatform platform) {
@@ -73,6 +81,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputController.text = '${_inputController.text}$value';
       _inputError = null;
     });
+    unawaited(_persistState());
   }
 
   void _deleteLastChar() {
@@ -84,6 +93,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputController.text = _inputController.text.substring(0, _inputController.text.length - 1);
       _inputError = null;
     });
+    unawaited(_persistState());
   }
 
   void _clearInputOnly() {
@@ -92,6 +102,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputError = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
   }
 
   ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
@@ -116,6 +127,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetErrorEmptyAddress;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -124,6 +136,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetErrorInvalidCidr;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -131,6 +144,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetDuplicateMessage(normalized, 2);
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -144,6 +158,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _relations.clear();
       _duplicateMessages.clear();
     });
+    unawaited(_persistState());
   }
 
   String _computeSupernetCidr(List<Supernet> addresses) {
@@ -170,6 +185,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
         _allContiguous = null;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -185,6 +201,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
           _allContiguous = null;
           if (hideMobileKeypad) _isMobileKeypadVisible = false;
         });
+        unawaited(_persistState());
         return;
       }
 
@@ -212,12 +229,50 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
           ..addAll(relations);
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     } catch (_) {
       setState(() {
         _statusText = l10n.ipv4SupernetErrorGeneric;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     }
+  }
+
+  Future<void> _restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedAddresses = prefs.getStringList(_addressesPreferenceKey) ?? const <String>[];
+    final savedInput = prefs.getString(_inputPreferenceKey) ?? '';
+    final savedMobileKeypadVisible = prefs.getBool(_showMobileKeypadPreferenceKey);
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _addresses
+        ..clear()
+        ..addAll(savedAddresses);
+      _inputController.text = savedInput;
+      if (savedMobileKeypadVisible != null) {
+        _isMobileKeypadVisible = savedMobileKeypadVisible;
+      }
+    });
+
+    if (_addresses.length >= 2 && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _calculateSupernet();
+        }
+      });
+    }
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_addressesPreferenceKey, _addresses);
+    await prefs.setString(_inputPreferenceKey, _inputController.text);
+    await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
   }
 
   String _relationLabel(AppLocalizations l10n, String relation) {
@@ -413,6 +468,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                     setState(() {
                                       _isMobileKeypadVisible = true;
                                     });
+                                    unawaited(_persistState());
                                   }
                                 }
                               : null,
@@ -485,6 +541,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                       setState(() {
                                         _addresses.remove(address);
                                       });
+                                      unawaited(_persistState());
                                     },
                                   ),
                                 )

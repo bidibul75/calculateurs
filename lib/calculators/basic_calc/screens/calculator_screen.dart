@@ -1,5 +1,7 @@
 // lib/calculators/basic_calc/sreens/calculator_screen.dart
 
+import 'dart:async';
+
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     // We listen to shifts of the controller to update UI
     _controller.addListener(_updateUI);
     _themeManager.addListener(_updateUI);
+    unawaited(_controller.restorePersistedState());
   }
 
   @override

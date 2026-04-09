@@ -12,8 +12,13 @@ import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('Calculator app smoke test', (WidgetTester tester) async {
     // Use a logical resolution that avoids layout overflow (DPR=1 → logical=physical).
     // Height 1000 → keyboardHeight = clamp(500, 360, 720) = 500 > 7 rows × ~65 px.

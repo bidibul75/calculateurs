@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
@@ -7,6 +9,7 @@ import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Ipv4AddressScreen extends StatefulWidget {
   const Ipv4AddressScreen({super.key});
@@ -16,6 +19,10 @@ class Ipv4AddressScreen extends StatefulWidget {
 }
 
 class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
+  static const String _inputPreferenceKey = 'ipv4.address.input.v1';
+  static const String _showMobileKeypadPreferenceKey = 'ipv4.address.mobileKeypadVisible.v1';
+  static const String _lastValidInputPreferenceKey = 'ipv4.address.lastValidInput.v1';
+
   static const double _mobileKeyHeight = 52;
   static const Duration _mobileKeypadAnimationDuration = Duration(milliseconds: 220);
   static const Key _mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
@@ -34,6 +41,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
   void initState() {
     super.initState();
     _themeManager.addListener(_updateUI);
+    unawaited(_restorePersistedState());
   }
 
   @override
@@ -54,6 +62,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       _errorText = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
   }
 
   void _calculate({bool hideMobileKeypad = false}) {
@@ -66,6 +75,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         _errorText = l10n.ipv4ErrorEmptyCidr;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -77,6 +87,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         _errorText = l10n.ipv4ErrorInvalidCidr;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -87,12 +98,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         _errorText = null;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     } catch (_) {
       setState(() {
         _result = null;
         _errorText = l10n.ipv4ErrorGeneric;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     }
   }
 
@@ -106,6 +119,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       _inputController.text = '${_inputController.text}$value';
       _errorText = null;
     });
+    unawaited(_persistState());
   }
 
   void _deleteLastChar() {
@@ -117,6 +131,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       _inputController.text = _inputController.text.substring(0, _inputController.text.length - 1);
       _errorText = null;
     });
+    unawaited(_persistState());
   }
 
   void _clearInputOnly() {
@@ -125,6 +140,41 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       _errorText = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
+  }
+
+  Future<void> _restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedInput = prefs.getString(_inputPreferenceKey) ?? '';
+    final savedLastValidInput = prefs.getString(_lastValidInputPreferenceKey) ?? '';
+    final savedMobileKeypadVisible = prefs.getBool(_showMobileKeypadPreferenceKey);
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _inputController.text = savedInput;
+      if (savedMobileKeypadVisible != null) {
+        _isMobileKeypadVisible = savedMobileKeypadVisible;
+      }
+
+      if (savedLastValidInput.isNotEmpty) {
+        try {
+          _result = Address(savedLastValidInput);
+          _errorText = null;
+        } catch (_) {
+          _result = null;
+        }
+      }
+    });
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_inputPreferenceKey, _inputController.text);
+    await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
+    await prefs.setString(_lastValidInputPreferenceKey, _result?.addressToProcess ?? '');
   }
 
   ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
@@ -411,6 +461,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                                     setState(() {
                                       _isMobileKeypadVisible = true;
                                     });
+                                    unawaited(_persistState());
                                   }
                                 }
                               : null,

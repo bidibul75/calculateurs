@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const Key mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
 const Key clearButtonKey = ValueKey<String>('ipv4.key.clear');
@@ -13,6 +14,7 @@ const Key enterButtonKey = ValueKey<String>('ipv4.key.enter');
 
 void main() {
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     if (GetIt.I.isRegistered<ThemeManager>()) {
       GetIt.I.unregister<ThemeManager>();
     }

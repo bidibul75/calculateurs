@@ -1,16 +1,26 @@
 // lib/calculators/basic_calc/controllers/calculator_controller.dart
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
 
 class CalculatorController extends ChangeNotifier {
+  static const String _historyEntriesKey = 'basic.history.entries.v1';
+  static const String _outputKey = 'basic.output.v1';
+  static const String _currentInputKey = 'basic.currentInput.v1';
+  static const String _memoryKey = 'basic.memory.v1';
+  static const int _maxHistoryEntries = 50;
+
   CalculatorState _state = CalculatorState();
 
   CalculatorState get state => _state;
@@ -112,6 +122,63 @@ class CalculatorController extends ChangeNotifier {
         isLastClicClear = false;
         _handleNumber(buttonText);
     }
+    notifyListeners();
+    unawaited(_persistState());
+  }
+
+  Future<void> restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedOutput = prefs.getString(_outputKey) ?? '0';
+    final savedCurrentInput = prefs.getString(_currentInputKey) ?? '';
+    final savedMemoryRaw = prefs.getString(_memoryKey);
+    final savedEntriesRaw = prefs.getString(_historyEntriesKey);
+
+    Rational savedMemory = Rational.zero;
+    if (savedMemoryRaw != null) {
+      try {
+        savedMemory = Rational.parse(savedMemoryRaw);
+      } catch (_) {
+        savedMemory = Rational.zero;
+      }
+    }
+
+    List<CalculatorHistoryEntry> savedEntries = const [];
+    if (savedEntriesRaw != null && savedEntriesRaw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(savedEntriesRaw) as List<dynamic>;
+        savedEntries = decoded
+            .map((item) => item as Map<String, dynamic>)
+            .map(
+              (item) => CalculatorHistoryEntry(
+                displayText: item['displayText'] as String? ?? '',
+                resultDisplay: item['resultDisplay'] as String? ?? '0',
+                resultClean: item['resultClean'] as String? ?? '0',
+              ),
+            )
+            .where((entry) => entry.displayText.isNotEmpty)
+            .toList();
+      } catch (_) {
+        savedEntries = const [];
+      }
+    }
+    if (savedEntries.length > _maxHistoryEntries) {
+      savedEntries = savedEntries.sublist(0, _maxHistoryEntries);
+    }
+
+    final safeOutput = savedOutput.isEmpty ? '0' : savedOutput;
+    final safeInput = savedCurrentInput;
+
+    _state = CalculatorState(
+      output: safeOutput,
+      currentInput: safeInput,
+      history: '',
+      historyEntries: savedEntries,
+      num1: safeInput.isNotEmpty ? safeInput.toCleanMathString : '0',
+      operation: '',
+      num2: '',
+      operation2: '',
+      memory: savedMemory,
+    );
     notifyListeners();
   }
 
@@ -369,11 +436,13 @@ class CalculatorController extends ChangeNotifier {
       operation2: "",
     );
     notifyListeners();
+    unawaited(_persistState());
   }
 
   void clearHistory() {
     _state = _state.copyWith(historyEntries: const []);
     notifyListeners();
+    unawaited(_persistState());
   }
 
   void removeHistoryEntryAt(int index) {
@@ -384,6 +453,7 @@ class CalculatorController extends ChangeNotifier {
     final updatedEntries = List<CalculatorHistoryEntry>.from(_state.historyEntries)..removeAt(index);
     _state = _state.copyWith(historyEntries: updatedEntries);
     notifyListeners();
+    unawaited(_persistState());
   }
 
   List<CalculatorHistoryEntry> _prependHistoryEntry(String historyText, String resultDisplay) {
@@ -396,6 +466,27 @@ class CalculatorController extends ChangeNotifier {
       resultDisplay: resultDisplay,
       resultClean: resultDisplay.toCleanMathString,
     );
-    return <CalculatorHistoryEntry>[entry, ..._state.historyEntries];
+    final updatedEntries = <CalculatorHistoryEntry>[entry, ..._state.historyEntries];
+    return updatedEntries.length > _maxHistoryEntries ? updatedEntries.sublist(0, _maxHistoryEntries) : updatedEntries;
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final entriesSerialized = jsonEncode(
+      _state.historyEntries
+          .map(
+            (entry) => {
+              'displayText': entry.displayText,
+              'resultDisplay': entry.resultDisplay,
+              'resultClean': entry.resultClean,
+            },
+          )
+          .toList(),
+    );
+
+    await prefs.setString(_historyEntriesKey, entriesSerialized);
+    await prefs.setString(_outputKey, _state.output);
+    await prefs.setString(_currentInputKey, _state.currentInput);
+    await prefs.setString(_memoryKey, _state.memory.toString());
   }
 }

@@ -5,9 +5,11 @@ import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     await GetIt.I.reset();
 
     final symbols = LocalNumberSymbols();
