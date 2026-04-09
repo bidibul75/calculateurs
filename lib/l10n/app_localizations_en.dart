@@ -56,6 +56,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeBackgroundColor => 'Background Color:';
 
   @override
+  String get themeBackgroundNeutral => 'Soft grey';
+
+  @override
+  String get themeBackgroundWallpaper => 'Wallpaper';
+
+  @override
+  String get themeBackgroundMetal => 'Brushed metal';
+
+  @override
   String get themeDisplayTextColor => 'Display Text Color:';
 
   @override

@@ -192,6 +192,24 @@ abstract class AppLocalizations {
   /// **'Background Color:'**
   String get themeBackgroundColor;
 
+  /// No description provided for @themeBackgroundNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft grey'**
+  String get themeBackgroundNeutral;
+
+  /// No description provided for @themeBackgroundWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallpaper'**
+  String get themeBackgroundWallpaper;
+
+  /// No description provided for @themeBackgroundMetal.
+  ///
+  /// In en, this message translates to:
+  /// **'Brushed metal'**
+  String get themeBackgroundMetal;
+
   /// No description provided for @themeDisplayTextColor.
   ///
   /// In en, this message translates to:

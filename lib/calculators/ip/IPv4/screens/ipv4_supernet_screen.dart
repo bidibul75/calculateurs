@@ -369,12 +369,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     final bool showMobileKeypad = !kIsWeb && _isMobilePlatform(Theme.of(context).platform) && _isMobileKeypadVisible;
 
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -554,7 +549,8 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                 ),
               ),
             ),
-            const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
+            if (_themeManager.isUnsplashBackgroundActive)
+              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
           ],
         ),
       ),

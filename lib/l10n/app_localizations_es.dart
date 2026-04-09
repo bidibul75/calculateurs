@@ -57,6 +57,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeBackgroundColor => 'Color de fondo:';
 
   @override
+  String get themeBackgroundNeutral => 'Gris suave';
+
+  @override
+  String get themeBackgroundWallpaper => 'Fondo de pantalla';
+
+  @override
+  String get themeBackgroundMetal => 'Metal cepillado';
+
+  @override
   String get themeDisplayTextColor => 'Color del texto de pantalla:';
 
   @override

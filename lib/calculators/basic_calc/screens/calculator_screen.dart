@@ -97,12 +97,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final bool isDesktopLike = mediaSize.width >= 768;
 
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -277,8 +272,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ),
             ),
-            // Photo credit at the bottom right
-            if (mediaSize.height >= 700)
+            // Photo credit at the bottom right, only when the Unsplash background is active.
+            if (mediaSize.height >= 700 && _themeManager.isUnsplashBackgroundActive)
               Positioned(
                 bottom: 16,
                 right: 16,

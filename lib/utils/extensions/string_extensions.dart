@@ -286,7 +286,6 @@ extension StringExtensions on String {
   String formatRound({int limit = 10}) {
     String s = toCleanMathString;
     s = s.roundString(limit: limit);
-    print("s = ${s}");
     return s;
   }
 

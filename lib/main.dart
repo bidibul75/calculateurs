@@ -1,4 +1,3 @@
-import 'package:calculators/calculators/ip/IPv6/supernet_ipv6.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +6,6 @@ import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:get_it/get_it.dart';
-import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
-import 'package:calculators/calculators/ip/IPv4/address.dart';
 
 void main() async {
   // Mandatory to execute code before runApp
@@ -26,6 +23,8 @@ void main() async {
   if (!GetIt.I.isRegistered<shared_theme.ThemeManager>()) {
     GetIt.I.registerSingleton<shared_theme.ThemeManager>(shared_theme.ThemeManager());
   }
+
+  await GetIt.I<shared_theme.ThemeManager>().restoreBackgroundPreset();
 
   runApp(const CalculatorApp());
 

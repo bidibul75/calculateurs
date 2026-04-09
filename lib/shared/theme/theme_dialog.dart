@@ -19,30 +19,49 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
+                runSpacing: 8,
                 children: [
+                  _BackgroundImageOption(
+                    assetPath: ThemeManager.wallpaperAssetPath,
+                    label: l10n.themeBackgroundWallpaper,
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWallpaper,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWallpaper),
+                  ),
+                  _BackgroundImageOption(
+                    assetPath: ThemeManager.brushedMetalAssetPath,
+                    label: l10n.themeBackgroundMetal,
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetBrushedMetal,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetBrushedMetal),
+                  ),
+                  _ColorOption(
+                    color: Colors.grey[200]!,
+                    label: l10n.themeBackgroundNeutral,
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetSoftGrey,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetSoftGrey),
+                  ),
                   _ColorOption(
                     color: Colors.white,
                     label: l10n.colorWhite,
-                    isSelected: themeManager.backgroundColor == Colors.white,
-                    onTap: () => themeManager.setBackgroundColor(Colors.white),
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWhite,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWhite),
                   ),
                   _ColorOption(
                     color: Colors.grey[900]!,
                     label: l10n.colorDark,
-                    isSelected: themeManager.backgroundColor == Colors.grey[900]!,
-                    onTap: () => themeManager.setBackgroundColor(Colors.grey[900]!),
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetDark,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetDark),
                   ),
                   _ColorOption(
                     color: Colors.blue[50]!,
                     label: l10n.colorLightBlue,
-                    isSelected: themeManager.backgroundColor == Colors.blue[50]!,
-                    onTap: () => themeManager.setBackgroundColor(Colors.blue[50]!),
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightBlue,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightBlue),
                   ),
                   _ColorOption(
                     color: Colors.amber[50]!,
                     label: l10n.colorLightAmber,
-                    isSelected: themeManager.backgroundColor == Colors.amber[50]!,
-                    onTap: () => themeManager.setBackgroundColor(Colors.amber[50]!),
+                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightAmber,
+                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightAmber),
                   ),
                 ],
               ),
@@ -213,6 +232,76 @@ class _ButtonGroupColorOption extends StatelessWidget {
     );
   }
 }
+
+class _BackgroundImageOption extends StatelessWidget {
+  final String assetPath;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _BackgroundImageOption({
+    required this.assetPath,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 68,
+        height: 68,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: isSelected ? Colors.black : Colors.grey, width: isSelected ? 3 : 1),
+          image: DecorationImage(image: AssetImage(assetPath), fit: BoxFit.cover),
+          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
+        ),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withAlpha(110)],
+                ),
+              ),
+            ),
+            const Center(
+              child: Icon(Icons.photo_library_outlined, color: Colors.white, size: 22),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(110),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 class _TextColorOption extends StatelessWidget {
   final Color color;

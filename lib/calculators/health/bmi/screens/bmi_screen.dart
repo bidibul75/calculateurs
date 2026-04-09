@@ -164,12 +164,7 @@ class _BmiScreenState extends State<BmiScreen> {
         .toDouble();
 
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -296,12 +291,13 @@ class _BmiScreenState extends State<BmiScreen> {
                 ),
               ),
             ),
-            // Photo credit at the bottom right
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: const PhotoCreditLink(),
-            ),
+            // Photo credit at the bottom right, only when the Unsplash background is active.
+            if (_themeManager.isUnsplashBackgroundActive)
+              const Positioned(
+                bottom: 16,
+                right: 16,
+                child: PhotoCreditLink(),
+              ),
           ],
         ),
       ),

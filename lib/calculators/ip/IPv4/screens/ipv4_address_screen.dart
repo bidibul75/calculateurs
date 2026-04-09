@@ -367,12 +367,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     final bool showMobileKeypad = isMobileApp && _isMobileKeypadVisible;
 
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -495,11 +490,12 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                 ),
               ),
             ),
-            const Positioned(
-              bottom: 16,
-              right: 16,
-              child: PhotoCreditLink(),
-            ),
+            if (_themeManager.isUnsplashBackgroundActive)
+              const Positioned(
+                bottom: 16,
+                right: 16,
+                child: PhotoCreditLink(),
+              ),
           ],
         ),
       ),

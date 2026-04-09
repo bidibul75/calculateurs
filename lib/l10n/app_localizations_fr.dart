@@ -57,6 +57,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeBackgroundColor => 'Couleur d\'arrière-plan :';
 
   @override
+  String get themeBackgroundNeutral => 'Gris doux';
+
+  @override
+  String get themeBackgroundWallpaper => 'Fond d\'écran';
+
+  @override
+  String get themeBackgroundMetal => 'Métal brossé';
+
+  @override
   String get themeDisplayTextColor => 'Couleur du texte de l\'affichage :';
 
   @override
@@ -93,7 +102,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get colorPurple => 'Violet';
 
   @override
-  String get colorTeal => 'Sarcelle';
+  String get colorTeal => 'Bleu Vert';
 
   @override
   String get colorLightGrey => 'Gris clair';
