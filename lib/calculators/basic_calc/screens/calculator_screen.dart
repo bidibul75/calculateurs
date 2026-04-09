@@ -8,6 +8,7 @@ import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:get_it/get_it.dart';
 import '../controllers/calculator_controller.dart';
+import '../models/calculator_history_entry.dart';
 import '../../../shared/widgets/menu_drawer.dart';
 
 class CalculatorScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
+  final ScrollController _historyScrollController = ScrollController();
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   void dispose() {
     _controller.removeListener(_updateUI);
     _themeManager.removeListener(_updateUI);
+    _historyScrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -89,6 +92,55 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
+  Widget _buildHistoryItem(CalculatorHistoryEntry entry) {
+    final historyText = entry.displayText.contains('= ≈') ? entry.displayText.replaceLast('= ≈', '≈') : entry.displayText;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.white.withAlpha(120),
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => _controller.selectHistoryEntry(entry),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    historyText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: _themeManager.displayTextColor, fontSize: 16),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(Icons.replay_outlined, size: 18, color: _themeManager.displayTextColor),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryList(List<CalculatorHistoryEntry> entries) {
+    if (entries.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Scrollbar(
+      controller: _historyScrollController,
+      thumbVisibility: true,
+      child: ListView.builder(
+        controller: _historyScrollController,
+        itemCount: entries.length,
+        itemBuilder: (context, index) => _buildHistoryItem(entries[index]),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
@@ -129,143 +181,135 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
                     return Column(
                       children: [
-                    // Display area with semi-transparent background
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                        alignment: Alignment.bottomRight,
-                        color: Colors.white.withAlpha(150), // Semi-transparent white overlay
-                        // Add a ScrollView to prevent overflow when the history is long
-                        child: SingleChildScrollView(
-                          reverse: true, // Keep the content pinned to the bottom
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // Memory display (aligned to the left)
-                              if (_controller.memoryDisplay().isNotEmpty)
-                                Align(
-                                  alignment: Alignment.centerLeft,
+                        // Display area with semi-transparent background
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                            color: Colors.white.withAlpha(150),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (_controller.memoryDisplay().isNotEmpty)
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      _controller.memoryDisplay(),
+                                      style: TextStyle(color: Colors.amber[800], fontSize: 24),
+                                    ),
+                                  ),
+                                if (state.history.isNotEmpty)
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      state.history.contains('= ≈') ? state.history.replaceLast('= ≈', '≈') : state.history,
+                                      style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                const SizedBox(height: 10),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
                                   child: Text(
-                                    _controller.memoryDisplay(),
-                                    style: TextStyle(color: Colors.amber[800], fontSize: 24),
+                                    state.output,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: _themeManager.displayTextColor,
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-
-                              // History display
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  state.history.contains('= ≈')?state.history.replaceLast('= ≈','≈'):state.history,
-                                  style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
-                                  textAlign: TextAlign.right,
+                                const SizedBox(height: 16),
+                                Expanded(
+                                  child: _buildHistoryList(state.historyEntries),
                                 ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              // FittedBox shrinks the font size if the text is too long
-                              FittedBox(
-                                fit: BoxFit.scaleDown, // Only shrinks, does not grow
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  state.output,
-                                  // Force a single line to trigger shrinking
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: _themeManager.displayTextColor,
-                                    fontSize: 50, // We can even increase the base size
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // Button grid area
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
-                      child: SizedBox(
-                        height: keyboardHeight,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('MC', compact: isCompactHeight),
-                                  _buildButton('MR', compact: isCompactHeight),
-                                  _buildButton('M+', compact: isCompactHeight),
-                                  _buildButton('M-', compact: isCompactHeight),
-                                ],
-                              ),
+                        // Button grid area
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
+                          child: SizedBox(
+                            height: keyboardHeight,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('MC', compact: isCompactHeight),
+                                      _buildButton('MR', compact: isCompactHeight),
+                                      _buildButton('M+', compact: isCompactHeight),
+                                      _buildButton('M-', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('x²', compact: isCompactHeight),
+                                      _buildButton('√', compact: isCompactHeight),
+                                      _buildButton('1/x', compact: isCompactHeight),
+                                      _buildButton('x^y', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('C', compact: isCompactHeight),
+                                      _buildButton('⌫', compact: isCompactHeight),
+                                      _buildButton('+/-', compact: isCompactHeight),
+                                      _buildButton('÷', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('7', compact: isCompactHeight),
+                                      _buildButton('8', compact: isCompactHeight),
+                                      _buildButton('9', compact: isCompactHeight),
+                                      _buildButton('x', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('4', compact: isCompactHeight),
+                                      _buildButton('5', compact: isCompactHeight),
+                                      _buildButton('6', compact: isCompactHeight),
+                                      _buildButton('-', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('1', compact: isCompactHeight),
+                                      _buildButton('2', compact: isCompactHeight),
+                                      _buildButton('3', compact: isCompactHeight),
+                                      _buildButton('+', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      _buildButton('0', compact: isCompactHeight),
+                                      _buildButton('00', compact: isCompactHeight),
+                                      _buildButton(symbols.decimalSep, compact: isCompactHeight),
+                                      _buildButton('=', compact: isCompactHeight),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('x²', compact: isCompactHeight),
-                                  _buildButton('√', compact: isCompactHeight),
-                                  _buildButton('1/x', compact: isCompactHeight),
-                                  _buildButton('x^y', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('C', compact: isCompactHeight),
-                                  _buildButton('⌫', compact: isCompactHeight),
-                                  _buildButton('+/-', compact: isCompactHeight),
-                                  _buildButton('÷', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('7', compact: isCompactHeight),
-                                  _buildButton('8', compact: isCompactHeight),
-                                  _buildButton('9', compact: isCompactHeight),
-                                  _buildButton('x', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('4', compact: isCompactHeight),
-                                  _buildButton('5', compact: isCompactHeight),
-                                  _buildButton('6', compact: isCompactHeight),
-                                  _buildButton('-', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('1', compact: isCompactHeight),
-                                  _buildButton('2', compact: isCompactHeight),
-                                  _buildButton('3', compact: isCompactHeight),
-                                  _buildButton('+', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  _buildButton('0', compact: isCompactHeight),
-                                  _buildButton('00', compact: isCompactHeight),
-                                  _buildButton(symbols.decimalSep, compact: isCompactHeight),
-                                  _buildButton('=', compact: isCompactHeight),
-                                ],
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
                       ],
                     );
                   },
