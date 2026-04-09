@@ -44,8 +44,8 @@ class CalculatorController extends ChangeNotifier {
       case "x":
       case "÷":
       case "x^y":
-        // Avoid to use Error message with operators
-        if (_state.output.toCleanMathString.isNotANumber) break;
+        // Avoids to use Error message with operators (empty String allowed to allow to change the operator)
+        if (_state.output.toCleanMathString.isNotEmpty && _state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
         _handleOperator(buttonText);
@@ -54,6 +54,7 @@ class CalculatorController extends ChangeNotifier {
       case "=":
       case "M+":
       case "M-":
+        // Avoids to use Error message or empty String with equal or memory button
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = true;
@@ -80,6 +81,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "+/-":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -89,6 +91,7 @@ class CalculatorController extends ChangeNotifier {
       case "x²":
       case "1/x":
       case "√":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -96,6 +99,7 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "⌫":
+        // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
         isLastClicClear = false;
         isLastClicEqualOrMemo = false;
@@ -117,6 +121,7 @@ class CalculatorController extends ChangeNotifier {
     String op = (label == "x^y") ? "^" : label;
 
     if (_state.currentInput.isNotEmpty) {
+      print("current input not empty");
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString;
 
@@ -165,6 +170,8 @@ class CalculatorController extends ChangeNotifier {
           );
         }
       } else {
+        print("operation empty");
+        print("num 2 : ${_state.num2}");
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
@@ -174,6 +181,7 @@ class CalculatorController extends ChangeNotifier {
         );
       }
     } else if (_state.operation.isNotEmpty) {
+      print("current input empty but not state.operation");
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
       String currentHist = _state.history.trim();
@@ -181,7 +189,7 @@ class CalculatorController extends ChangeNotifier {
       if (currentHist.isNotEmpty) {
         String base = _state.num1;
         String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString ?? base;
-        String newHistory = "$formattedBase $op ";
+        String newHistory = "${formattedBase.formatRound()} $op ";
         _state = _state.copyWith(operation: op, history: newHistory);
       }
     }
