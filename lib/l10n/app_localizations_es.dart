@@ -213,6 +213,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv4ActionClear => 'Limpiar';
 
   @override
+  String get ipv4ResultCopy => 'Copiar resultado';
+
+  @override
+  String get ipv4ResultSave => 'Guardar resultado';
+
+  @override
+  String get ipv4ResultCopied => 'Resultado copiado al portapapeles.';
+
+  @override
+  String get ipv4ResultExportUnsupported =>
+      'La exportación de archivos no está disponible en esta plataforma.';
+
+  @override
+  String get ipv4ResultExportError => 'No se puede guardar el resultado.';
+
+  @override
+  String ipv4ResultExported(Object path) {
+    return 'Resultado guardado en: $path';
+  }
+
+  @override
   String get ipv4ErrorEmptyCidr => 'Introduce una dirección IPv4 en CIDR.';
 
   @override

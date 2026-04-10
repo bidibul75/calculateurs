@@ -11,6 +11,8 @@ const Key mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
 const Key clearButtonKey = ValueKey<String>('ipv4.key.clear');
 const Key backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
 const Key enterButtonKey = ValueKey<String>('ipv4.key.enter');
+const Key resultCopyButtonKey = ValueKey<String>('ipv4.result.copy');
+const Key resultSaveButtonKey = ValueKey<String>('ipv4.result.save');
 
 void main() {
   setUp(() {
@@ -78,6 +80,8 @@ void main() {
     expect(find.text('192.168.1.255'), findsOneWidget);
     expect(find.text('Usable hosts'), findsOneWidget);
     expect(find.text('254'), findsOneWidget);
+    expect(find.byKey(resultCopyButtonKey), findsOneWidget);
+    expect(find.byKey(resultSaveButtonKey), findsOneWidget);
   });
 
   testWidgets('shows custom keypad on mobile only', (tester) async {

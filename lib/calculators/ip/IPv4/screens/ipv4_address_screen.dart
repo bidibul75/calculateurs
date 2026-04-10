@@ -8,8 +8,10 @@ import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/ipv4_result_export_service.dart';
 
 class Ipv4AddressScreen extends StatefulWidget {
   const Ipv4AddressScreen({super.key});
@@ -29,6 +31,8 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
   static const Key _clearButtonKey = ValueKey<String>('ipv4.key.clear');
   static const Key _backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
   static const Key _enterButtonKey = ValueKey<String>('ipv4.key.enter');
+  static const Key _resultCopyButtonKey = ValueKey<String>('ipv4.result.copy');
+  static const Key _resultSaveButtonKey = ValueKey<String>('ipv4.result.save');
 
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final TextEditingController _inputController = TextEditingController();
@@ -379,6 +383,89 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
+  void _showResultSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _addressResultAsPlainText(AppLocalizations l10n, Address address) {
+    final rows = <String>[
+      '${l10n.ipv4InfoPrefix}: /${address.suffix}',
+      '${l10n.ipv4InfoClass}: ${_addressClass(address)}',
+      '${l10n.ipv4InfoScope}: ${_addressScope(l10n, address)}',
+      '${l10n.ipv4InfoMask}: ${address.mask}',
+      '${l10n.ipv4InfoWildcard}: ${address.wildcardMask}',
+      '${l10n.ipv4InfoNetwork}: ${address.addressNetwork}',
+      '${l10n.ipv4InfoBroadcast}: ${address.addressBroadcast}',
+      '${l10n.ipv4InfoFirstHost}: ${_hostDisplay(address.addressAvailableFirstOne)}',
+      '${l10n.ipv4InfoLastHost}: ${_hostDisplay(address.addressAvailableLastOne)}',
+      '${l10n.ipv4InfoTotalAddresses}: ${address.numberAvailableAddresses}',
+      '${l10n.ipv4InfoUsableHosts}: ${address.numberUsableAddresses}',
+      '${l10n.ipv4InfoNetworkBinary}: ${address.addressNetworkStringBinary}',
+      '${l10n.ipv4InfoBroadcastBinary}: ${address.addressBroadcastStringBinary}',
+    ];
+
+    return rows.join('\n');
+  }
+
+  Future<void> _copyAddressResult(AppLocalizations l10n, Address address) async {
+    await Clipboard.setData(ClipboardData(text: _addressResultAsPlainText(l10n, address)));
+    _showResultSnackBar(l10n.ipv4ResultCopied);
+  }
+
+  Future<void> _saveAddressResult(AppLocalizations l10n, Address address) async {
+    if (!isIpv4ResultFileExportSupported) {
+      _showResultSnackBar(l10n.ipv4ResultExportUnsupported);
+      return;
+    }
+
+    try {
+      final filePath = await exportIpv4ResultToTextFile(
+        _addressResultAsPlainText(l10n, address),
+        prefix: 'ipv4_address_result',
+      );
+      if (filePath == null || filePath.isEmpty) {
+        _showResultSnackBar(l10n.ipv4ResultExportError);
+        return;
+      }
+      _showResultSnackBar(l10n.ipv4ResultExported(filePath));
+    } catch (_) {
+      _showResultSnackBar(l10n.ipv4ResultExportError);
+    }
+  }
+
+  Widget _buildResultActions({
+    required AppLocalizations l10n,
+    required VoidCallback onCopy,
+    required VoidCallback onSave,
+  }) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            key: _resultCopyButtonKey,
+            tooltip: l10n.ipv4ResultCopy,
+            onPressed: onCopy,
+            icon: const Icon(Icons.content_copy_outlined),
+          ),
+          IconButton(
+            key: _resultSaveButtonKey,
+            tooltip: l10n.ipv4ResultSave,
+            onPressed: onSave,
+            icon: const Icon(Icons.save_alt_outlined),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildResultCard(AppLocalizations l10n, Address address) {
     return Card(
       color: Colors.white.withAlpha(200),
@@ -403,6 +490,12 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             const Divider(),
             _buildInfoRow(l10n.ipv4InfoNetworkBinary, address.addressNetworkStringBinary),
             _buildInfoRow(l10n.ipv4InfoBroadcastBinary, address.addressBroadcastStringBinary),
+            const Divider(),
+            _buildResultActions(
+              l10n: l10n,
+              onCopy: () => unawaited(_copyAddressResult(l10n, address)),
+              onSave: () => unawaited(_saveAddressResult(l10n, address)),
+            ),
           ],
         ),
       ),

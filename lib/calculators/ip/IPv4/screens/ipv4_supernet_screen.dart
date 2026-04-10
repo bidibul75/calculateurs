@@ -10,8 +10,10 @@ import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/ipv4_result_export_service.dart';
 
 class Ipv4SupernetScreen extends StatefulWidget {
   const Ipv4SupernetScreen({super.key});
@@ -38,6 +40,9 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   String? _supernetResult;
   bool? _allContiguous;
   bool _isMobileKeypadVisible = true;
+
+  static const Key _resultCopyButtonKey = ValueKey<String>('ipv4.supernet.result.copy');
+  static const Key _resultSaveButtonKey = ValueKey<String>('ipv4.supernet.result.save');
 
   @override
   void initState() {
@@ -418,6 +423,86 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     );
   }
 
+  void _showResultSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _supernetResultAsPlainText(AppLocalizations l10n) {
+    final lines = <String>[
+      '${l10n.ipv4SupernetAddressesTitle}: ${_addresses.join(', ')}',
+    ];
+
+    if (_statusText != null && _statusText!.isNotEmpty) {
+      lines.add(_statusText!);
+    }
+
+    if (_supernetResult != null) {
+      lines.add('${l10n.ipv4SupernetResultValue}: $_supernetResult');
+    }
+
+    if (_relations.isNotEmpty) {
+      lines.add(l10n.ipv4SupernetRelationsTitle);
+      lines.addAll(_relations.map((r) => '${r.addressA} -> ${_relationLabel(l10n, r.relationAB)} -> ${r.addressB}'));
+    }
+
+    return lines.join('\n');
+  }
+
+  Future<void> _copySupernetResult(AppLocalizations l10n) async {
+    await Clipboard.setData(ClipboardData(text: _supernetResultAsPlainText(l10n)));
+    _showResultSnackBar(l10n.ipv4ResultCopied);
+  }
+
+  Future<void> _saveSupernetResult(AppLocalizations l10n) async {
+    if (!isIpv4ResultFileExportSupported) {
+      _showResultSnackBar(l10n.ipv4ResultExportUnsupported);
+      return;
+    }
+
+    try {
+      final filePath = await exportIpv4ResultToTextFile(
+        _supernetResultAsPlainText(l10n),
+        prefix: 'ipv4_supernet_result',
+      );
+      if (filePath == null || filePath.isEmpty) {
+        _showResultSnackBar(l10n.ipv4ResultExportError);
+        return;
+      }
+      _showResultSnackBar(l10n.ipv4ResultExported(filePath));
+    } catch (_) {
+      _showResultSnackBar(l10n.ipv4ResultExportError);
+    }
+  }
+
+  Widget _buildResultActions(AppLocalizations l10n) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            key: _resultCopyButtonKey,
+            tooltip: l10n.ipv4ResultCopy,
+            onPressed: () => unawaited(_copySupernetResult(l10n)),
+            icon: const Icon(Icons.content_copy_outlined),
+          ),
+          IconButton(
+            key: _resultSaveButtonKey,
+            tooltip: l10n.ipv4ResultSave,
+            onPressed: () => unawaited(_saveSupernetResult(l10n)),
+            icon: const Icon(Icons.save_alt_outlined),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -573,6 +658,8 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                   Text(l10n.ipv4SupernetResultTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
                                   const SizedBox(height: 8),
                                   Text('${l10n.ipv4SupernetResultValue}: $_supernetResult'),
+                                  const Divider(),
+                                  _buildResultActions(l10n),
                                 ],
                               ),
                             ),

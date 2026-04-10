@@ -498,6 +498,42 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get ipv4ActionClear;
 
+  /// No description provided for @ipv4ResultCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy result'**
+  String get ipv4ResultCopy;
+
+  /// No description provided for @ipv4ResultSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save result'**
+  String get ipv4ResultSave;
+
+  /// No description provided for @ipv4ResultCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Result copied to clipboard.'**
+  String get ipv4ResultCopied;
+
+  /// No description provided for @ipv4ResultExportUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'File export is not available on this platform.'**
+  String get ipv4ResultExportUnsupported;
+
+  /// No description provided for @ipv4ResultExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save result.'**
+  String get ipv4ResultExportError;
+
+  /// No description provided for @ipv4ResultExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved to: {path}'**
+  String ipv4ResultExported(Object path);
+
   /// No description provided for @ipv4ErrorEmptyCidr.
   ///
   /// In en, this message translates to:

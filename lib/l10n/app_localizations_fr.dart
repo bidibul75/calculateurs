@@ -214,6 +214,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ipv4ActionClear => 'Effacer';
 
   @override
+  String get ipv4ResultCopy => 'Copier le résultat';
+
+  @override
+  String get ipv4ResultSave => 'Enregistrer le résultat';
+
+  @override
+  String get ipv4ResultCopied => 'Résultat copié dans le presse-papiers.';
+
+  @override
+  String get ipv4ResultExportUnsupported =>
+      'L\'export de fichier n\'est pas disponible sur cette plateforme.';
+
+  @override
+  String get ipv4ResultExportError => 'Impossible d\'enregistrer le résultat.';
+
+  @override
+  String ipv4ResultExported(Object path) {
+    return 'Résultat enregistré dans : $path';
+  }
+
+  @override
   String get ipv4ErrorEmptyCidr => 'Veuillez saisir une adresse IPv4 en CIDR.';
 
   @override

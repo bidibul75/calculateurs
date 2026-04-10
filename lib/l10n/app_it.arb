@@ -83,6 +83,17 @@
   "ipv4InputHint": "Esempio: 192.168.1.34/24",
   "ipv4ActionCalculate": "Calcola",
   "ipv4ActionClear": "Cancella",
+  "ipv4ResultCopy": "Copia risultato",
+  "ipv4ResultSave": "Salva risultato",
+  "ipv4ResultCopied": "Risultato copiato negli appunti.",
+  "ipv4ResultExportUnsupported": "L'esportazione file non è disponibile su questa piattaforma.",
+  "ipv4ResultExportError": "Impossibile salvare il risultato.",
+  "ipv4ResultExported": "Risultato salvato in: {path}",
+  "@ipv4ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "ipv4ErrorEmptyCidr": "Inserisci un indirizzo IPv4 in CIDR.",
   "ipv4ErrorInvalidCidr": "Formato CIDR IPv4 non valido.",
   "ipv4ErrorGeneric": "Impossibile elaborare questo CIDR IPv4.",
