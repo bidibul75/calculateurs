@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/calculators/ip/IPv4/relation.dart';
 import 'package:calculators/calculators/ip/IPv4/supernet.dart';
@@ -8,7 +10,10 @@ import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/ipv4_result_export_service.dart';
 
 class Ipv4SupernetScreen extends StatefulWidget {
   const Ipv4SupernetScreen({super.key});
@@ -19,6 +24,9 @@ class Ipv4SupernetScreen extends StatefulWidget {
 
 class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   static const double _mobileKeyHeight = 52;
+  static const String _addressesPreferenceKey = 'ipv4.supernet.addresses.v1';
+  static const String _inputPreferenceKey = 'ipv4.supernet.input.v1';
+  static const String _showMobileKeypadPreferenceKey = 'ipv4.supernet.mobileKeypadVisible.v1';
 
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final TextEditingController _inputController = TextEditingController();
@@ -33,10 +41,14 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   bool? _allContiguous;
   bool _isMobileKeypadVisible = true;
 
+  static const Key _resultCopyButtonKey = ValueKey<String>('ipv4.supernet.result.copy');
+  static const Key _resultSaveButtonKey = ValueKey<String>('ipv4.supernet.result.save');
+
   @override
   void initState() {
     super.initState();
     _themeManager.addListener(_updateUI);
+    unawaited(_restorePersistedState());
   }
 
   @override
@@ -62,6 +74,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _allContiguous = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
   }
 
   bool _isMobilePlatform(TargetPlatform platform) {
@@ -73,6 +86,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputController.text = '${_inputController.text}$value';
       _inputError = null;
     });
+    unawaited(_persistState());
   }
 
   void _deleteLastChar() {
@@ -84,6 +98,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputController.text = _inputController.text.substring(0, _inputController.text.length - 1);
       _inputError = null;
     });
+    unawaited(_persistState());
   }
 
   void _clearInputOnly() {
@@ -92,6 +107,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _inputError = null;
       _isMobileKeypadVisible = true;
     });
+    unawaited(_persistState());
   }
 
   ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
@@ -116,6 +132,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetErrorEmptyAddress;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -124,6 +141,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetErrorInvalidCidr;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -131,6 +149,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       setState(() {
         _inputError = l10n.ipv4SupernetDuplicateMessage(normalized, 2);
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -144,6 +163,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       _relations.clear();
       _duplicateMessages.clear();
     });
+    unawaited(_persistState());
   }
 
   String _computeSupernetCidr(List<Supernet> addresses) {
@@ -170,6 +190,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
         _allContiguous = null;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
       return;
     }
 
@@ -185,6 +206,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
           _allContiguous = null;
           if (hideMobileKeypad) _isMobileKeypadVisible = false;
         });
+        unawaited(_persistState());
         return;
       }
 
@@ -212,12 +234,50 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
           ..addAll(relations);
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     } catch (_) {
       setState(() {
         _statusText = l10n.ipv4SupernetErrorGeneric;
         if (hideMobileKeypad) _isMobileKeypadVisible = false;
       });
+      unawaited(_persistState());
     }
+  }
+
+  Future<void> _restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedAddresses = prefs.getStringList(_addressesPreferenceKey) ?? const <String>[];
+    final savedInput = prefs.getString(_inputPreferenceKey) ?? '';
+    final savedMobileKeypadVisible = prefs.getBool(_showMobileKeypadPreferenceKey);
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _addresses
+        ..clear()
+        ..addAll(savedAddresses);
+      _inputController.text = savedInput;
+      if (savedMobileKeypadVisible != null) {
+        _isMobileKeypadVisible = savedMobileKeypadVisible;
+      }
+    });
+
+    if (_addresses.length >= 2 && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _calculateSupernet();
+        }
+      });
+    }
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_addressesPreferenceKey, _addresses);
+    await prefs.setString(_inputPreferenceKey, _inputController.text);
+    await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
   }
 
   String _relationLabel(AppLocalizations l10n, String relation) {
@@ -363,18 +423,93 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     );
   }
 
+  void _showResultSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String _supernetResultAsPlainText(AppLocalizations l10n) {
+    final lines = <String>[
+      '${l10n.ipv4SupernetAddressesTitle}: ${_addresses.join(', ')}',
+    ];
+
+    if (_statusText != null && _statusText!.isNotEmpty) {
+      lines.add(_statusText!);
+    }
+
+    if (_supernetResult != null) {
+      lines.add('${l10n.ipv4SupernetResultValue}: $_supernetResult');
+    }
+
+    if (_relations.isNotEmpty) {
+      lines.add(l10n.ipv4SupernetRelationsTitle);
+      lines.addAll(_relations.map((r) => '${r.addressA} -> ${_relationLabel(l10n, r.relationAB)} -> ${r.addressB}'));
+    }
+
+    return lines.join('\n');
+  }
+
+  Future<void> _copySupernetResult(AppLocalizations l10n) async {
+    await Clipboard.setData(ClipboardData(text: _supernetResultAsPlainText(l10n)));
+    _showResultSnackBar(l10n.ipv4ResultCopied);
+  }
+
+  Future<void> _saveSupernetResult(AppLocalizations l10n) async {
+    if (!isIpv4ResultFileExportSupported) {
+      _showResultSnackBar(l10n.ipv4ResultExportUnsupported);
+      return;
+    }
+
+    try {
+      final filePath = await exportIpv4ResultToTextFile(
+        _supernetResultAsPlainText(l10n),
+        prefix: 'ipv4_supernet_result',
+      );
+      if (filePath == null || filePath.isEmpty) {
+        _showResultSnackBar(l10n.ipv4ResultExportError);
+        return;
+      }
+      _showResultSnackBar(l10n.ipv4ResultExported(filePath));
+    } catch (_) {
+      _showResultSnackBar(l10n.ipv4ResultExportError);
+    }
+  }
+
+  Widget _buildResultActions(AppLocalizations l10n) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            key: _resultCopyButtonKey,
+            tooltip: l10n.ipv4ResultCopy,
+            onPressed: () => unawaited(_copySupernetResult(l10n)),
+            icon: const Icon(Icons.content_copy_outlined),
+          ),
+          IconButton(
+            key: _resultSaveButtonKey,
+            tooltip: l10n.ipv4ResultSave,
+            onPressed: () => unawaited(_saveSupernetResult(l10n)),
+            icon: const Icon(Icons.save_alt_outlined),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final bool showMobileKeypad = !kIsWeb && _isMobilePlatform(Theme.of(context).platform) && _isMobileKeypadVisible;
 
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -418,6 +553,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                     setState(() {
                                       _isMobileKeypadVisible = true;
                                     });
+                                    unawaited(_persistState());
                                   }
                                 }
                               : null,
@@ -490,6 +626,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                       setState(() {
                                         _addresses.remove(address);
                                       });
+                                      unawaited(_persistState());
                                     },
                                   ),
                                 )
@@ -521,6 +658,8 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                   Text(l10n.ipv4SupernetResultTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
                                   const SizedBox(height: 8),
                                   Text('${l10n.ipv4SupernetResultValue}: $_supernetResult'),
+                                  const Divider(),
+                                  _buildResultActions(l10n),
                                 ],
                               ),
                             ),
@@ -554,7 +693,8 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                 ),
               ),
             ),
-            const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
+            if (_themeManager.isUnsplashBackgroundActive)
+              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
           ],
         ),
       ),

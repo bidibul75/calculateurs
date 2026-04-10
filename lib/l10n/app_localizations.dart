@@ -108,6 +108,54 @@ abstract class AppLocalizations {
   /// **'Basic calculator'**
   String get appTitle;
 
+  /// No description provided for @basicHistoryCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy history'**
+  String get basicHistoryCopy;
+
+  /// No description provided for @basicHistorySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save history'**
+  String get basicHistorySave;
+
+  /// No description provided for @basicHistoryClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get basicHistoryClear;
+
+  /// No description provided for @basicHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'History is empty.'**
+  String get basicHistoryEmpty;
+
+  /// No description provided for @basicHistoryCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'History copied to clipboard.'**
+  String get basicHistoryCopied;
+
+  /// No description provided for @basicHistoryExportUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'File export is not available on this platform.'**
+  String get basicHistoryExportUnsupported;
+
+  /// No description provided for @basicHistoryExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save history.'**
+  String get basicHistoryExportError;
+
+  /// No description provided for @basicHistoryExported.
+  ///
+  /// In en, this message translates to:
+  /// **'History saved to: {path}'**
+  String basicHistoryExported(Object path);
+
   /// No description provided for @menuThemes.
   ///
   /// In en, this message translates to:
@@ -191,6 +239,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Background Color:'**
   String get themeBackgroundColor;
+
+  /// No description provided for @themeBackgroundNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft grey'**
+  String get themeBackgroundNeutral;
+
+  /// No description provided for @themeBackgroundWallpaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallpaper'**
+  String get themeBackgroundWallpaper;
+
+  /// No description provided for @themeBackgroundMetal.
+  ///
+  /// In en, this message translates to:
+  /// **'Brushed metal'**
+  String get themeBackgroundMetal;
 
   /// No description provided for @themeDisplayTextColor.
   ///
@@ -431,6 +497,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear'**
   String get ipv4ActionClear;
+
+  /// No description provided for @ipv4ResultCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy result'**
+  String get ipv4ResultCopy;
+
+  /// No description provided for @ipv4ResultSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save result'**
+  String get ipv4ResultSave;
+
+  /// No description provided for @ipv4ResultCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Result copied to clipboard.'**
+  String get ipv4ResultCopied;
+
+  /// No description provided for @ipv4ResultExportUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'File export is not available on this platform.'**
+  String get ipv4ResultExportUnsupported;
+
+  /// No description provided for @ipv4ResultExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save result.'**
+  String get ipv4ResultExportError;
+
+  /// No description provided for @ipv4ResultExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved to: {path}'**
+  String ipv4ResultExported(Object path);
 
   /// No description provided for @ipv4ErrorEmptyCidr.
   ///

@@ -1,15 +1,26 @@
 // lib/calculators/basic_calc/controllers/calculator_controller.dart
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
 
 class CalculatorController extends ChangeNotifier {
+  static const String _historyEntriesKey = 'basic.history.entries.v1';
+  static const String _outputKey = 'basic.output.v1';
+  static const String _currentInputKey = 'basic.currentInput.v1';
+  static const String _memoryKey = 'basic.memory.v1';
+  static const int _maxHistoryEntries = 50;
+
   CalculatorState _state = CalculatorState();
 
   CalculatorState get state => _state;
@@ -24,7 +35,7 @@ class CalculatorController extends ChangeNotifier {
         isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
           isLastClicClear = false;
-          _state = _state.copyWith(output: "0", currentInput: "", num1: "0", operation: "", history: "");
+          _state = _state.copyWith(output: "0", currentInput: "", num1: "0", operation: "", history: "", historyEntries: const []);
         } else {
           isLastClicClear = true;
           // Clear only the current input and operation, preserve memory and history
@@ -34,7 +45,7 @@ class CalculatorController extends ChangeNotifier {
             num1: "0",
             operation: "",
             // If the history already contains a result (=), keep it for reference, otherwise clear it
-            history: _state.history.contains("=") ? _state.history : "",
+            history: "",
           );
         }
         break;
@@ -70,6 +81,7 @@ class CalculatorController extends ChangeNotifier {
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString, // Clean for internal calculation
+            history: "",
           );
         }
         break;
@@ -111,6 +123,63 @@ class CalculatorController extends ChangeNotifier {
         _handleNumber(buttonText);
     }
     notifyListeners();
+    unawaited(_persistState());
+  }
+
+  Future<void> restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedOutput = prefs.getString(_outputKey) ?? '0';
+    final savedCurrentInput = prefs.getString(_currentInputKey) ?? '';
+    final savedMemoryRaw = prefs.getString(_memoryKey);
+    final savedEntriesRaw = prefs.getString(_historyEntriesKey);
+
+    Rational savedMemory = Rational.zero;
+    if (savedMemoryRaw != null) {
+      try {
+        savedMemory = Rational.parse(savedMemoryRaw);
+      } catch (_) {
+        savedMemory = Rational.zero;
+      }
+    }
+
+    List<CalculatorHistoryEntry> savedEntries = const [];
+    if (savedEntriesRaw != null && savedEntriesRaw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(savedEntriesRaw) as List<dynamic>;
+        savedEntries = decoded
+            .map((item) => item as Map<String, dynamic>)
+            .map(
+              (item) => CalculatorHistoryEntry(
+                displayText: item['displayText'] as String? ?? '',
+                resultDisplay: item['resultDisplay'] as String? ?? '0',
+                resultClean: item['resultClean'] as String? ?? '0',
+              ),
+            )
+            .where((entry) => entry.displayText.isNotEmpty)
+            .toList();
+      } catch (_) {
+        savedEntries = const [];
+      }
+    }
+    if (savedEntries.length > _maxHistoryEntries) {
+      savedEntries = savedEntries.sublist(0, _maxHistoryEntries);
+    }
+
+    final safeOutput = savedOutput.isEmpty ? '0' : savedOutput;
+    final safeInput = savedCurrentInput;
+
+    _state = CalculatorState(
+      output: safeOutput,
+      currentInput: safeInput,
+      history: '',
+      historyEntries: savedEntries,
+      num1: safeInput.isNotEmpty ? safeInput.toCleanMathString : '0',
+      operation: '',
+      num2: '',
+      operation2: '',
+      memory: savedMemory,
+    );
+    notifyListeners();
   }
 
   // --- Private Logic ---
@@ -121,7 +190,6 @@ class CalculatorController extends ChangeNotifier {
     String op = (label == "x^y") ? "^" : label;
 
     if (_state.currentInput.isNotEmpty) {
-      print("current input not empty");
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString;
 
@@ -170,8 +238,6 @@ class CalculatorController extends ChangeNotifier {
           );
         }
       } else {
-        print("operation empty");
-        print("num 2 : ${_state.num2}");
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
@@ -181,7 +247,6 @@ class CalculatorController extends ChangeNotifier {
         );
       }
     } else if (_state.operation.isNotEmpty) {
-      print("current input empty but not state.operation");
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
       String currentHist = _state.history.trim();
@@ -240,9 +305,11 @@ class CalculatorController extends ChangeNotifier {
               result,
             );
 
+      final updatedHistoryEntries = _prependHistoryEntry(history, result);
       _state = _state.copyWith(
         output: result,
-        history: history,
+        history: "",
+        historyEntries: updatedHistoryEntries,
         currentInput: result,
         operation: "",
         num1: "0",
@@ -274,12 +341,22 @@ class CalculatorController extends ChangeNotifier {
 
       if (_state.history.contains("=")) {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
-        _state = _state.copyWith(currentInput: result, output: result, history: history);
       } else {
         history =
             "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} ${result.formatRound()}";
-        _state = _state.copyWith(currentInput: result, output: result, history: history);
       }
+
+      final updatedHistoryEntries = _prependHistoryEntry(history, result);
+      _state = _state.copyWith(
+        currentInput: result,
+        output: result,
+        history: "",
+        historyEntries: updatedHistoryEntries,
+        operation: "",
+        num1: result.toCleanMathString,
+        num2: "",
+        operation2: "",
+      );
     }
     isLastClicEqualOrMemo = true;
   }
@@ -319,7 +396,7 @@ class CalculatorController extends ChangeNotifier {
     if (isLastClicEqualOrMemo) {
       isLastClicEqualOrMemo = false;
       String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
-      _state = CalculatorState(currentInput: val, output: val, history: _state.history, memory: _state.memory);
+      _state = CalculatorState(currentInput: val, output: val, history: "", historyEntries: _state.historyEntries, memory: _state.memory);
       isLastClicNumber = true;
       return;
     }
@@ -339,5 +416,87 @@ class CalculatorController extends ChangeNotifier {
   String memoryDisplay() {
     if (_state.memory == Rational.zero) return "";
     return "M = ${Decimal.parse(_state.memory.toDecimal().toString()).toPreciseFormattedString}";
+  }
+
+  void selectHistoryEntry(CalculatorHistoryEntry entry) {
+    isLastClicClear = false;
+    isLastClicEqualOrMemo = true;
+    isLastClicNumber = false;
+    _state = _state.copyWith(
+      currentInput: entry.resultClean,
+      output: entry.resultDisplay,
+      history: "",
+      num1: entry.resultClean,
+      operation: "",
+      num2: "",
+      operation2: "",
+    );
+    notifyListeners();
+    unawaited(_persistState());
+  }
+
+  void clearHistory() {
+    _state = _state.copyWith(historyEntries: const []);
+    notifyListeners();
+    unawaited(_persistState());
+  }
+
+  String historyEntriesToPlainText() {
+    if (_state.historyEntries.isEmpty) {
+      return '';
+    }
+
+    return _state.historyEntries
+        .map(
+          (entry) => entry.displayText.contains('= ≈')
+              ? entry.displayText.replaceLast('= ≈', '≈')
+              : entry.displayText,
+        )
+        .join('\n');
+  }
+
+  void removeHistoryEntryAt(int index) {
+    if (index < 0 || index >= _state.historyEntries.length) {
+      return;
+    }
+
+    final updatedEntries = List<CalculatorHistoryEntry>.from(_state.historyEntries)..removeAt(index);
+    _state = _state.copyWith(historyEntries: updatedEntries);
+    notifyListeners();
+    unawaited(_persistState());
+  }
+
+  List<CalculatorHistoryEntry> _prependHistoryEntry(String historyText, String resultDisplay) {
+    if (resultDisplay.toCleanMathString.isNotANumber) {
+      return _state.historyEntries;
+    }
+
+    final entry = CalculatorHistoryEntry(
+      displayText: historyText,
+      resultDisplay: resultDisplay,
+      resultClean: resultDisplay.toCleanMathString,
+    );
+    final updatedEntries = <CalculatorHistoryEntry>[entry, ..._state.historyEntries];
+    return updatedEntries.length > _maxHistoryEntries ? updatedEntries.sublist(0, _maxHistoryEntries) : updatedEntries;
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final entriesSerialized = jsonEncode(
+      _state.historyEntries
+          .map(
+            (entry) => {
+              'displayText': entry.displayText,
+              'resultDisplay': entry.resultDisplay,
+              'resultClean': entry.resultClean,
+            },
+          )
+          .toList(),
+    );
+
+    await prefs.setString(_historyEntriesKey, entriesSerialized);
+    await prefs.setString(_outputKey, _state.output);
+    await prefs.setString(_currentInputKey, _state.currentInput);
+    await prefs.setString(_memoryKey, _state.memory.toString());
   }
 }

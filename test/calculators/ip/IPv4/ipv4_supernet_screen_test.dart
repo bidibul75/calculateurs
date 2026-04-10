@@ -5,9 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const Key supernetResultCopyButtonKey = ValueKey<String>('ipv4.supernet.result.copy');
+const Key supernetResultSaveButtonKey = ValueKey<String>('ipv4.supernet.result.save');
 
 void main() {
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     if (GetIt.I.isRegistered<ThemeManager>()) {
       GetIt.I.unregister<ThemeManager>();
     }
@@ -61,6 +66,8 @@ void main() {
 
     expect(find.text('All addresses are contiguous.'), findsOneWidget);
     expect(find.text('Covering supernet: 192.168.0.0/23'), findsOneWidget);
+    expect(find.byKey(supernetResultCopyButtonKey), findsOneWidget);
+    expect(find.byKey(supernetResultSaveButtonKey), findsOneWidget);
   });
 
   testWidgets('prevents adding duplicate addresses and shows localized duplicate message', (tester) async {

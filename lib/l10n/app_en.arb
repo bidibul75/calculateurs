@@ -1,6 +1,19 @@
 {
   "@@locale": "en",
   "appTitle": "Basic calculator",
+  "basicHistoryCopy": "Copy history",
+  "basicHistorySave": "Save history",
+  "basicHistoryClear": "Clear history",
+  "basicHistoryEmpty": "History is empty.",
+  "basicHistoryCopied": "History copied to clipboard.",
+  "basicHistoryExportUnsupported": "File export is not available on this platform.",
+  "basicHistoryExportError": "Unable to save history.",
+  "basicHistoryExported": "History saved to: {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Themes",
   "menuWhoAmI": "Who am I",
   "menuDonate": "Donate",
@@ -15,6 +28,9 @@
   "donateOutro": "Every contribution helps improve this app!",
   "themeSettingsTitle": "Theme Settings",
   "themeBackgroundColor": "Background Color:",
+  "themeBackgroundNeutral": "Soft grey",
+  "themeBackgroundWallpaper": "Wallpaper",
+  "themeBackgroundMetal": "Brushed metal",
   "themeDisplayTextColor": "Display Text Color:",
   "themeButtonGroupsColor": "Button Groups Color:",
   "themeButtonTextColor": "Button Text Color:",
@@ -67,6 +83,17 @@
   "ipv4InputHint": "Example: 192.168.1.34/24",
   "ipv4ActionCalculate": "Calculate",
   "ipv4ActionClear": "Clear",
+  "ipv4ResultCopy": "Copy result",
+  "ipv4ResultSave": "Save result",
+  "ipv4ResultCopied": "Result copied to clipboard.",
+  "ipv4ResultExportUnsupported": "File export is not available on this platform.",
+  "ipv4ResultExportError": "Unable to save result.",
+  "ipv4ResultExported": "Result saved to: {path}",
+  "@ipv4ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "ipv4ErrorEmptyCidr": "Please enter an IPv4 CIDR address.",
   "ipv4ErrorInvalidCidr": "Invalid IPv4 CIDR format.",
   "ipv4ErrorGeneric": "Unable to process this IPv4 CIDR.",

@@ -1,6 +1,19 @@
 {
   "@@locale": "fr",
   "appTitle": "Calculatrice basique",
+  "basicHistoryCopy": "Copier l'historique",
+  "basicHistorySave": "Enregistrer l'historique",
+  "basicHistoryClear": "Effacer l'historique",
+  "basicHistoryEmpty": "L'historique est vide.",
+  "basicHistoryCopied": "Historique copié dans le presse-papiers.",
+  "basicHistoryExportUnsupported": "L'export de fichier n'est pas disponible sur cette plateforme.",
+  "basicHistoryExportError": "Impossible d'enregistrer l'historique.",
+  "basicHistoryExported": "Historique enregistré dans : {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Thèmes",
   "menuWhoAmI": "Qui suis-je",
   "menuDonate": "Faire un don",
@@ -15,6 +28,9 @@
   "donateOutro": "Chaque contribution aide à améliorer cette application !",
   "themeSettingsTitle": "Paramètres du thème",
   "themeBackgroundColor": "Couleur d'arrière-plan :",
+  "themeBackgroundNeutral": "Gris doux",
+  "themeBackgroundWallpaper": "Fond d'écran",
+  "themeBackgroundMetal": "Métal brossé",
   "themeDisplayTextColor": "Couleur du texte de l'affichage :",
   "themeButtonGroupsColor": "Couleur des groupes de boutons :",
   "themeButtonTextColor": "Couleur du texte des boutons :",
@@ -27,13 +43,13 @@
   "colorGreen": "Vert",
   "colorDarkGrey": "Gris foncé",
   "colorPurple": "Violet",
-  "colorTeal": "Sarcelle",
+  "colorTeal": "Bleu-vert",
   "colorLightGrey": "Gris clair",
   "colorYellow": "Jaune",
   "photoCredit": "Photo : Bady Abbas sur Unsplash",
 
   "@_menu.sections": {
-    "description": "Libelles des sections pour regrouper les modules dans le menu burger"
+    "description": "Libellés des sections pour regrouper les modules dans le menu burger"
   },
   "menuSectionHealth": "Santé",
   "menuSectionConversions": "Outils IP",
@@ -41,7 +57,7 @@
   "menuSectionRealEstate": "Immobilier",
 
   "@_module.health.bmi": {
-    "description": "Vocabulaire module : Sante > IMC"
+    "description": "Vocabulaire module : Santé > IMC"
   },
   "bmiTitle": "Calculateur IMC",
   "menuBmi": "Calculateur IMC",
@@ -67,6 +83,17 @@
   "ipv4InputHint": "Exemple : 192.168.1.34/24",
   "ipv4ActionCalculate": "Calculer",
   "ipv4ActionClear": "Effacer",
+  "ipv4ResultCopy": "Copier le résultat",
+  "ipv4ResultSave": "Enregistrer le résultat",
+  "ipv4ResultCopied": "Résultat copié dans le presse-papiers.",
+  "ipv4ResultExportUnsupported": "L'export de fichier n'est pas disponible sur cette plateforme.",
+  "ipv4ResultExportError": "Impossible d'enregistrer le résultat.",
+  "ipv4ResultExported": "Résultat enregistré dans : {path}",
+  "@ipv4ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "ipv4ErrorEmptyCidr": "Veuillez saisir une adresse IPv4 en CIDR.",
   "ipv4ErrorInvalidCidr": "Format CIDR IPv4 invalide.",
   "ipv4ErrorGeneric": "Impossible de traiter ce CIDR IPv4.",
@@ -133,7 +160,7 @@
   },
   "ipv6TypeLoopback": "Adresse loopback.",
   "ipv6TypeLinkLocal": "Adresse link-local (communication sur le même switch, non routable).",
-  "ipv6TypeGlobalUnicast": "Adresse global unicast (adresse publique routable sur Internet).",
+  "ipv6TypeGlobalUnicast": "Adresse unicast globale (adresse publique routable sur Internet).",
   "ipv6TypeUniqueLocal": "Adresse unique local (équivalent aux adresses privées IPv4).",
   "ipv6TypeMulticast": "Adresse multicast.",
   "ipv6TypeUnspecified": "Adresse non spécifiée.",

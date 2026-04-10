@@ -1,14 +1,19 @@
 // lib/calculators/health/bmi/controllers/bmi_controller.dart
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/bmi_state.dart';
 import '../services/bmi_logic.dart';
 
 /// Controller for BMI calculator
 class BmiController extends ChangeNotifier {
   static const String actionEnter = 'action_enter';
+  static const String _stateKey = 'bmi.state.v1';
 
   BmiState _state = const BmiState();
+  bool _hasRestoredState = false;
 
   // Localized prompts (set from screen)
   String promptHeight = 'Height (m):';
@@ -35,7 +40,47 @@ class BmiController extends ChangeNotifier {
     errorInvalidHeight = invalidHeightMessage;
     errorInvalidWeight = invalidWeightMessage;
     errorInvalidResult = invalidResultMessage;
-    _state = BmiState(prompt: promptHeight);
+    if (_state.prompt.isEmpty && !_hasRestoredState) {
+      _state = BmiState(prompt: promptHeight);
+    } else {
+      _state = _state.copyWith(prompt: _resolvePromptForState(_state));
+    }
+  }
+
+  Future<void> restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = prefs.getString(_stateKey);
+    if (encoded == null || encoded.isEmpty) {
+      _hasRestoredState = true;
+      return;
+    }
+
+    final segments = encoded.split('|');
+    if (segments.length != 6) {
+      _hasRestoredState = true;
+      return;
+    }
+
+    _state = BmiState(
+      currentInput: segments[0],
+      output: segments[1].isEmpty ? '0' : segments[1],
+      height: segments[2].isEmpty ? null : segments[2],
+      weight: segments[3].isEmpty ? null : segments[3],
+      isHeightComplete: segments[4] == '1',
+      hasError: segments[5] == '1',
+      prompt: _resolvePromptForState(
+        BmiState(
+          currentInput: segments[0],
+          output: segments[1].isEmpty ? '0' : segments[1],
+          height: segments[2].isEmpty ? null : segments[2],
+          weight: segments[3].isEmpty ? null : segments[3],
+          isHeightComplete: segments[4] == '1',
+          hasError: segments[5] == '1',
+        ),
+      ),
+    );
+    _hasRestoredState = true;
+    notifyListeners();
   }
 
   /// Handle button press
@@ -63,6 +108,7 @@ class BmiController extends ChangeNotifier {
       prompt: promptHeight,
     );
     notifyListeners();
+    unawaited(_persistState());
   }
 
   /// Backspace
@@ -74,6 +120,7 @@ class BmiController extends ChangeNotifier {
         hasError: false,
       );
       notifyListeners();
+      unawaited(_persistState());
     }
   }
 
@@ -82,6 +129,7 @@ class BmiController extends ChangeNotifier {
     final newInput = _state.currentInput + char;
     _state = _state.copyWith(currentInput: newInput, output: newInput.isNotEmpty ? newInput : '0', hasError: false);
     notifyListeners();
+    unawaited(_persistState());
   }
 
   /// Handle Enter button
@@ -100,6 +148,7 @@ class BmiController extends ChangeNotifier {
           prompt: promptWeight,
         );
         notifyListeners();
+        unawaited(_persistState());
       } else {
         // First entry: height
         _state = _state.copyWith(
@@ -111,6 +160,7 @@ class BmiController extends ChangeNotifier {
           prompt: promptHeight,
         );
         notifyListeners();
+        unawaited(_persistState());
       }
     } else {
       // Second entry: weight, calculate BMI
@@ -124,6 +174,7 @@ class BmiController extends ChangeNotifier {
           prompt: promptWeight,
         );
         notifyListeners();
+        unawaited(_persistState());
       } else {
         final height = _state.height!;
         final bmiResult = BmiLogic.calculateBmi(height, weight);
@@ -145,7 +196,31 @@ class BmiController extends ChangeNotifier {
           );
         }
         notifyListeners();
+        unawaited(_persistState());
       }
     }
+  }
+
+  String _resolvePromptForState(BmiState state) {
+    if (state.weight != null && state.weight!.isNotEmpty && !state.hasError) {
+      return promptResult;
+    }
+    if (state.isHeightComplete) {
+      return promptWeight;
+    }
+    return promptHeight;
+  }
+
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = [
+      _state.currentInput,
+      _state.output,
+      _state.height ?? '',
+      _state.weight ?? '',
+      _state.isHeightComplete ? '1' : '0',
+      _state.hasError ? '1' : '0',
+    ].join('|');
+    await prefs.setString(_stateKey, encoded);
   }
 }

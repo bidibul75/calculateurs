@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const Key mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
 const Key clearButtonKey = ValueKey<String>('ipv4.key.clear');
 const Key backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
 const Key enterButtonKey = ValueKey<String>('ipv4.key.enter');
+const Key resultCopyButtonKey = ValueKey<String>('ipv4.result.copy');
+const Key resultSaveButtonKey = ValueKey<String>('ipv4.result.save');
 
 void main() {
   setUp(() {
+    SharedPreferences.setMockInitialValues({});
     if (GetIt.I.isRegistered<ThemeManager>()) {
       GetIt.I.unregister<ThemeManager>();
     }
@@ -76,6 +80,8 @@ void main() {
     expect(find.text('192.168.1.255'), findsOneWidget);
     expect(find.text('Usable hosts'), findsOneWidget);
     expect(find.text('254'), findsOneWidget);
+    expect(find.byKey(resultCopyButtonKey), findsOneWidget);
+    expect(find.byKey(resultSaveButtonKey), findsOneWidget);
   });
 
   testWidgets('shows custom keypad on mobile only', (tester) async {

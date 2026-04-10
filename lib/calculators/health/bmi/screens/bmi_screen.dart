@@ -1,5 +1,7 @@
 // lib/calculators/health/bmi/screens/bmi_screen.dart
 
+import 'dart:async';
+
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
@@ -22,6 +24,7 @@ class _BmiScreenState extends State<BmiScreen> {
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
   bool _isInitialized = false;
+  bool _isRestored = false;
 
   @override
   void initState() {
@@ -45,6 +48,11 @@ class _BmiScreenState extends State<BmiScreen> {
         l10n.bmiErrorGeneric,
       );
       _isInitialized = true;
+    }
+
+    if (!_isRestored) {
+      _isRestored = true;
+      unawaited(_controller.restorePersistedState());
     }
   }
 
@@ -164,12 +172,7 @@ class _BmiScreenState extends State<BmiScreen> {
         .toDouble();
 
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
+      decoration: _themeManager.backgroundDecoration,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -296,12 +299,13 @@ class _BmiScreenState extends State<BmiScreen> {
                 ),
               ),
             ),
-            // Photo credit at the bottom right
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: const PhotoCreditLink(),
-            ),
+            // Photo credit at the bottom right, only when the Unsplash background is active.
+            if (_themeManager.isUnsplashBackgroundActive)
+              const Positioned(
+                bottom: 16,
+                right: 16,
+                child: PhotoCreditLink(),
+              ),
           ],
         ),
       ),

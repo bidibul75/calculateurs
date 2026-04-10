@@ -1,5 +1,7 @@
 // lib/calculators/basic_calc/sreens/menu_drawer.dart
 
+import 'dart:async';
+
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/navigation/app_routes.dart';
 import 'package:calculators/navigation/menu_catalog.dart';
@@ -129,6 +131,7 @@ class MenuDrawer extends StatelessWidget {
     if (currentRoute == routeName) {
       return;
     }
+    unawaited(AppRoutes.saveLastRoute(routeName));
     Navigator.of(context, rootNavigator: true).pushNamed(routeName);
   }
 

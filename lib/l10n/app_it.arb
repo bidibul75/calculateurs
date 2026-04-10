@@ -1,6 +1,19 @@
 {
   "@@locale": "it",
   "appTitle": "Calcolatrice base",
+  "basicHistoryCopy": "Copia cronologia",
+  "basicHistorySave": "Salva cronologia",
+  "basicHistoryClear": "Cancella cronologia",
+  "basicHistoryEmpty": "La cronologia è vuota.",
+  "basicHistoryCopied": "Cronologia copiata negli appunti.",
+  "basicHistoryExportUnsupported": "L'esportazione file non è disponibile su questa piattaforma.",
+  "basicHistoryExportError": "Impossibile salvare la cronologia.",
+  "basicHistoryExported": "Cronologia salvata in: {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Temi",
   "menuWhoAmI": "Chi sono",
   "menuDonate": "Dona",
@@ -15,6 +28,9 @@
   "donateOutro": "Ogni contributo aiuta a migliorare questa app.",
   "themeSettingsTitle": "Impostazioni tema",
   "themeBackgroundColor": "Colore di sfondo:",
+  "themeBackgroundNeutral": "Grigio tenue",
+  "themeBackgroundWallpaper": "Sfondo",
+  "themeBackgroundMetal": "Metallo spazzolato",
   "themeDisplayTextColor": "Colore testo display:",
   "themeButtonGroupsColor": "Colore gruppi di pulsanti:",
   "themeButtonTextColor": "Colore testo pulsanti:",
@@ -67,6 +83,17 @@
   "ipv4InputHint": "Esempio: 192.168.1.34/24",
   "ipv4ActionCalculate": "Calcola",
   "ipv4ActionClear": "Cancella",
+  "ipv4ResultCopy": "Copia risultato",
+  "ipv4ResultSave": "Salva risultato",
+  "ipv4ResultCopied": "Risultato copiato negli appunti.",
+  "ipv4ResultExportUnsupported": "L'esportazione file non è disponibile su questa piattaforma.",
+  "ipv4ResultExportError": "Impossibile salvare il risultato.",
+  "ipv4ResultExported": "Risultato salvato in: {path}",
+  "@ipv4ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "ipv4ErrorEmptyCidr": "Inserisci un indirizzo IPv4 in CIDR.",
   "ipv4ErrorInvalidCidr": "Formato CIDR IPv4 non valido.",
   "ipv4ErrorGeneric": "Impossibile elaborare questo CIDR IPv4.",

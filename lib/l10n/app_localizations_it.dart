@@ -12,6 +12,33 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'Calcolatrice base';
 
   @override
+  String get basicHistoryCopy => 'Copia cronologia';
+
+  @override
+  String get basicHistorySave => 'Salva cronologia';
+
+  @override
+  String get basicHistoryClear => 'Cancella cronologia';
+
+  @override
+  String get basicHistoryEmpty => 'La cronologia è vuota.';
+
+  @override
+  String get basicHistoryCopied => 'Cronologia copiata negli appunti.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'L\'esportazione file non è disponibile su questa piattaforma.';
+
+  @override
+  String get basicHistoryExportError => 'Impossibile salvare la cronologia.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'Cronologia salvata in: $path';
+  }
+
+  @override
   String get menuThemes => 'Temi';
 
   @override
@@ -54,6 +81,15 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get themeBackgroundColor => 'Colore di sfondo:';
+
+  @override
+  String get themeBackgroundNeutral => 'Grigio tenue';
+
+  @override
+  String get themeBackgroundWallpaper => 'Sfondo';
+
+  @override
+  String get themeBackgroundMetal => 'Metallo spazzolato';
 
   @override
   String get themeDisplayTextColor => 'Colore testo display:';
@@ -174,6 +210,27 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get ipv4ActionClear => 'Cancella';
+
+  @override
+  String get ipv4ResultCopy => 'Copia risultato';
+
+  @override
+  String get ipv4ResultSave => 'Salva risultato';
+
+  @override
+  String get ipv4ResultCopied => 'Risultato copiato negli appunti.';
+
+  @override
+  String get ipv4ResultExportUnsupported =>
+      'L\'esportazione file non è disponibile su questa piattaforma.';
+
+  @override
+  String get ipv4ResultExportError => 'Impossibile salvare il risultato.';
+
+  @override
+  String ipv4ResultExported(Object path) {
+    return 'Risultato salvato in: $path';
+  }
 
   @override
   String get ipv4ErrorEmptyCidr => 'Inserisci un indirizzo IPv4 in CIDR.';

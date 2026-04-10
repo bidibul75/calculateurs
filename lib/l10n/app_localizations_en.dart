@@ -12,6 +12,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Basic calculator';
 
   @override
+  String get basicHistoryCopy => 'Copy history';
+
+  @override
+  String get basicHistorySave => 'Save history';
+
+  @override
+  String get basicHistoryClear => 'Clear history';
+
+  @override
+  String get basicHistoryEmpty => 'History is empty.';
+
+  @override
+  String get basicHistoryCopied => 'History copied to clipboard.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'File export is not available on this platform.';
+
+  @override
+  String get basicHistoryExportError => 'Unable to save history.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'History saved to: $path';
+  }
+
+  @override
   String get menuThemes => 'Themes';
 
   @override
@@ -54,6 +81,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeBackgroundColor => 'Background Color:';
+
+  @override
+  String get themeBackgroundNeutral => 'Soft grey';
+
+  @override
+  String get themeBackgroundWallpaper => 'Wallpaper';
+
+  @override
+  String get themeBackgroundMetal => 'Brushed metal';
 
   @override
   String get themeDisplayTextColor => 'Display Text Color:';
@@ -174,6 +210,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ipv4ActionClear => 'Clear';
+
+  @override
+  String get ipv4ResultCopy => 'Copy result';
+
+  @override
+  String get ipv4ResultSave => 'Save result';
+
+  @override
+  String get ipv4ResultCopied => 'Result copied to clipboard.';
+
+  @override
+  String get ipv4ResultExportUnsupported =>
+      'File export is not available on this platform.';
+
+  @override
+  String get ipv4ResultExportError => 'Unable to save result.';
+
+  @override
+  String ipv4ResultExported(Object path) {
+    return 'Result saved to: $path';
+  }
 
   @override
   String get ipv4ErrorEmptyCidr => 'Please enter an IPv4 CIDR address.';

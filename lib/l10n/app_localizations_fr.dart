@@ -12,6 +12,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'Calculatrice basique';
 
   @override
+  String get basicHistoryCopy => 'Copier l\'historique';
+
+  @override
+  String get basicHistorySave => 'Enregistrer l\'historique';
+
+  @override
+  String get basicHistoryClear => 'Effacer l\'historique';
+
+  @override
+  String get basicHistoryEmpty => 'L\'historique est vide.';
+
+  @override
+  String get basicHistoryCopied => 'Historique copié dans le presse-papiers.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'L\'export de fichier n\'est pas disponible sur cette plateforme.';
+
+  @override
+  String get basicHistoryExportError =>
+      'Impossible d\'enregistrer l\'historique.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'Historique enregistré dans : $path';
+  }
+
+  @override
   String get menuThemes => 'Thèmes';
 
   @override
@@ -57,6 +85,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeBackgroundColor => 'Couleur d\'arrière-plan :';
 
   @override
+  String get themeBackgroundNeutral => 'Gris doux';
+
+  @override
+  String get themeBackgroundWallpaper => 'Fond d\'écran';
+
+  @override
+  String get themeBackgroundMetal => 'Métal brossé';
+
+  @override
   String get themeDisplayTextColor => 'Couleur du texte de l\'affichage :';
 
   @override
@@ -93,7 +130,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get colorPurple => 'Violet';
 
   @override
-  String get colorTeal => 'Sarcelle';
+  String get colorTeal => 'Bleu-vert';
 
   @override
   String get colorLightGrey => 'Gris clair';
@@ -175,6 +212,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ipv4ActionClear => 'Effacer';
+
+  @override
+  String get ipv4ResultCopy => 'Copier le résultat';
+
+  @override
+  String get ipv4ResultSave => 'Enregistrer le résultat';
+
+  @override
+  String get ipv4ResultCopied => 'Résultat copié dans le presse-papiers.';
+
+  @override
+  String get ipv4ResultExportUnsupported =>
+      'L\'export de fichier n\'est pas disponible sur cette plateforme.';
+
+  @override
+  String get ipv4ResultExportError => 'Impossible d\'enregistrer le résultat.';
+
+  @override
+  String ipv4ResultExported(Object path) {
+    return 'Résultat enregistré dans : $path';
+  }
 
   @override
   String get ipv4ErrorEmptyCidr => 'Veuillez saisir une adresse IPv4 en CIDR.';
@@ -334,7 +392,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ipv6TypeGlobalUnicast =>
-      'Adresse global unicast (adresse publique routable sur Internet).';
+      'Adresse unicast globale (adresse publique routable sur Internet).';
 
   @override
   String get ipv6TypeUniqueLocal =>

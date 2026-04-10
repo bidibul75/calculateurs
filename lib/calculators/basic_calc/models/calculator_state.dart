@@ -1,10 +1,10 @@
-// lib/calculators/basic_calc/models/calculator_state.dart
-
 import 'package:rational/rational.dart';
+import 'calculator_history_entry.dart';
 
 class CalculatorState {
   final String output;
   final String history;
+  final List<CalculatorHistoryEntry> historyEntries;
   final String currentInput;
   final String num1;
   final String operation;
@@ -15,17 +15,20 @@ class CalculatorState {
   CalculatorState({
     this.output = "0",
     this.history = "",
+    List<CalculatorHistoryEntry>? historyEntries,
     this.currentInput = "",
     this.num1 = "0",
     this.operation = "",
     this.num2 = "",
     this.operation2 = "",
     Rational? memory,
-  }) : memory = memory ?? Rational.zero;
+  })  : historyEntries = historyEntries ?? const [],
+        memory = memory ?? Rational.zero;
 
   CalculatorState copyWith({
     String? output,
     String? history,
+    List<CalculatorHistoryEntry>? historyEntries,
     String? currentInput,
     String? num1,
     String? operation,
@@ -36,6 +39,7 @@ class CalculatorState {
     return CalculatorState(
       output: output ?? this.output,
       history: history ?? this.history,
+      historyEntries: historyEntries ?? this.historyEntries,
       currentInput: currentInput ?? this.currentInput,
       num1: num1 ?? this.num1,
       operation: operation ?? this.operation,
