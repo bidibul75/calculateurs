@@ -27,7 +27,7 @@ void main() {
     controller.onButtonPressed('1');
     controller.onButtonPressed('=');
 
-    for (var i = 0; i < 50; i++) {
+    for (int i = 0; i < 50; i++) {
       controller.onButtonPressed('+');
       controller.onButtonPressed('1');
       controller.onButtonPressed('=');

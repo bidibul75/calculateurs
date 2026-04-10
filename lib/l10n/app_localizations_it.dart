@@ -12,6 +12,33 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'Calcolatrice base';
 
   @override
+  String get basicHistoryCopy => 'Copia cronologia';
+
+  @override
+  String get basicHistorySave => 'Salva cronologia';
+
+  @override
+  String get basicHistoryClear => 'Cancella cronologia';
+
+  @override
+  String get basicHistoryEmpty => 'La cronologia è vuota.';
+
+  @override
+  String get basicHistoryCopied => 'Cronologia copiata negli appunti.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'L\'esportazione file non è disponibile su questa piattaforma.';
+
+  @override
+  String get basicHistoryExportError => 'Impossibile salvare la cronologia.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'Cronologia salvata in: $path';
+  }
+
+  @override
   String get menuThemes => 'Temi';
 
   @override

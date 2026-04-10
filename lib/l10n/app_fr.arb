@@ -1,6 +1,19 @@
 {
   "@@locale": "fr",
   "appTitle": "Calculatrice basique",
+  "basicHistoryCopy": "Copier l'historique",
+  "basicHistorySave": "Enregistrer l'historique",
+  "basicHistoryClear": "Effacer l'historique",
+  "basicHistoryEmpty": "L'historique est vide.",
+  "basicHistoryCopied": "Historique copié dans le presse-papiers.",
+  "basicHistoryExportUnsupported": "L'export de fichier n'est pas disponible sur cette plateforme.",
+  "basicHistoryExportError": "Impossible d'enregistrer l'historique.",
+  "basicHistoryExported": "Historique enregistré dans : {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Thèmes",
   "menuWhoAmI": "Qui suis-je",
   "menuDonate": "Faire un don",
@@ -30,13 +43,13 @@
   "colorGreen": "Vert",
   "colorDarkGrey": "Gris foncé",
   "colorPurple": "Violet",
-  "colorTeal": "Bleu Vert",
+  "colorTeal": "Bleu-vert",
   "colorLightGrey": "Gris clair",
   "colorYellow": "Jaune",
   "photoCredit": "Photo : Bady Abbas sur Unsplash",
 
   "@_menu.sections": {
-    "description": "Libelles des sections pour regrouper les modules dans le menu burger"
+    "description": "Libellés des sections pour regrouper les modules dans le menu burger"
   },
   "menuSectionHealth": "Santé",
   "menuSectionConversions": "Outils IP",
@@ -44,7 +57,7 @@
   "menuSectionRealEstate": "Immobilier",
 
   "@_module.health.bmi": {
-    "description": "Vocabulaire module : Sante > IMC"
+    "description": "Vocabulaire module : Santé > IMC"
   },
   "bmiTitle": "Calculateur IMC",
   "menuBmi": "Calculateur IMC",
@@ -136,7 +149,7 @@
   },
   "ipv6TypeLoopback": "Adresse loopback.",
   "ipv6TypeLinkLocal": "Adresse link-local (communication sur le même switch, non routable).",
-  "ipv6TypeGlobalUnicast": "Adresse global unicast (adresse publique routable sur Internet).",
+  "ipv6TypeGlobalUnicast": "Adresse unicast globale (adresse publique routable sur Internet).",
   "ipv6TypeUniqueLocal": "Adresse unique local (équivalent aux adresses privées IPv4).",
   "ipv6TypeMulticast": "Adresse multicast.",
   "ipv6TypeUnspecified": "Adresse non spécifiée.",

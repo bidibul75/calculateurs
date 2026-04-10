@@ -1,6 +1,19 @@
 {
   "@@locale": "en",
   "appTitle": "Basic calculator",
+  "basicHistoryCopy": "Copy history",
+  "basicHistorySave": "Save history",
+  "basicHistoryClear": "Clear history",
+  "basicHistoryEmpty": "History is empty.",
+  "basicHistoryCopied": "History copied to clipboard.",
+  "basicHistoryExportUnsupported": "File export is not available on this platform.",
+  "basicHistoryExportError": "Unable to save history.",
+  "basicHistoryExported": "History saved to: {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Themes",
   "menuWhoAmI": "Who am I",
   "menuDonate": "Donate",

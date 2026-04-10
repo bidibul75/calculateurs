@@ -12,6 +12,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Basic calculator';
 
   @override
+  String get basicHistoryCopy => 'Copy history';
+
+  @override
+  String get basicHistorySave => 'Save history';
+
+  @override
+  String get basicHistoryClear => 'Clear history';
+
+  @override
+  String get basicHistoryEmpty => 'History is empty.';
+
+  @override
+  String get basicHistoryCopied => 'History copied to clipboard.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'File export is not available on this platform.';
+
+  @override
+  String get basicHistoryExportError => 'Unable to save history.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'History saved to: $path';
+  }
+
+  @override
   String get menuThemes => 'Themes';
 
   @override

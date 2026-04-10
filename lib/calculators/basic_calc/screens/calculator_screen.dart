@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
@@ -12,6 +13,7 @@ import 'package:get_it/get_it.dart';
 import '../controllers/calculator_controller.dart';
 import '../models/calculator_history_entry.dart';
 import '../../../shared/widgets/menu_drawer.dart';
+import '../services/history_export_service.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -22,6 +24,8 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   static const Key _clearHistoryButtonKey = ValueKey<String>('basic.history.clear');
+  static const Key _copyHistoryButtonKey = ValueKey<String>('basic.history.copy');
+  static const Key _saveHistoryButtonKey = ValueKey<String>('basic.history.save');
 
   final CalculatorController _controller = CalculatorController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
@@ -98,7 +102,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   Widget _buildHistoryItem(CalculatorHistoryEntry entry, int index) {
-    final historyText = entry.displayText.contains('= ≈') ? entry.displayText.replaceLast('= ≈', '≈') : entry.displayText;
+    final historyText = entry.displayText.contains('= ≈')
+        ? entry.displayText.replaceLast('= ≈', '≈')
+        : entry.displayText;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -109,10 +115,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         background: Container(
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.redAccent.withAlpha(220),
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: BoxDecoration(color: Colors.redAccent.withAlpha(220), borderRadius: BorderRadius.circular(8)),
           child: const Icon(Icons.delete_outline, color: Colors.white),
         ),
         child: Material(
@@ -144,7 +147,52 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-  Widget _buildHistoryList(List<CalculatorHistoryEntry> entries) {
+  void _showHistorySnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _copyHistoryToClipboard(AppLocalizations l10n) async {
+    final historyText = _controller.historyEntriesToPlainText();
+    if (historyText.isEmpty) {
+      _showHistorySnackBar(l10n.basicHistoryEmpty);
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: historyText));
+    _showHistorySnackBar(l10n.basicHistoryCopied);
+  }
+
+  Future<void> _saveHistoryToFile(AppLocalizations l10n) async {
+    final historyText = _controller.historyEntriesToPlainText();
+    if (historyText.isEmpty) {
+      _showHistorySnackBar(l10n.basicHistoryEmpty);
+      return;
+    }
+
+    if (!isHistoryFileExportSupported) {
+      _showHistorySnackBar(l10n.basicHistoryExportUnsupported);
+      return;
+    }
+
+    try {
+      final filePath = await exportHistoryToTextFile(historyText);
+      if (filePath == null || filePath.isEmpty) {
+        _showHistorySnackBar(l10n.basicHistoryExportError);
+        return;
+      }
+      _showHistorySnackBar(l10n.basicHistoryExported(filePath));
+    } catch (_) {
+      _showHistorySnackBar(l10n.basicHistoryExportError);
+    }
+  }
+
+  Widget _buildHistoryList(List<CalculatorHistoryEntry> entries, AppLocalizations l10n) {
     if (entries.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -154,11 +202,31 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       children: [
         Align(
           alignment: Alignment.centerRight,
-          child: IconButton(
-            key: _clearHistoryButtonKey,
-            onPressed: _controller.clearHistory,
-            icon: const Icon(Icons.delete_sweep_outlined),
-            color: _themeManager.displayTextColor,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                key: _copyHistoryButtonKey,
+                onPressed: entries.isEmpty ? null : () => unawaited(_copyHistoryToClipboard(l10n)),
+                tooltip: l10n.basicHistoryCopy,
+                icon: const Icon(Icons.content_copy_outlined),
+                color: _themeManager.displayTextColor,
+              ),
+              IconButton(
+                key: _saveHistoryButtonKey,
+                onPressed: entries.isEmpty ? null : () => unawaited(_saveHistoryToFile(l10n)),
+                tooltip: l10n.basicHistorySave,
+                icon: const Icon(Icons.save_alt_outlined),
+                color: _themeManager.displayTextColor,
+              ),
+              IconButton(
+                key: _clearHistoryButtonKey,
+                onPressed: _controller.clearHistory,
+                tooltip: l10n.basicHistoryClear,
+                icon: const Icon(Icons.delete_sweep_outlined),
+                color: _themeManager.displayTextColor,
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -210,7 +278,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     // Compute keyboard height from actual available space to avoid vertical overflow.
                     final double keyboardHeight =
                         (availableHeight * (isDesktopLike ? 0.44 : (isCompactHeight ? 0.52 : 0.50)))
-                            .clamp(isDesktopLike ? 300.0 : (isCompactHeight ? 250.0 : 320.0), isDesktopLike ? 560.0 : 640.0)
+                            .clamp(
+                              isDesktopLike ? 300.0 : (isCompactHeight ? 250.0 : 320.0),
+                              isDesktopLike ? 560.0 : 640.0,
+                            )
                             .toDouble();
                     final double keyboardBottomPadding = isCompactHeight ? 8.0 : 50.0;
 
@@ -236,8 +307,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      state.history.contains('= ≈') ? state.history.replaceLast('= ≈', '≈') : state.history,
-                                      style: TextStyle(color: _themeManager.displayTextColor.withAlpha(180), fontSize: 24),
+                                      state.history.contains('= ≈')
+                                          ? state.history.replaceLast('= ≈', '≈')
+                                          : state.history,
+                                      style: TextStyle(
+                                        color: _themeManager.displayTextColor.withAlpha(180),
+                                        fontSize: 24,
+                                      ),
                                       textAlign: TextAlign.right,
                                     ),
                                   ),
@@ -256,9 +332,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                Expanded(
-                                  child: _buildHistoryList(state.historyEntries),
-                                ),
+                                Expanded(child: _buildHistoryList(state.historyEntries, l10n)),
                               ],
                             ),
                           ),
@@ -353,11 +427,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ),
             // Photo credit at the bottom right, only when the Unsplash background is active.
             if (mediaSize.height >= 700 && _themeManager.isUnsplashBackgroundActive)
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: const PhotoCreditLink(),
-              ),
+              Positioned(bottom: 16, right: 16, child: const PhotoCreditLink()),
           ],
         ),
       ),

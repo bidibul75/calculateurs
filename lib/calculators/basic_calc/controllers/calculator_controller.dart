@@ -190,7 +190,6 @@ class CalculatorController extends ChangeNotifier {
     String op = (label == "x^y") ? "^" : label;
 
     if (_state.currentInput.isNotEmpty) {
-      print("current input not empty");
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString;
 
@@ -239,8 +238,6 @@ class CalculatorController extends ChangeNotifier {
           );
         }
       } else {
-        print("operation empty");
-        print("num 2 : ${_state.num2}");
         _state = _state.copyWith(
           num1: inputClean,
           operation: op,
@@ -250,7 +247,6 @@ class CalculatorController extends ChangeNotifier {
         );
       }
     } else if (_state.operation.isNotEmpty) {
-      print("current input empty but not state.operation");
       // If we change operator without typing a new number (e.g. press + then change to x)
       // Only change the operator in the history
       String currentHist = _state.history.trim();
@@ -443,6 +439,20 @@ class CalculatorController extends ChangeNotifier {
     _state = _state.copyWith(historyEntries: const []);
     notifyListeners();
     unawaited(_persistState());
+  }
+
+  String historyEntriesToPlainText() {
+    if (_state.historyEntries.isEmpty) {
+      return '';
+    }
+
+    return _state.historyEntries
+        .map(
+          (entry) => entry.displayText.contains('= ≈')
+              ? entry.displayText.replaceLast('= ≈', '≈')
+              : entry.displayText,
+        )
+        .join('\n');
   }
 
   void removeHistoryEntryAt(int index) {

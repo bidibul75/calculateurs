@@ -12,6 +12,33 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Calculadora básica';
 
   @override
+  String get basicHistoryCopy => 'Copiar historial';
+
+  @override
+  String get basicHistorySave => 'Guardar historial';
+
+  @override
+  String get basicHistoryClear => 'Borrar historial';
+
+  @override
+  String get basicHistoryEmpty => 'El historial está vacío.';
+
+  @override
+  String get basicHistoryCopied => 'Historial copiado al portapapeles.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'La exportación de archivos no está disponible en esta plataforma.';
+
+  @override
+  String get basicHistoryExportError => 'No se puede guardar el historial.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'Historial guardado en: $path';
+  }
+
+  @override
   String get menuThemes => 'Temas';
 
   @override
@@ -165,16 +192,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bmiCategoryObese => 'Obesidad';
 
   @override
-  String get menuIpv4Address => 'Direccion IPv4';
+  String get menuIpv4Address => 'Dirección IPv4';
 
   @override
   String get menuIpv4Supernet => 'Superred IPv4';
 
   @override
-  String get ipv4Title => 'Direccion IPv4';
+  String get ipv4Title => 'Dirección IPv4';
 
   @override
-  String get ipv4InputLabel => 'Direccion IPv4 en CIDR';
+  String get ipv4InputLabel => 'Dirección IPv4 en CIDR';
 
   @override
   String get ipv4InputHint => 'Ejemplo: 192.168.1.34/24';
@@ -186,10 +213,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv4ActionClear => 'Limpiar';
 
   @override
-  String get ipv4ErrorEmptyCidr => 'Introduce una direccion IPv4 en CIDR.';
+  String get ipv4ErrorEmptyCidr => 'Introduce una dirección IPv4 en CIDR.';
 
   @override
-  String get ipv4ErrorInvalidCidr => 'Formato CIDR IPv4 invalido.';
+  String get ipv4ErrorInvalidCidr => 'Formato CIDR IPv4 inválido.';
 
   @override
   String get ipv4ErrorGeneric => 'No se puede procesar este CIDR IPv4.';
@@ -201,25 +228,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv4InfoClass => 'Clase';
 
   @override
-  String get ipv4InfoScope => 'Ambito';
+  String get ipv4InfoScope => 'Ámbito';
 
   @override
-  String get ipv4InfoMask => 'Mascara de subred';
+  String get ipv4InfoMask => 'Máscara de subred';
 
   @override
-  String get ipv4InfoWildcard => 'Mascara wildcard';
+  String get ipv4InfoWildcard => 'Máscara wildcard';
 
   @override
-  String get ipv4InfoNetwork => 'Direccion de red';
+  String get ipv4InfoNetwork => 'Dirección de red';
 
   @override
-  String get ipv4InfoBroadcast => 'Direccion de broadcast';
+  String get ipv4InfoBroadcast => 'Dirección de broadcast';
 
   @override
-  String get ipv4InfoFirstHost => 'Primer host util';
+  String get ipv4InfoFirstHost => 'Primer host útil';
 
   @override
-  String get ipv4InfoLastHost => 'Ultimo host util';
+  String get ipv4InfoLastHost => 'Último host útil';
 
   @override
   String get ipv4InfoTotalAddresses => 'Total de direcciones';
@@ -237,7 +264,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv4ScopePrivate => 'Privada';
 
   @override
-  String get ipv4ScopePublic => 'Publica';
+  String get ipv4ScopePublic => 'Pública';
 
   @override
   String get ipv4ScopeLoopback => 'Loopback';
@@ -255,7 +282,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv4SupernetTitle => 'Superred IPv4';
 
   @override
-  String get ipv4SupernetInputLabel => 'Direccion IPv4 en CIDR';
+  String get ipv4SupernetInputLabel => 'Dirección IPv4 en CIDR';
 
   @override
   String get ipv4SupernetInputHint => 'Ejemplo: 192.168.1.0/24';
@@ -291,10 +318,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ipv4SupernetErrorEmptyAddress =>
-      'Introduce una direccion IPv4 en CIDR.';
+      'Introduce una dirección IPv4 en CIDR.';
 
   @override
-  String get ipv4SupernetErrorInvalidCidr => 'Formato CIDR IPv4 invalido.';
+  String get ipv4SupernetErrorInvalidCidr => 'Formato CIDR IPv4 inválido.';
 
   @override
   String get ipv4SupernetErrorNeedTwo =>
@@ -328,11 +355,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get relationOverlap => 'solapamiento';
 
   @override
-  String get relationIntersecting => 'interseccion';
+  String get relationIntersecting => 'intersección';
 
   @override
   String relationUnknown(Object code) {
-    return 'relacion desconocida ($code)';
+    return 'relación desconocida ($code)';
   }
 
   @override

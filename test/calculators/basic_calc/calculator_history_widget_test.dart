@@ -40,6 +40,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('1 + 2 = 3'), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('basic.history.copy')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('basic.history.save')), findsOneWidget);
 
     await tester.tap(find.textContaining('1 + 2 = 3'));
     await tester.pumpAndSettle();

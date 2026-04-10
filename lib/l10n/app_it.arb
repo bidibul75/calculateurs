@@ -1,6 +1,19 @@
 {
   "@@locale": "it",
   "appTitle": "Calcolatrice base",
+  "basicHistoryCopy": "Copia cronologia",
+  "basicHistorySave": "Salva cronologia",
+  "basicHistoryClear": "Cancella cronologia",
+  "basicHistoryEmpty": "La cronologia è vuota.",
+  "basicHistoryCopied": "Cronologia copiata negli appunti.",
+  "basicHistoryExportUnsupported": "L'esportazione file non è disponibile su questa piattaforma.",
+  "basicHistoryExportError": "Impossibile salvare la cronologia.",
+  "basicHistoryExported": "Cronologia salvata in: {path}",
+  "@basicHistoryExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
   "menuThemes": "Temi",
   "menuWhoAmI": "Chi sono",
   "menuDonate": "Dona",

@@ -12,6 +12,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'Calculatrice basique';
 
   @override
+  String get basicHistoryCopy => 'Copier l\'historique';
+
+  @override
+  String get basicHistorySave => 'Enregistrer l\'historique';
+
+  @override
+  String get basicHistoryClear => 'Effacer l\'historique';
+
+  @override
+  String get basicHistoryEmpty => 'L\'historique est vide.';
+
+  @override
+  String get basicHistoryCopied => 'Historique copié dans le presse-papiers.';
+
+  @override
+  String get basicHistoryExportUnsupported =>
+      'L\'export de fichier n\'est pas disponible sur cette plateforme.';
+
+  @override
+  String get basicHistoryExportError =>
+      'Impossible d\'enregistrer l\'historique.';
+
+  @override
+  String basicHistoryExported(Object path) {
+    return 'Historique enregistré dans : $path';
+  }
+
+  @override
   String get menuThemes => 'Thèmes';
 
   @override
@@ -102,7 +130,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get colorPurple => 'Violet';
 
   @override
-  String get colorTeal => 'Bleu Vert';
+  String get colorTeal => 'Bleu-vert';
 
   @override
   String get colorLightGrey => 'Gris clair';
@@ -343,7 +371,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ipv6TypeGlobalUnicast =>
-      'Adresse global unicast (adresse publique routable sur Internet).';
+      'Adresse unicast globale (adresse publique routable sur Internet).';
 
   @override
   String get ipv6TypeUniqueLocal =>
