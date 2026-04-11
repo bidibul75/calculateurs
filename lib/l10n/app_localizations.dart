@@ -816,6 +816,240 @@ abstract class AppLocalizations {
   /// **'unknown ({code})'**
   String relationUnknown(Object code);
 
+  /// No description provided for @menuIpv6Address.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 Address'**
+  String get menuIpv6Address;
+
+  /// No description provided for @menuIpv6Supernet.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 Supernet'**
+  String get menuIpv6Supernet;
+
+  /// No description provided for @ipv6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 Address'**
+  String get ipv6Title;
+
+  /// No description provided for @ipv6InputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 CIDR address'**
+  String get ipv6InputLabel;
+
+  /// No description provided for @ipv6InputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 2001:db8::1/64'**
+  String get ipv6InputHint;
+
+  /// No description provided for @ipv6ActionCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate'**
+  String get ipv6ActionCalculate;
+
+  /// No description provided for @ipv6ActionClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get ipv6ActionClear;
+
+  /// No description provided for @ipv6ResultCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy result'**
+  String get ipv6ResultCopy;
+
+  /// No description provided for @ipv6ResultSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save result'**
+  String get ipv6ResultSave;
+
+  /// No description provided for @ipv6ResultCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Result copied to clipboard.'**
+  String get ipv6ResultCopied;
+
+  /// No description provided for @ipv6ResultExportUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'File export is not available on this platform.'**
+  String get ipv6ResultExportUnsupported;
+
+  /// No description provided for @ipv6ResultExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to save result.'**
+  String get ipv6ResultExportError;
+
+  /// No description provided for @ipv6ResultExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Result saved to: {path}'**
+  String ipv6ResultExported(Object path);
+
+  /// No description provided for @ipv6ErrorEmptyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty IPv6 address.'**
+  String get ipv6ErrorEmptyAddress;
+
+  /// No description provided for @ipv6ErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to process this IPv6 address.'**
+  String get ipv6ErrorGeneric;
+
+  /// No description provided for @ipv6InfoPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefix'**
+  String get ipv6InfoPrefix;
+
+  /// No description provided for @ipv6InfoType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get ipv6InfoType;
+
+  /// No description provided for @ipv6InfoExpandedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Expanded address'**
+  String get ipv6InfoExpandedAddress;
+
+  /// No description provided for @ipv6InfoNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network address'**
+  String get ipv6InfoNetwork;
+
+  /// No description provided for @ipv6InfoTotalAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total addresses'**
+  String get ipv6InfoTotalAddresses;
+
+  /// No description provided for @ipv6InfoNetworkBinary.
+  ///
+  /// In en, this message translates to:
+  /// **'Network (binary)'**
+  String get ipv6InfoNetworkBinary;
+
+  /// No description provided for @ipv6TypeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown address.'**
+  String get ipv6TypeUnknown;
+
+  /// No description provided for @ipv6SupernetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 Supernet'**
+  String get ipv6SupernetTitle;
+
+  /// No description provided for @ipv6SupernetInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IPv6 CIDR address'**
+  String get ipv6SupernetInputLabel;
+
+  /// No description provided for @ipv6SupernetInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 2001:db8::/64'**
+  String get ipv6SupernetInputHint;
+
+  /// No description provided for @ipv6SupernetActionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get ipv6SupernetActionAdd;
+
+  /// No description provided for @ipv6SupernetActionCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate supernet'**
+  String get ipv6SupernetActionCalculate;
+
+  /// No description provided for @ipv6SupernetActionReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get ipv6SupernetActionReset;
+
+  /// No description provided for @ipv6SupernetAddressesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses'**
+  String get ipv6SupernetAddressesTitle;
+
+  /// No description provided for @ipv6SupernetResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supernet result'**
+  String get ipv6SupernetResultTitle;
+
+  /// No description provided for @ipv6SupernetResultValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Covering supernet'**
+  String get ipv6SupernetResultValue;
+
+  /// No description provided for @ipv6SupernetRelationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Address relations'**
+  String get ipv6SupernetRelationsTitle;
+
+  /// No description provided for @ipv6SupernetContiguousYes.
+  ///
+  /// In en, this message translates to:
+  /// **'All addresses are contiguous.'**
+  String get ipv6SupernetContiguousYes;
+
+  /// No description provided for @ipv6SupernetContiguousNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses are not all contiguous.'**
+  String get ipv6SupernetContiguousNo;
+
+  /// No description provided for @ipv6SupernetErrorEmptyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an IPv6 address.'**
+  String get ipv6SupernetErrorEmptyAddress;
+
+  /// No description provided for @ipv6SupernetErrorInvalidCidr.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid IPv6 CIDR format.'**
+  String get ipv6SupernetErrorInvalidCidr;
+
+  /// No description provided for @ipv6SupernetErrorNeedTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add at least two IPv6 addresses.'**
+  String get ipv6SupernetErrorNeedTwo;
+
+  /// No description provided for @ipv6SupernetErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to compute supernet for this list.'**
+  String get ipv6SupernetErrorGeneric;
+
+  /// No description provided for @ipv6SupernetDuplicateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate removed: {address} ({count} entries)'**
+  String ipv6SupernetDuplicateMessage(Object address, int count);
+
   /// No description provided for @ipv6TypeLoopback.
   ///
   /// In en, this message translates to:
@@ -857,12 +1091,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid IPv6 CIDR format.'**
   String get ipv6ErrorInvalidCidrFormat;
-
-  /// No description provided for @ipv6ErrorEmptyAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Empty IPv6 address.'**
-  String get ipv6ErrorEmptyAddress;
 
   /// No description provided for @ipv6ErrorInvalidSuffix.
   ///

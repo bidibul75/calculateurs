@@ -1,6 +1,8 @@
+import 'package:calculators/shared/services/result_export_service_stub.dart' as shared_export;
+
 Future<String?> exportIpv4ResultToTextFile(String content, {required String prefix}) async {
-  return null;
+  return shared_export.exportResultToTextFile(content, prefix: prefix);
 }
 
-bool get isIpv4ResultFileExportSupported => false;
+bool get isIpv4ResultFileExportSupported => shared_export.isResultFileExportSupported;
 

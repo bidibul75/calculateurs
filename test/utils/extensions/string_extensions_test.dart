@@ -1,7 +1,21 @@
 import 'package:calculators/utils/extensions/string_extensions.dart';
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 
 void main() {
+  setUpAll(() {
+    if (!GetIt.I.isRegistered<LocalNumberSymbols>()) {
+      final localNumberSymbols = LocalNumberSymbols();
+      localNumberSymbols.updateFromLocale('en_US');
+      GetIt.I.registerSingleton<LocalNumberSymbols>(localNumberSymbols);
+    }
+  });
+
+  tearDownAll(() async {
+    await GetIt.I.reset();
+  });
+
   group('StringExtensions.isValidIPv4', () {
     test('returns true for valid IPv4 addresses', () {
       const valid = <String>[
@@ -234,18 +248,18 @@ void main() {
 
   group('StringExtensions.roundString', () {
     test('rounds a String reprensenting a number', () {
-      expect('123456'.roundString(limit:5), "123456");
-      expect('123.456'.roundString(limit:2), "123.46");
-      expect('1234.499999'.roundString(limit:0), "1234");
-      expect('1234.54'.roundString(limit:1), "1234.5");
-      expect('1234.56'.roundString(limit:5), "1234.56");
+      expect('123456'.roundString(limit:5), "123,456");
+      expect('123.456'.roundString(limit:2), "≈ 123.46");
+      expect('1234.499999'.roundString(limit:0), "≈ 1,234");
+      expect('1234.54'.roundString(limit:1), "≈ 1,234.5");
+      expect('1234.56'.roundString(limit:5), "≈ 1,234.56");
     });
   });
 
   group('StringExtensions.formatRound', () {
     test('rounds a String reprensenting a number', () {
-      expect('123456'.formatRound(limit:5), "123456");
-      expect('10,123.456'.roundString(limit:2), "10,123.46");
+      expect('123456'.formatRound(limit:5), "123,456");
+      expect('10,123.456'.formatRound(limit:2), "≈ 10,123.46");
     });
   });
-  }
+}
