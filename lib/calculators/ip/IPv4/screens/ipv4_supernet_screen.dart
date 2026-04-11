@@ -4,13 +4,13 @@ import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/calculators/ip/IPv4/relation.dart';
 import 'package:calculators/calculators/ip/IPv4/supernet.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/ipv4_result_export_service.dart';
@@ -423,16 +423,6 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     );
   }
 
-  void _showResultSnackBar(String message) {
-    if (!mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
   String _supernetResultAsPlainText(AppLocalizations l10n) {
     final lines = <String>[
       '${l10n.ipv4SupernetAddressesTitle}: ${_addresses.join(', ')}',
@@ -455,29 +445,24 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
   }
 
   Future<void> _copySupernetResult(AppLocalizations l10n) async {
-    await Clipboard.setData(ClipboardData(text: _supernetResultAsPlainText(l10n)));
-    _showResultSnackBar(l10n.ipv4ResultCopied);
+    await copyResultToClipboard(
+      context: context,
+      text: _supernetResultAsPlainText(l10n),
+      copiedMessage: l10n.ipv4ResultCopied,
+    );
   }
 
   Future<void> _saveSupernetResult(AppLocalizations l10n) async {
-    if (!isIpv4ResultFileExportSupported) {
-      _showResultSnackBar(l10n.ipv4ResultExportUnsupported);
-      return;
-    }
-
-    try {
-      final filePath = await exportIpv4ResultToTextFile(
-        _supernetResultAsPlainText(l10n),
-        prefix: 'ipv4_supernet_result',
-      );
-      if (filePath == null || filePath.isEmpty) {
-        _showResultSnackBar(l10n.ipv4ResultExportError);
-        return;
-      }
-      _showResultSnackBar(l10n.ipv4ResultExported(filePath));
-    } catch (_) {
-      _showResultSnackBar(l10n.ipv4ResultExportError);
-    }
+    await saveResultToFileWithFeedback(
+      context: context,
+      content: _supernetResultAsPlainText(l10n),
+      prefix: 'ipv4_supernet_result',
+      isExportSupported: isIpv4ResultFileExportSupported,
+      exportToTextFile: exportIpv4ResultToTextFile,
+      unsupportedMessage: l10n.ipv4ResultExportUnsupported,
+      errorMessage: l10n.ipv4ResultExportError,
+      exportedMessageBuilder: l10n.ipv4ResultExported,
+    );
   }
 
   Widget _buildResultActions(AppLocalizations l10n) {

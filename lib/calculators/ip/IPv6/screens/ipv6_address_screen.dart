@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
 import 'package:calculators/calculators/ip/IPv6/services/ipv6_result_export_service.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/my_exception.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -372,16 +372,6 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
     );
   }
 
-  void _showResultSnackBar(String message) {
-    if (!mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
   String _addressResultAsPlainText(AppLocalizations l10n, AddressIPV6 address) {
     final rows = <String>[
       '${l10n.ipv6InfoPrefix}: /${address.suffix}',
@@ -396,29 +386,24 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
   }
 
   Future<void> _copyAddressResult(AppLocalizations l10n, AddressIPV6 address) async {
-    await Clipboard.setData(ClipboardData(text: _addressResultAsPlainText(l10n, address)));
-    _showResultSnackBar(l10n.ipv6ResultCopied);
+    await copyResultToClipboard(
+      context: context,
+      text: _addressResultAsPlainText(l10n, address),
+      copiedMessage: l10n.ipv6ResultCopied,
+    );
   }
 
   Future<void> _saveAddressResult(AppLocalizations l10n, AddressIPV6 address) async {
-    if (!isIpv6ResultFileExportSupported) {
-      _showResultSnackBar(l10n.ipv6ResultExportUnsupported);
-      return;
-    }
-
-    try {
-      final filePath = await exportIpv6ResultToTextFile(
-        _addressResultAsPlainText(l10n, address),
-        prefix: 'ipv6_address_result',
-      );
-      if (filePath == null || filePath.isEmpty) {
-        _showResultSnackBar(l10n.ipv6ResultExportError);
-        return;
-      }
-      _showResultSnackBar(l10n.ipv6ResultExported(filePath));
-    } catch (_) {
-      _showResultSnackBar(l10n.ipv6ResultExportError);
-    }
+    await saveResultToFileWithFeedback(
+      context: context,
+      content: _addressResultAsPlainText(l10n, address),
+      prefix: 'ipv6_address_result',
+      isExportSupported: isIpv6ResultFileExportSupported,
+      exportToTextFile: exportIpv6ResultToTextFile,
+      unsupportedMessage: l10n.ipv6ResultExportUnsupported,
+      errorMessage: l10n.ipv6ResultExportError,
+      exportedMessageBuilder: l10n.ipv6ResultExported,
+    );
   }
 
   Widget _buildResultActions({

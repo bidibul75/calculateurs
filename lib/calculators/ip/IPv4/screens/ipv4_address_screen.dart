@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/ipv4_result_export_service.dart';
@@ -383,16 +383,6 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  void _showResultSnackBar(String message) {
-    if (!mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
   String _addressResultAsPlainText(AppLocalizations l10n, Address address) {
     final rows = <String>[
       '${l10n.ipv4InfoPrefix}: /${address.suffix}',
@@ -414,29 +404,24 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
   }
 
   Future<void> _copyAddressResult(AppLocalizations l10n, Address address) async {
-    await Clipboard.setData(ClipboardData(text: _addressResultAsPlainText(l10n, address)));
-    _showResultSnackBar(l10n.ipv4ResultCopied);
+    await copyResultToClipboard(
+      context: context,
+      text: _addressResultAsPlainText(l10n, address),
+      copiedMessage: l10n.ipv4ResultCopied,
+    );
   }
 
   Future<void> _saveAddressResult(AppLocalizations l10n, Address address) async {
-    if (!isIpv4ResultFileExportSupported) {
-      _showResultSnackBar(l10n.ipv4ResultExportUnsupported);
-      return;
-    }
-
-    try {
-      final filePath = await exportIpv4ResultToTextFile(
-        _addressResultAsPlainText(l10n, address),
-        prefix: 'ipv4_address_result',
-      );
-      if (filePath == null || filePath.isEmpty) {
-        _showResultSnackBar(l10n.ipv4ResultExportError);
-        return;
-      }
-      _showResultSnackBar(l10n.ipv4ResultExported(filePath));
-    } catch (_) {
-      _showResultSnackBar(l10n.ipv4ResultExportError);
-    }
+    await saveResultToFileWithFeedback(
+      context: context,
+      content: _addressResultAsPlainText(l10n, address),
+      prefix: 'ipv4_address_result',
+      isExportSupported: isIpv4ResultFileExportSupported,
+      exportToTextFile: exportIpv4ResultToTextFile,
+      unsupportedMessage: l10n.ipv4ResultExportUnsupported,
+      errorMessage: l10n.ipv4ResultExportError,
+      exportedMessageBuilder: l10n.ipv4ResultExported,
+    );
   }
 
   Widget _buildResultActions({

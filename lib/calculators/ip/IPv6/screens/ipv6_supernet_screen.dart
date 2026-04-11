@@ -5,13 +5,13 @@ import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
 import 'package:calculators/calculators/ip/IPv6/supernet_ipv6.dart';
 import 'package:calculators/calculators/ip/IPv6/services/ipv6_result_export_service.dart';
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/my_exception.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -349,39 +349,24 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
   }
 
   Future<void> _copySupernetResult(AppLocalizations l10n) async {
-    await Clipboard.setData(ClipboardData(text: _supernetResultAsPlainText(l10n)));
-    _showResultSnackBar(l10n.ipv6ResultCopied);
+    await copyResultToClipboard(
+      context: context,
+      text: _supernetResultAsPlainText(l10n),
+      copiedMessage: l10n.ipv6ResultCopied,
+    );
   }
 
   Future<void> _saveSupernetResult(AppLocalizations l10n) async {
-    if (!isIpv6ResultFileExportSupported) {
-      _showResultSnackBar(l10n.ipv6ResultExportUnsupported);
-      return;
-    }
-
-    try {
-      final filePath = await exportIpv6ResultToTextFile(
-        _supernetResultAsPlainText(l10n),
-        prefix: 'ipv6_supernet_result',
-      );
-      if (filePath == null || filePath.isEmpty) {
-        _showResultSnackBar(l10n.ipv6ResultExportError);
-        return;
-      }
-      _showResultSnackBar(l10n.ipv6ResultExported(filePath));
-    } catch (_) {
-      _showResultSnackBar(l10n.ipv6ResultExportError);
-    }
-  }
-
-  void _showResultSnackBar(String message) {
-    if (!mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    await saveResultToFileWithFeedback(
+      context: context,
+      content: _supernetResultAsPlainText(l10n),
+      prefix: 'ipv6_supernet_result',
+      isExportSupported: isIpv6ResultFileExportSupported,
+      exportToTextFile: exportIpv6ResultToTextFile,
+      unsupportedMessage: l10n.ipv6ResultExportUnsupported,
+      errorMessage: l10n.ipv6ResultExportError,
+      exportedMessageBuilder: l10n.ipv6ResultExported,
+    );
   }
 
   Widget _buildResultActions(AppLocalizations l10n) {
