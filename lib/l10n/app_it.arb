@@ -158,6 +158,8 @@
   "@_module.ip.ipv6": {
     "description": "Vocabolario modulo: IP > IPv6"
   },
+  "ipv6InfoSimplifiedAddress": "Indirizzo semplificato",
+  "ipv6InfoSimplifiedNetwork": "Indirizzo di rete semplificato",
   "ipv6TypeLoopback": "Indirizzo loopback.",
   "ipv6TypeLinkLocal": "Indirizzo link-local (comunicazione sullo stesso switch, non instradabile).",
   "ipv6TypeGlobalUnicast": "Indirizzo global unicast (indirizzo pubblico instradabile su Internet).",

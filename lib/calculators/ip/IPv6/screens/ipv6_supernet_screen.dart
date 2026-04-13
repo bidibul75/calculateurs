@@ -327,7 +327,30 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
     }
   }
 
+  String? _simplifiedSupernetResult() {
+    if (_supernetResult == null || _supernetResult!.isEmpty) {
+      return null;
+    }
+    return AddressIPV6.cidrSimplifier(_supernetResult!).toUpperCase();
+  }
+
+  String? _expandedSupernetResult() {
+    final simplified = _simplifiedSupernetResult();
+    if (simplified == null) {
+      return null;
+    }
+
+    try {
+      final parsed = AddressIPV6(simplified);
+      return '${parsed.address6WithoutSuffixListString.join(':').toUpperCase()}/${parsed.suffix}';
+    } catch (_) {
+      return simplified;
+    }
+  }
+
   String _supernetResultAsPlainText(AppLocalizations l10n) {
+    final simplified = _simplifiedSupernetResult();
+    final expanded = _expandedSupernetResult();
     final lines = <String>[
       '${l10n.ipv6SupernetAddressesTitle}: ${_addresses.join(', ')}',
     ];
@@ -336,8 +359,11 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
       lines.add(_statusText!);
     }
 
-    if (_supernetResult != null) {
-      lines.add('${l10n.ipv6SupernetResultValue}: $_supernetResult');
+    if (simplified != null) {
+      lines.add('${l10n.ipv6InfoSimplifiedNetwork}: $simplified');
+    }
+    if (expanded != null) {
+      lines.add('${l10n.ipv6InfoNetwork}: $expanded');
     }
 
     if (_relations.isNotEmpty) {
@@ -444,7 +470,7 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           ..addAll(duplicateMessages);
         _allContiguous = contiguous;
         _statusText = contiguous ? l10n.ipv6SupernetContiguousYes : l10n.ipv6SupernetContiguousNo;
-        _supernetResult = supernetCidr;
+        _supernetResult = AddressIPV6.cidrSimplifier(supernetCidr).toUpperCase();
         _relations
           ..clear()
           ..addAll(relations);
@@ -529,6 +555,9 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
   }
 
   Widget _buildResultCard(AppLocalizations l10n, {required bool showActions}) {
+    final simplified = _simplifiedSupernetResult();
+    final expanded = _expandedSupernetResult();
+
     return Card(
       color: Colors.white.withAlpha(200),
       child: Padding(
@@ -538,8 +567,8 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           children: [
             Text(l10n.ipv6SupernetResultTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            // Formats the result with simplified format (:: if necessary)
-            if (_supernetResult != null) Text('${l10n.ipv6SupernetResultValue}: ${_supernetResult!=null?AddressIPV6.cidrSimplifier(_supernetResult??""):""}'),
+            if (simplified != null) Text('${l10n.ipv6InfoSimplifiedNetwork}: $simplified'),
+            if (expanded != null) Text('${l10n.ipv6InfoNetwork}: $expanded'),
             if (showActions) ...[
               const Divider(),
               _buildResultActions(l10n),

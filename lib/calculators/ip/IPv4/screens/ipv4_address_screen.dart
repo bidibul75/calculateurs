@@ -7,6 +7,7 @@ import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -394,8 +395,8 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       '${l10n.ipv4InfoBroadcast}: ${address.addressBroadcast}',
       '${l10n.ipv4InfoFirstHost}: ${_hostDisplay(address.addressAvailableFirstOne)}',
       '${l10n.ipv4InfoLastHost}: ${_hostDisplay(address.addressAvailableLastOne)}',
-      '${l10n.ipv4InfoTotalAddresses}: ${address.numberAvailableAddresses}',
-      '${l10n.ipv4InfoUsableHosts}: ${address.numberUsableAddresses}',
+      '${l10n.ipv4InfoTotalAddresses}: ${Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString}',
+      '${l10n.ipv4InfoUsableHosts}: ${Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString}',
       '${l10n.ipv4InfoNetworkBinary}: ${address.addressNetworkStringBinary}',
       '${l10n.ipv4InfoBroadcastBinary}: ${address.addressBroadcastStringBinary}',
     ];
@@ -470,8 +471,8 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             _buildInfoRow(l10n.ipv4InfoFirstHost, _hostDisplay(address.addressAvailableFirstOne)),
             _buildInfoRow(l10n.ipv4InfoLastHost, _hostDisplay(address.addressAvailableLastOne)),
             const Divider(),
-            _buildInfoRow(l10n.ipv4InfoTotalAddresses, address.numberAvailableAddresses.toString()),
-            _buildInfoRow(l10n.ipv4InfoUsableHosts, address.numberUsableAddresses.toString()),
+            _buildInfoRow(l10n.ipv4InfoTotalAddresses, Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString),
+            _buildInfoRow(l10n.ipv4InfoUsableHosts, Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString),
             const Divider(),
             _buildInfoRow(l10n.ipv4InfoNetworkBinary, address.addressNetworkStringBinary),
             _buildInfoRow(l10n.ipv4InfoBroadcastBinary, address.addressBroadcastStringBinary),

@@ -7,7 +7,9 @@ import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
+import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/my_exception.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -345,6 +347,10 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
     return AddressIPV6.typeLabel(l10n, type).isEmpty ? l10n.ipv6TypeUnknown : AddressIPV6.typeLabel(l10n, type);
   }
 
+  String _simplifiedNetwork(AddressIPV6 address) {
+    return AddressIPV6.cidrSimplifier('${address.networkAdress6.join(":")}/${address.suffix}').toUpperCase().split('/').first;
+  }
+
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -373,12 +379,16 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
   }
 
   String _addressResultAsPlainText(AppLocalizations l10n, AddressIPV6 address) {
+    final simplifiedAddress = AddressIPV6.cidrSimplifier('${address.addressWithoutSuffixString}/${address.suffix}').toUpperCase();
+    final simplifiedNetwork = _simplifiedNetwork(address);
     final rows = <String>[
       '${l10n.ipv6InfoPrefix}: /${address.suffix}',
       '${l10n.ipv6InfoType}: ${_addressType(address)}',
+      '${l10n.ipv6InfoSimplifiedAddress}: $simplifiedAddress',
       '${l10n.ipv6InfoExpandedAddress}: ${address.address6WithoutSuffixListString.join(":")}',
+      '${l10n.ipv6InfoSimplifiedNetwork}: $simplifiedNetwork',
       '${l10n.ipv6InfoNetwork}: ${address.networkAdress6.join(":")}',
-      '${l10n.ipv6InfoTotalAddresses}: ${address.numberOfAddresses}',
+      '${l10n.ipv6InfoTotalAddresses}: ${Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString}',
       '${l10n.ipv6InfoNetworkBinary}: ${AddressIPV6.hexListToBinaryString(address.networkAdress6)}',
     ];
 
@@ -434,6 +444,9 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
   }
 
   Widget _buildResultCard(AppLocalizations l10n, AddressIPV6 address) {
+    final simplifiedAddress = AddressIPV6.cidrSimplifier('${address.addressWithoutSuffixString}/${address.suffix}').toUpperCase();
+    final simplifiedNetwork = _simplifiedNetwork(address);
+
     return Card(
       color: Colors.white.withAlpha(200),
       elevation: 3,
@@ -443,10 +456,12 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
           children: [
             _buildInfoRow(l10n.ipv6InfoPrefix, '/${address.suffix}'),
             _buildInfoRow(l10n.ipv6InfoType, _addressType(address)),
+            _buildInfoRow(l10n.ipv6InfoSimplifiedAddress, simplifiedAddress),
             _buildInfoRow(l10n.ipv6InfoExpandedAddress, address.address6WithoutSuffixListString.join(':')),
             const Divider(),
+            _buildInfoRow(l10n.ipv6InfoSimplifiedNetwork, simplifiedNetwork),
             _buildInfoRow(l10n.ipv6InfoNetwork, address.networkAdress6.join(':')),
-            _buildInfoRow(l10n.ipv6InfoTotalAddresses, address.numberOfAddresses.toString()),
+            _buildInfoRow(l10n.ipv6InfoTotalAddresses, Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString),
             _buildInfoRow(l10n.ipv6InfoNetworkBinary, AddressIPV6.hexListToBinaryString(address.networkAdress6)),
             const Divider(),
             _buildResultActions(

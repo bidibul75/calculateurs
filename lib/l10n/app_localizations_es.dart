@@ -441,7 +441,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ipv6InfoExpandedAddress => 'Expanded address';
 
   @override
+  String get ipv6InfoSimplifiedAddress => 'Dirección simplificada';
+
+  @override
   String get ipv6InfoNetwork => 'Network address';
+
+  @override
+  String get ipv6InfoSimplifiedNetwork => 'Dirección de red simplificada';
 
   @override
   String get ipv6InfoTotalAddresses => 'Total addresses';

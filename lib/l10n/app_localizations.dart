@@ -924,11 +924,23 @@ abstract class AppLocalizations {
   /// **'Expanded address'**
   String get ipv6InfoExpandedAddress;
 
+  /// No description provided for @ipv6InfoSimplifiedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplified address'**
+  String get ipv6InfoSimplifiedAddress;
+
   /// No description provided for @ipv6InfoNetwork.
   ///
   /// In en, this message translates to:
   /// **'Network address'**
   String get ipv6InfoNetwork;
+
+  /// No description provided for @ipv6InfoSimplifiedNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplified network address'**
+  String get ipv6InfoSimplifiedNetwork;
 
   /// No description provided for @ipv6InfoTotalAddresses.
   ///
