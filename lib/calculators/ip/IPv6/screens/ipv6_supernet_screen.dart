@@ -538,7 +538,8 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           children: [
             Text(l10n.ipv6SupernetResultTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            if (_supernetResult != null) Text('${l10n.ipv6SupernetResultValue}: $_supernetResult'),
+            // Formats the result with simplified format (:: if necessary)
+            if (_supernetResult != null) Text('${l10n.ipv6SupernetResultValue}: ${_supernetResult!=null?AddressIPV6.cidrSimplifier(_supernetResult??""):""}'),
             if (showActions) ...[
               const Divider(),
               _buildResultActions(l10n),
