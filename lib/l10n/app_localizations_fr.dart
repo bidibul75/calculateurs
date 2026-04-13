@@ -313,7 +313,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ipv4SupernetActionAdd => 'Ajouter';
 
   @override
-  String get ipv4SupernetActionCalculate => 'Calculer le supernet';
+  String get ipv4SupernetActionCalculate => 'Calculer supernet';
 
   @override
   String get ipv4SupernetActionReset => 'Réinitialiser';
@@ -471,7 +471,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ipv6SupernetActionAdd => 'Ajouter';
 
   @override
-  String get ipv6SupernetActionCalculate => 'Calculer le supernet';
+  String get ipv6SupernetActionCalculate => 'Calculer supernet';
 
   @override
   String get ipv6SupernetActionReset => 'Réinitialiser';

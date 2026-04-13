@@ -124,6 +124,13 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     );
   }
 
+  Widget _actionButtonLabel(String text) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(text, maxLines: 1, softWrap: false),
+    );
+  }
+
   void _addAddress() {
     final l10n = AppLocalizations.of(context);
     final rawInput = _inputController.text.trim();
@@ -561,7 +568,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                 child: ElevatedButton(
                                   style: _keyButtonStyle(),
                                   onPressed: _addAddress,
-                                  child: Text(l10n.ipv4SupernetActionAdd),
+                                  child: _actionButtonLabel(l10n.ipv4SupernetActionAdd),
                                 ),
                               ),
                             ),
@@ -574,7 +581,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                   onPressed: _addresses.length >= 2
                                       ? () => _calculateSupernet(hideMobileKeypad: showMobileKeypad)
                                       : null,
-                                  child: Text(l10n.ipv4SupernetActionCalculate),
+                                  child: _actionButtonLabel(l10n.ipv4SupernetActionCalculate),
                                 ),
                               ),
                             ),
@@ -585,7 +592,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                 child: ElevatedButton(
                                   style: _keyButtonStyle(backgroundColor: Colors.redAccent),
                                   onPressed: _resetAll,
-                                  child: Text(l10n.ipv4SupernetActionReset),
+                                  child: _actionButtonLabel(l10n.ipv4SupernetActionReset),
                                 ),
                               ),
                             ),
