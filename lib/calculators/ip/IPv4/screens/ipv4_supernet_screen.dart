@@ -287,28 +287,6 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
   }
 
-  String _relationLabel(AppLocalizations l10n, String relation) {
-    switch (relation) {
-      case 'equal':
-        return l10n.relationEqual;
-      case 'outside':
-        return l10n.relationOutside;
-      case 'contiguous':
-        return l10n.relationContiguous;
-      case 'A_inside_B':
-        return l10n.relationAInsideB;
-      case 'B_inside_A':
-        return l10n.relationBInsideA;
-      case 'overlap':
-      case 'overlaps':
-        return l10n.relationOverlap;
-      case 'intersecting':
-        return l10n.relationIntersecting;
-      default:
-        return l10n.relationUnknown(relation);
-    }
-  }
-
   Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding}) {
     return Expanded(
       child: Padding(
@@ -445,7 +423,7 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
 
     if (_relations.isNotEmpty) {
       lines.add(l10n.ipv4SupernetRelationsTitle);
-      lines.addAll(_relations.map((r) => '${r.addressA} -> ${_relationLabel(l10n, r.relationAB)} -> ${r.addressB}'));
+      lines.addAll(_relations.map((r) => '${r.addressA} -> ${Relation.relationLabel(l10n, r.relationAB)} -> ${r.addressB}'));
     }
 
     return lines.join('\n');
@@ -671,7 +649,22 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                                   ..._relations.map(
                                     (r) => Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 3),
-                                      child: Text('${r.addressA} -> ${_relationLabel(l10n, r.relationAB)} -> ${r.addressB}'),
+                                      child: Text.rich(
+                                          TextSpan(
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                    text :'${r.addressA} -> ',
+                                                  ),
+                                              TextSpan(
+                                                text: Relation.relationLabel(l10n, r.relationAB),
+                                                style: TextStyle(color: Relation.isAGoodRelation(r.relationAB)?Colors.green:Colors.red),
+                                              ),
+                                              TextSpan(
+                                                text: ' -> ${r.addressB}',
+                                              ),
+                                            ],
+                                          ),
+                                      ),
                                     ),
                                   ),
                                 ],

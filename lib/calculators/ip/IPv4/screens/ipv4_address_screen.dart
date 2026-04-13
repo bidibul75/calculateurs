@@ -196,12 +196,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  Widget _buildKeyButton(
-    String label, {
-    required double fontSize,
-    required EdgeInsets padding,
-    Key? buttonKey,
-  }) {
+  Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding, Key? buttonKey}) {
     return Expanded(
       child: Padding(
         padding: padding,
@@ -212,7 +207,10 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             key: buttonKey,
             style: _keyButtonStyle(),
             onPressed: () => _appendToInput(label),
-            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+            child: Text(
+              label,
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),
@@ -239,13 +237,19 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         children: [
           Icon(icon),
           const SizedBox(width: 8),
-          Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+          ),
         ],
       );
     } else if (hasIcon) {
       child = Icon(icon);
     } else {
-      child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
+      child = Text(
+        label ?? '',
+        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+      );
     }
 
     final button = Padding(
@@ -281,10 +285,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
           key: _mobileKeypadContainerKey,
           margin: const EdgeInsets.only(top: 12),
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(150),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(12)),
           child: Column(
             children: [
               Row(
@@ -307,10 +308,34 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                   ),
                 ],
               ),
-              Row(children: [_buildKeyButton('1', fontSize: fontSize, padding: keyPadding), _buildKeyButton('2', fontSize: fontSize, padding: keyPadding), _buildKeyButton('3', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('4', fontSize: fontSize, padding: keyPadding), _buildKeyButton('5', fontSize: fontSize, padding: keyPadding), _buildKeyButton('6', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('7', fontSize: fontSize, padding: keyPadding), _buildKeyButton('8', fontSize: fontSize, padding: keyPadding), _buildKeyButton('9', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('.', fontSize: fontSize, padding: keyPadding), _buildKeyButton('0', fontSize: fontSize, padding: keyPadding), _buildKeyButton('/', fontSize: fontSize, padding: keyPadding)]),
+              Row(
+                children: [
+                  _buildKeyButton('1', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('2', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('3', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('4', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('5', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('6', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('7', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('8', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('9', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('.', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('0', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('/', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
               const SizedBox(height: 8),
               _buildActionKeyButton(
                 label: 'Enter',
@@ -471,8 +496,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             _buildInfoRow(l10n.ipv4InfoFirstHost, _hostDisplay(address.addressAvailableFirstOne)),
             _buildInfoRow(l10n.ipv4InfoLastHost, _hostDisplay(address.addressAvailableLastOne)),
             const Divider(),
-            _buildInfoRow(l10n.ipv4InfoTotalAddresses, Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString),
-            _buildInfoRow(l10n.ipv4InfoUsableHosts, Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString),
+            _buildInfoRow(
+              l10n.ipv4InfoTotalAddresses,
+              Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString,
+            ),
+            _buildInfoRow(
+              l10n.ipv4InfoUsableHosts,
+              Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString,
+            ),
             const Divider(),
             _buildInfoRow(l10n.ipv4InfoNetworkBinary, address.addressNetworkStringBinary),
             _buildInfoRow(l10n.ipv4InfoBroadcastBinary, address.addressBroadcastStringBinary),
@@ -560,11 +591,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           transitionBuilder: (child, animation) {
                             return FadeTransition(
                               opacity: animation,
-                              child: SizeTransition(
-                                axisAlignment: -1,
-                                sizeFactor: animation,
-                                child: child,
-                              ),
+                              child: SizeTransition(axisAlignment: -1, sizeFactor: animation, child: child),
                             );
                           },
                           child: showMobileKeypad
@@ -610,10 +637,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                               ),
                             ],
                           ),
-                        if (_result != null) ...[
-                          const SizedBox(height: 16),
-                          _buildResultCard(l10n, _result!),
-                        ],
+                        if (_result != null) ...[const SizedBox(height: 16), _buildResultCard(l10n, _result!)],
                       ],
                     ),
                   ),
@@ -621,15 +645,10 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
               ),
             ),
             if (_themeManager.isUnsplashBackgroundActive)
-              const Positioned(
-                bottom: 16,
-                right: 16,
-                child: PhotoCreditLink(),
-              ),
+              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
           ],
         ),
       ),
     );
   }
 }
-

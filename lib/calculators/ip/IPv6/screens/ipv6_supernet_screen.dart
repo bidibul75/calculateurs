@@ -129,10 +129,7 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
   }
 
   Widget _actionButtonLabel(String text) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(text, maxLines: 1, softWrap: false),
-    );
+    return FittedBox(fit: BoxFit.scaleDown, child: Text(text, maxLines: 1, softWrap: false));
   }
 
   Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding}) {
@@ -145,7 +142,10 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           child: ElevatedButton(
             style: _keyButtonStyle(),
             onPressed: () => _appendToInput(label),
-            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+            child: Text(
+              label,
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),
@@ -172,13 +172,19 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
         children: [
           Icon(icon),
           const SizedBox(width: 8),
-          Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+          ),
         ],
       );
     } else if (hasIcon) {
       child = Icon(icon);
     } else {
-      child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
+      child = Text(
+        label ?? '',
+        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+      );
     }
 
     final button = Padding(
@@ -214,10 +220,7 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           key: _mobileKeypadContainerKey,
           margin: const EdgeInsets.only(top: 12),
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(150),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          decoration: BoxDecoration(color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(12)),
           child: Column(
             children: [
               Row(
@@ -240,12 +243,48 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
                   ),
                 ],
               ),
-              Row(children: [_buildKeyButton('1', fontSize: fontSize, padding: keyPadding), _buildKeyButton('2', fontSize: fontSize, padding: keyPadding), _buildKeyButton('3', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('4', fontSize: fontSize, padding: keyPadding), _buildKeyButton('5', fontSize: fontSize, padding: keyPadding), _buildKeyButton('6', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('7', fontSize: fontSize, padding: keyPadding), _buildKeyButton('8', fontSize: fontSize, padding: keyPadding), _buildKeyButton('9', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('A', fontSize: fontSize, padding: keyPadding), _buildKeyButton('B', fontSize: fontSize, padding: keyPadding), _buildKeyButton('C', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('D', fontSize: fontSize, padding: keyPadding), _buildKeyButton('E', fontSize: fontSize, padding: keyPadding), _buildKeyButton('F', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton(':', fontSize: fontSize, padding: keyPadding), _buildKeyButton('0', fontSize: fontSize, padding: keyPadding), _buildKeyButton('/', fontSize: fontSize, padding: keyPadding)]),
+              Row(
+                children: [
+                  _buildKeyButton('1', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('2', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('3', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('4', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('5', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('6', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('7', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('8', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('9', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('A', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('B', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('C', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton('D', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('E', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('F', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildKeyButton(':', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('0', fontSize: fontSize, padding: keyPadding),
+                  _buildKeyButton('/', fontSize: fontSize, padding: keyPadding),
+                ],
+              ),
               const SizedBox(height: 8),
               _buildActionKeyButton(
                 label: l10n.bmiActionEnter,
@@ -312,28 +351,6 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
     }
   }
 
-  String _relationLabel(AppLocalizations l10n, String relation) {
-    switch (relation) {
-      case 'equal':
-        return l10n.relationEqual;
-      case 'outside':
-        return l10n.relationOutside;
-      case 'contiguous':
-        return l10n.relationContiguous;
-      case 'A_inside_B':
-        return l10n.relationAInsideB;
-      case 'B_inside_A':
-        return l10n.relationBInsideA;
-      case 'overlap':
-      case 'overlaps':
-        return l10n.relationOverlap;
-      case 'intersecting':
-        return l10n.relationIntersecting;
-      default:
-        return l10n.relationUnknown(relation);
-    }
-  }
-
   String? _simplifiedSupernetResult() {
     if (_supernetResult == null || _supernetResult!.isEmpty) {
       return null;
@@ -358,9 +375,7 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
   String _supernetResultAsPlainText(AppLocalizations l10n) {
     final simplified = _simplifiedSupernetResult();
     final expanded = _expandedSupernetResult();
-    final lines = <String>[
-      '${l10n.ipv6SupernetAddressesTitle}: ${_addresses.join(', ')}',
-    ];
+    final lines = <String>['${l10n.ipv6SupernetAddressesTitle}: ${_addresses.join(', ')}'];
 
     if (_statusText != null && _statusText!.isNotEmpty) {
       lines.add(_statusText!);
@@ -375,7 +390,11 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
 
     if (_relations.isNotEmpty) {
       lines.add(l10n.ipv6SupernetRelationsTitle);
-      lines.addAll(_relations.map((relation) => '${relation.addressA} -> ${_relationLabel(l10n, relation.relationAB)} -> ${relation.addressB}'));
+      lines.addAll(
+        _relations.map(
+          (relation) => '${relation.addressA} -> ${Relation.relationLabel(l10n, relation.relationAB)} -> ${relation.addressB}',
+        ),
+      );
     }
 
     return lines.join('\n');
@@ -574,12 +593,20 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
           children: [
             Text(l10n.ipv6SupernetResultTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            if (simplified != null) Text('${l10n.ipv6InfoSimplifiedNetwork}: $simplified'),
+            if (simplified != null)
+              Text.rich(
+                TextSpan(
+                  text: '${l10n.ipv6InfoSimplifiedNetwork}: ',
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: simplified,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
             if (expanded != null) Text('${l10n.ipv6InfoNetwork}: $expanded'),
-            if (showActions) ...[
-              const Divider(),
-              _buildResultActions(l10n),
-            ],
+            if (showActions) ...[const Divider(), _buildResultActions(l10n)],
           ],
         ),
       ),
@@ -599,13 +626,23 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
             ..._relations.map(
               (relation) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Text('${relation.addressA} -> ${_relationLabel(l10n, relation.relationAB)} -> ${relation.addressB}'),
+                child: Text.rich(
+                  TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: '${relation.addressA} -> ',
+                      ),
+                      TextSpan(
+                        text: Relation.relationLabel(l10n, relation.relationAB),
+                        style: TextStyle(color: Relation.isAGoodRelation(relation.relationAB)?Colors.green:Colors.red),
+                      ),
+                      TextSpan(text: '-> ${relation.addressB}'),
+                    ],
+                  ),
+                ),
               ),
             ),
-            if (showActions) ...[
-              const Divider(),
-              _buildResultActions(l10n),
-            ],
+            if (showActions) ...[const Divider(), _buildResultActions(l10n)],
           ],
         ),
       ),
@@ -696,7 +733,9 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
                                 height: _mobileKeyHeight,
                                 child: ElevatedButton(
                                   style: _keyButtonStyle(),
-                                  onPressed: _addresses.length >= 2 ? () => _calculateSupernet(hideMobileKeypad: showMobileKeypad) : null,
+                                  onPressed: _addresses.length >= 2
+                                      ? () => _calculateSupernet(hideMobileKeypad: showMobileKeypad)
+                                      : null,
                                   child: _actionButtonLabel(l10n.ipv6SupernetActionCalculate),
                                 ),
                               ),
@@ -720,13 +759,12 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
                           style: TextStyle(fontWeight: FontWeight.w600, color: _themeManager.displayTextColor),
                         ),
                         const SizedBox(height: 8),
-                        if (_addresses.isEmpty)
-                          Text(l10n.ipv6SupernetErrorNeedTwo)
-                        else
-                          _buildAddressesChips(),
+                        if (_addresses.isEmpty) Text(l10n.ipv6SupernetErrorNeedTwo) else _buildAddressesChips(),
                         if (_duplicateMessages.isNotEmpty) ...[
                           const SizedBox(height: 12),
-                          ..._duplicateMessages.map((message) => Text(message, style: const TextStyle(color: Colors.orange))),
+                          ..._duplicateMessages.map(
+                            (message) => Text(message, style: const TextStyle(color: Colors.orange)),
+                          ),
                         ],
                         if (_statusText != null) ...[
                           const SizedBox(height: 12),
@@ -742,10 +780,7 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
                           const SizedBox(height: 16),
                           _buildResultCard(l10n, showActions: !hasRelations),
                         ],
-                        if (hasRelations) ...[
-                          const SizedBox(height: 16),
-                          _buildRelationsCard(l10n, showActions: true),
-                        ],
+                        if (hasRelations) ...[const SizedBox(height: 16), _buildRelationsCard(l10n, showActions: true)],
                       ],
                     ),
                   ),
@@ -760,5 +795,3 @@ class _Ipv6SupernetScreenState extends State<Ipv6SupernetScreen> {
     );
   }
 }
-
-
