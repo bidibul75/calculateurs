@@ -1,45 +1,47 @@
 import 'dart:async';
 
-import 'package:calculators/calculators/ip/IPv4/address.dart';
+import 'package:calculators/calculators/ip/IPv6/address_ipv6.dart';
+import 'package:calculators/calculators/ip/IPv6/services/ipv6_result_export_service.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
-import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:calculators/utils/extensions/decimal_extensions.dart';
+import 'package:calculators/utils/my_exception.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/ipv4_result_export_service.dart';
 
-class Ipv4AddressScreen extends StatefulWidget {
-  const Ipv4AddressScreen({super.key});
+class Ipv6AddressScreen extends StatefulWidget {
+  const Ipv6AddressScreen({super.key});
 
   @override
-  State<Ipv4AddressScreen> createState() => _Ipv4AddressScreenState();
+  State<Ipv6AddressScreen> createState() => _Ipv6AddressScreenState();
 }
 
-class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
-  static const String _inputPreferenceKey = 'ipv4.address.input.v1';
-  static const String _showMobileKeypadPreferenceKey = 'ipv4.address.mobileKeypadVisible.v1';
-  static const String _lastValidInputPreferenceKey = 'ipv4.address.lastValidInput.v1';
+class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
+  static const String _inputPreferenceKey = 'ipv6.address.input.v1';
+  static const String _showMobileKeypadPreferenceKey = 'ipv6.address.mobileKeypadVisible.v1';
+  static const String _lastValidInputPreferenceKey = 'ipv6.address.lastValidInput.v1';
 
   static const double _mobileKeyHeight = 52;
   static const Duration _mobileKeypadAnimationDuration = Duration(milliseconds: 220);
-  static const Key _mobileKeypadContainerKey = ValueKey<String>('ipv4.mobileKeypad');
-  static const Key _clearButtonKey = ValueKey<String>('ipv4.key.clear');
-  static const Key _backspaceButtonKey = ValueKey<String>('ipv4.key.backspace');
-  static const Key _enterButtonKey = ValueKey<String>('ipv4.key.enter');
-  static const Key _resultCopyButtonKey = ValueKey<String>('ipv4.result.copy');
-  static const Key _resultSaveButtonKey = ValueKey<String>('ipv4.result.save');
+  static const Key _mobileKeypadContainerKey = ValueKey<String>('ipv6.mobileKeypad');
+  static const Key _clearButtonKey = ValueKey<String>('ipv6.key.clear');
+  static const Key _backspaceButtonKey = ValueKey<String>('ipv6.key.backspace');
+  static const Key _enterButtonKey = ValueKey<String>('ipv6.key.enter');
+  static const Key _resultCopyButtonKey = ValueKey<String>('ipv6.result.copy');
+  static const Key _resultSaveButtonKey = ValueKey<String>('ipv6.result.save');
 
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final TextEditingController _inputController = TextEditingController();
 
-  Address? _result;
+  AddressIPV6? _result;
   String? _errorText;
+  String? _lastValidInput;
   bool _isMobileKeypadVisible = true;
 
   @override
@@ -65,58 +67,10 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       _inputController.clear();
       _result = null;
       _errorText = null;
+      _lastValidInput = null;
       _isMobileKeypadVisible = true;
     });
     unawaited(_persistState());
-  }
-
-  void _calculate({bool hideMobileKeypad = false}) {
-    final l10n = AppLocalizations.of(context);
-    final rawInput = _inputController.text.trim();
-
-    if (rawInput.isEmpty) {
-      setState(() {
-        _result = null;
-        _errorText = l10n.ipv4ErrorEmptyCidr;
-        if (hideMobileKeypad) _isMobileKeypadVisible = false;
-      });
-      unawaited(_persistState());
-      return;
-    }
-
-    // Accept harmless spaces in user input, then validate the canonical CIDR form.
-    final normalizedInput = rawInput.replaceAll(' ', '');
-    if (!normalizedInput.isValidIPv4CIDR) {
-      setState(() {
-        _result = null;
-        _errorText = l10n.ipv4ErrorInvalidCidr;
-        if (hideMobileKeypad) _isMobileKeypadVisible = false;
-      });
-      unawaited(_persistState());
-      return;
-    }
-
-    try {
-      final address = Address(normalizedInput);
-      setState(() {
-        _result = address;
-        _errorText = null;
-        if (hideMobileKeypad) _isMobileKeypadVisible = false;
-      });
-      unawaited(_persistState());
-    } catch (_) {
-      setState(() {
-        _result = null;
-        _errorText = l10n.ipv4ErrorGeneric;
-        if (hideMobileKeypad) _isMobileKeypadVisible = false;
-      });
-      unawaited(_persistState());
-    }
-  }
-
-  /// Returns true only on Android and iOS to enable the custom mobile keypad.
-  bool _isMobilePlatform(TargetPlatform platform) {
-    return platform == TargetPlatform.android || platform == TargetPlatform.iOS;
   }
 
   void _appendToInput(String value) {
@@ -148,38 +102,8 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     unawaited(_persistState());
   }
 
-  Future<void> _restorePersistedState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedInput = prefs.getString(_inputPreferenceKey) ?? '';
-    final savedLastValidInput = prefs.getString(_lastValidInputPreferenceKey) ?? '';
-    final savedMobileKeypadVisible = prefs.getBool(_showMobileKeypadPreferenceKey);
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _inputController.text = savedInput;
-      if (savedMobileKeypadVisible != null) {
-        _isMobileKeypadVisible = savedMobileKeypadVisible;
-      }
-
-      if (savedLastValidInput.isNotEmpty) {
-        try {
-          _result = Address(savedLastValidInput);
-          _errorText = null;
-        } catch (_) {
-          _result = null;
-        }
-      }
-    });
-  }
-
-  Future<void> _persistState() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_inputPreferenceKey, _inputController.text);
-    await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
-    await prefs.setString(_lastValidInputPreferenceKey, _result?.addressToProcess ?? '');
+  bool _isMobilePlatform(TargetPlatform platform) {
+    return platform == TargetPlatform.android || platform == TargetPlatform.iOS;
   }
 
   ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
@@ -196,7 +120,12 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding, Key? buttonKey}) {
+  Widget _buildKeyButton(
+    String label, {
+    required double fontSize,
+    required EdgeInsets padding,
+    Key? buttonKey,
+  }) {
     return Expanded(
       child: Padding(
         padding: padding,
@@ -207,10 +136,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             key: buttonKey,
             style: _keyButtonStyle(),
             onPressed: () => _appendToInput(label),
-            child: Text(
-              label,
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
+            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
           ),
         ),
       ),
@@ -237,19 +163,13 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         children: [
           Icon(icon),
           const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-          ),
+          Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
         ],
       );
     } else if (hasIcon) {
       child = Icon(icon);
     } else {
-      child = Text(
-        label ?? '',
-        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-      );
+      child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
     }
 
     final button = Padding(
@@ -273,7 +193,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     return Expanded(child: button);
   }
 
-  Widget _buildMobileKeypad() {
+  Widget _buildMobileKeypad(AppLocalizations l10n) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool compact = constraints.maxWidth < 360;
@@ -285,7 +205,10 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
           key: _mobileKeypadContainerKey,
           margin: const EdgeInsets.only(top: 12),
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(
+            color: Colors.white.withAlpha(150),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             children: [
               Row(
@@ -308,37 +231,15 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  _buildKeyButton('1', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('2', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('3', fontSize: fontSize, padding: keyPadding),
-                ],
-              ),
-              Row(
-                children: [
-                  _buildKeyButton('4', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('5', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('6', fontSize: fontSize, padding: keyPadding),
-                ],
-              ),
-              Row(
-                children: [
-                  _buildKeyButton('7', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('8', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('9', fontSize: fontSize, padding: keyPadding),
-                ],
-              ),
-              Row(
-                children: [
-                  _buildKeyButton('.', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('0', fontSize: fontSize, padding: keyPadding),
-                  _buildKeyButton('/', fontSize: fontSize, padding: keyPadding),
-                ],
-              ),
+              Row(children: [_buildKeyButton('1', fontSize: fontSize, padding: keyPadding), _buildKeyButton('2', fontSize: fontSize, padding: keyPadding), _buildKeyButton('3', fontSize: fontSize, padding: keyPadding)]),
+              Row(children: [_buildKeyButton('4', fontSize: fontSize, padding: keyPadding), _buildKeyButton('5', fontSize: fontSize, padding: keyPadding), _buildKeyButton('6', fontSize: fontSize, padding: keyPadding)]),
+              Row(children: [_buildKeyButton('7', fontSize: fontSize, padding: keyPadding), _buildKeyButton('8', fontSize: fontSize, padding: keyPadding), _buildKeyButton('9', fontSize: fontSize, padding: keyPadding)]),
+              Row(children: [_buildKeyButton('A', fontSize: fontSize, padding: keyPadding), _buildKeyButton('B', fontSize: fontSize, padding: keyPadding), _buildKeyButton('C', fontSize: fontSize, padding: keyPadding)]),
+              Row(children: [_buildKeyButton('D', fontSize: fontSize, padding: keyPadding), _buildKeyButton('E', fontSize: fontSize, padding: keyPadding), _buildKeyButton('F', fontSize: fontSize, padding: keyPadding)]),
+              Row(children: [_buildKeyButton(':', fontSize: fontSize, padding: keyPadding), _buildKeyButton('0', fontSize: fontSize, padding: keyPadding), _buildKeyButton('/', fontSize: fontSize, padding: keyPadding)]),
               const SizedBox(height: 8),
               _buildActionKeyButton(
-                label: 'Enter',
+                label: l10n.bmiActionEnter,
                 icon: Icons.keyboard_return,
                 onPressed: () => _calculate(hideMobileKeypad: true),
                 fontSize: fontSize,
@@ -354,32 +255,100 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  String _addressScope(AppLocalizations l10n, Address address) {
-    final int first = int.parse(address.addressOnlyList[0]);
-    final int second = int.parse(address.addressOnlyList[1]);
+  void _calculate({bool hideMobileKeypad = false}) {
+    final l10n = AppLocalizations.of(context);
+    final rawInput = _inputController.text.trim();
 
-    // Classify common IPv4 scopes used by admins (private, loopback, link-local, multicast, reserved).
-    if (first == 10 || (first == 172 && second >= 16 && second <= 31) || (first == 192 && second == 168)) {
-      return l10n.ipv4ScopePrivate;
+    if (rawInput.isEmpty) {
+      setState(() {
+        _result = null;
+        _errorText = l10n.ipv6ErrorEmptyAddress;
+        if (hideMobileKeypad) {
+          _isMobileKeypadVisible = false;
+        }
+      });
+      unawaited(_persistState());
+      return;
     }
-    if (first == 127) return l10n.ipv4ScopeLoopback;
-    if (first == 169 && second == 254) return l10n.ipv4ScopeLinkLocal;
-    if (first >= 224 && first <= 239) return l10n.ipv4ScopeMulticast;
-    if (first >= 240) return l10n.ipv4ScopeReserved;
-    return l10n.ipv4ScopePublic;
+
+    try {
+      final parsed = AddressIPV6(rawInput);
+      final normalized = AddressIPV6.cidrSimplifier('${parsed.addressWithoutSuffixString}/${parsed.suffix}');
+      final canonicalInput = normalized.toUpperCase();
+
+      setState(() {
+        _result = AddressIPV6(canonicalInput);
+        _errorText = null;
+        _lastValidInput = canonicalInput;
+        if (hideMobileKeypad) {
+          _isMobileKeypadVisible = false;
+        }
+      });
+      unawaited(_persistState());
+    } on MyException catch (error) {
+      setState(() {
+        _result = null;
+        _errorText = AddressIPV6.localizeError(l10n, error.error);
+        if (hideMobileKeypad) {
+          _isMobileKeypadVisible = false;
+        }
+      });
+      unawaited(_persistState());
+    } catch (_) {
+      setState(() {
+        _result = null;
+        _errorText = l10n.ipv6ErrorGeneric;
+        if (hideMobileKeypad) {
+          _isMobileKeypadVisible = false;
+        }
+      });
+      unawaited(_persistState());
+    }
   }
 
-  String _addressClass(Address address) {
-    final int first = int.parse(address.addressOnlyList[0]);
-    if (first <= 127) return 'A';
-    if (first <= 191) return 'B';
-    if (first <= 223) return 'C';
-    if (first <= 239) return 'D';
-    return 'E';
+  Future<void> _restorePersistedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedInput = prefs.getString(_inputPreferenceKey) ?? '';
+    final savedLastValidInput = prefs.getString(_lastValidInputPreferenceKey) ?? '';
+    final savedMobileKeypadVisible = prefs.getBool(_showMobileKeypadPreferenceKey);
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _inputController.text = savedInput;
+      if (savedMobileKeypadVisible != null) {
+        _isMobileKeypadVisible = savedMobileKeypadVisible;
+      }
+      _lastValidInput = savedLastValidInput.isEmpty ? null : savedLastValidInput;
+
+      if (savedLastValidInput.isNotEmpty) {
+        try {
+          _result = AddressIPV6(savedLastValidInput);
+          _errorText = null;
+        } on MyException {
+          _result = null;
+        }
+      }
+    });
   }
 
-  String _hostDisplay(List<String> host) {
-    return host.join('.');
+  Future<void> _persistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_inputPreferenceKey, _inputController.text);
+    await prefs.setBool(_showMobileKeypadPreferenceKey, _isMobileKeypadVisible);
+    await prefs.setString(_lastValidInputPreferenceKey, _lastValidInput ?? '');
+  }
+
+  String _addressType(AddressIPV6 address) {
+    final type = AddressIPV6.identifyType(address.addressWithoutSuffixString);
+    final l10n = AppLocalizations.of(context);
+    return AddressIPV6.typeLabel(l10n, type).isEmpty ? l10n.ipv6TypeUnknown : AddressIPV6.typeLabel(l10n, type);
+  }
+
+  String _simplifiedNetwork(AddressIPV6 address) {
+    return AddressIPV6.cidrSimplifier('${address.networkAdress6.join(":")}/${address.suffix}').toUpperCase().split('/').first;
   }
 
   Widget _buildInfoRow(String label, String value) {
@@ -409,44 +378,41 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  String _addressResultAsPlainText(AppLocalizations l10n, Address address) {
+  String _addressResultAsPlainText(AppLocalizations l10n, AddressIPV6 address) {
+    final simplifiedAddress = AddressIPV6.cidrSimplifier('${address.addressWithoutSuffixString}/${address.suffix}').toUpperCase();
+    final simplifiedNetwork = _simplifiedNetwork(address);
     final rows = <String>[
-      '${l10n.ipv4InfoPrefix}: /${address.suffix}',
-      '${l10n.ipv4InfoClass}: ${_addressClass(address)}',
-      '${l10n.ipv4InfoScope}: ${_addressScope(l10n, address)}',
-      '${l10n.ipv4InfoMask}: ${address.mask}',
-      '${l10n.ipv4InfoWildcard}: ${address.wildcardMask}',
-      '${l10n.ipv4InfoNetwork}: ${address.addressNetwork}',
-      '${l10n.ipv4InfoBroadcast}: ${address.addressBroadcast}',
-      '${l10n.ipv4InfoFirstHost}: ${_hostDisplay(address.addressAvailableFirstOne)}',
-      '${l10n.ipv4InfoLastHost}: ${_hostDisplay(address.addressAvailableLastOne)}',
-      '${l10n.ipv4InfoTotalAddresses}: ${Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString}',
-      '${l10n.ipv4InfoUsableHosts}: ${Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString}',
-      '${l10n.ipv4InfoNetworkBinary}: ${address.addressNetworkStringBinary}',
-      '${l10n.ipv4InfoBroadcastBinary}: ${address.addressBroadcastStringBinary}',
+      '${l10n.ipv6InfoPrefix}: /${address.suffix}',
+      '${l10n.ipv6InfoType}: ${_addressType(address)}',
+      '${l10n.ipv6InfoSimplifiedAddress}: $simplifiedAddress',
+      '${l10n.ipv6InfoExpandedAddress}: ${address.address6WithoutSuffixListString.join(":")}',
+      '${l10n.ipv6InfoSimplifiedNetwork}: $simplifiedNetwork',
+      '${l10n.ipv6InfoNetwork}: ${address.networkAdress6.join(":")}',
+      '${l10n.ipv6InfoTotalAddresses}: ${Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString}',
+      '${l10n.ipv6InfoNetworkBinary}: ${AddressIPV6.hexListToBinaryString(address.networkAdress6)}',
     ];
 
     return rows.join('\n');
   }
 
-  Future<void> _copyAddressResult(AppLocalizations l10n, Address address) async {
+  Future<void> _copyAddressResult(AppLocalizations l10n, AddressIPV6 address) async {
     await copyResultToClipboard(
       context: context,
       text: _addressResultAsPlainText(l10n, address),
-      copiedMessage: l10n.ipv4ResultCopied,
+      copiedMessage: l10n.ipv6ResultCopied,
     );
   }
 
-  Future<void> _saveAddressResult(AppLocalizations l10n, Address address) async {
+  Future<void> _saveAddressResult(AppLocalizations l10n, AddressIPV6 address) async {
     await saveResultToFileWithFeedback(
       context: context,
       content: _addressResultAsPlainText(l10n, address),
-      prefix: 'ipv4_address_result',
-      isExportSupported: isIpv4ResultFileExportSupported,
-      exportToTextFile: exportIpv4ResultToTextFile,
-      unsupportedMessage: l10n.ipv4ResultExportUnsupported,
-      errorMessage: l10n.ipv4ResultExportError,
-      exportedMessageBuilder: l10n.ipv4ResultExported,
+      prefix: 'ipv6_address_result',
+      isExportSupported: isIpv6ResultFileExportSupported,
+      exportToTextFile: exportIpv6ResultToTextFile,
+      unsupportedMessage: l10n.ipv6ResultExportUnsupported,
+      errorMessage: l10n.ipv6ResultExportError,
+      exportedMessageBuilder: l10n.ipv6ResultExported,
     );
   }
 
@@ -462,13 +428,13 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         children: [
           IconButton(
             key: _resultCopyButtonKey,
-            tooltip: l10n.ipv4ResultCopy,
+            tooltip: l10n.ipv6ResultCopy,
             onPressed: onCopy,
             icon: const Icon(Icons.content_copy_outlined),
           ),
           IconButton(
             key: _resultSaveButtonKey,
-            tooltip: l10n.ipv4ResultSave,
+            tooltip: l10n.ipv6ResultSave,
             onPressed: onSave,
             icon: const Icon(Icons.save_alt_outlined),
           ),
@@ -477,7 +443,10 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     );
   }
 
-  Widget _buildResultCard(AppLocalizations l10n, Address address) {
+  Widget _buildResultCard(AppLocalizations l10n, AddressIPV6 address) {
+    final simplifiedAddress = AddressIPV6.cidrSimplifier('${address.addressWithoutSuffixString}/${address.suffix}').toUpperCase();
+    final simplifiedNetwork = _simplifiedNetwork(address);
+
     return Card(
       color: Colors.white.withAlpha(200),
       elevation: 3,
@@ -485,28 +454,15 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildInfoRow(l10n.ipv4InfoPrefix, '/${address.suffix}'),
-            _buildInfoRow(l10n.ipv4InfoClass, _addressClass(address)),
-            _buildInfoRow(l10n.ipv4InfoScope, _addressScope(l10n, address)),
+            _buildInfoRow(l10n.ipv6InfoPrefix, '/${address.suffix}'),
+            _buildInfoRow(l10n.ipv6InfoType, _addressType(address)),
+            _buildInfoRow(l10n.ipv6InfoSimplifiedAddress, simplifiedAddress),
+            _buildInfoRow(l10n.ipv6InfoExpandedAddress, address.address6WithoutSuffixListString.join(':')),
             const Divider(),
-            _buildInfoRow(l10n.ipv4InfoMask, address.mask),
-            _buildInfoRow(l10n.ipv4InfoWildcard, address.wildcardMask),
-            _buildInfoRow(l10n.ipv4InfoNetwork, address.addressNetwork),
-            _buildInfoRow(l10n.ipv4InfoBroadcast, address.addressBroadcast),
-            _buildInfoRow(l10n.ipv4InfoFirstHost, _hostDisplay(address.addressAvailableFirstOne)),
-            _buildInfoRow(l10n.ipv4InfoLastHost, _hostDisplay(address.addressAvailableLastOne)),
-            const Divider(),
-            _buildInfoRow(
-              l10n.ipv4InfoTotalAddresses,
-              Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString,
-            ),
-            _buildInfoRow(
-              l10n.ipv4InfoUsableHosts,
-              Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString,
-            ),
-            const Divider(),
-            _buildInfoRow(l10n.ipv4InfoNetworkBinary, address.addressNetworkStringBinary),
-            _buildInfoRow(l10n.ipv4InfoBroadcastBinary, address.addressBroadcastStringBinary),
+            _buildInfoRow(l10n.ipv6InfoSimplifiedNetwork, simplifiedNetwork),
+            _buildInfoRow(l10n.ipv6InfoNetwork, address.networkAdress6.join(':')),
+            _buildInfoRow(l10n.ipv6InfoTotalAddresses, Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString),
+            _buildInfoRow(l10n.ipv6InfoNetworkBinary, AddressIPV6.hexListToBinaryString(address.networkAdress6)),
             const Divider(),
             _buildResultActions(
               l10n: l10n,
@@ -522,7 +478,6 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    // Mobile app uses the custom keypad; desktop/web keeps standard text input behavior.
     final bool isMobileApp = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
     final bool showMobileKeypad = isMobileApp && _isMobileKeypadVisible;
 
@@ -531,7 +486,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text(l10n.ipv4Title),
+          title: Text(l10n.ipv6Title),
           backgroundColor: Colors.white.withAlpha(150),
           foregroundColor: Colors.grey[150],
           iconTheme: IconThemeData(color: Colors.grey[150]),
@@ -552,7 +507,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          l10n.ipv4InputLabel,
+                          l10n.ipv6InputLabel,
                           style: TextStyle(
                             color: _themeManager.displayTextColor,
                             fontSize: 18,
@@ -565,7 +520,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           keyboardType: TextInputType.text,
                           readOnly: showMobileKeypad,
                           textInputAction: TextInputAction.done,
-                          onTap: !kIsWeb && _isMobilePlatform(Theme.of(context).platform)
+                          onTap: isMobileApp
                               ? () {
                                   if (!_isMobileKeypadVisible) {
                                     setState(() {
@@ -577,7 +532,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                               : null,
                           onSubmitted: (_) => _calculate(hideMobileKeypad: true),
                           decoration: InputDecoration(
-                            hintText: l10n.ipv4InputHint,
+                            hintText: l10n.ipv6InputHint,
                             filled: true,
                             fillColor: Colors.white,
                             border: const OutlineInputBorder(),
@@ -591,12 +546,16 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           transitionBuilder: (child, animation) {
                             return FadeTransition(
                               opacity: animation,
-                              child: SizeTransition(axisAlignment: -1, sizeFactor: animation, child: child),
+                              child: SizeTransition(
+                                axisAlignment: -1,
+                                sizeFactor: animation,
+                                child: child,
+                              ),
                             );
                           },
                           child: showMobileKeypad
-                              ? _buildMobileKeypad()
-                              : const SizedBox(key: ValueKey<String>('ipv4.mobileKeypad.hidden')),
+                              ? _buildMobileKeypad(l10n)
+                              : const SizedBox(key: ValueKey<String>('ipv6.mobileKeypad.hidden')),
                         ),
                         const SizedBox(height: 12),
                         if (isMobileApp)
@@ -606,7 +565,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                               child: ElevatedButton(
                                 style: _keyButtonStyle(backgroundColor: Colors.redAccent),
                                 onPressed: _clear,
-                                child: Text(l10n.ipv4ActionClear),
+                                child: Text(l10n.ipv6ActionClear),
                               ),
                             )
                           else
@@ -620,7 +579,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                                   child: ElevatedButton(
                                     style: _keyButtonStyle(),
                                     onPressed: () => _calculate(hideMobileKeypad: showMobileKeypad),
-                                    child: Text(l10n.ipv4ActionCalculate),
+                                    child: Text(l10n.ipv6ActionCalculate),
                                   ),
                                 ),
                               ),
@@ -631,13 +590,16 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                                   child: ElevatedButton(
                                     style: _keyButtonStyle(backgroundColor: Colors.redAccent),
                                     onPressed: _clear,
-                                    child: Text(l10n.ipv4ActionClear),
+                                    child: Text(l10n.ipv6ActionClear),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        if (_result != null) ...[const SizedBox(height: 16), _buildResultCard(l10n, _result!)],
+                        if (_result != null) ...[
+                          const SizedBox(height: 16),
+                          _buildResultCard(l10n, _result!),
+                        ],
                       ],
                     ),
                   ),
@@ -645,10 +607,16 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
               ),
             ),
             if (_themeManager.isUnsplashBackgroundActive)
-              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
+              const Positioned(
+                bottom: 16,
+                right: 16,
+                child: PhotoCreditLink(),
+              ),
           ],
         ),
       ),
     );
   }
 }
+
+

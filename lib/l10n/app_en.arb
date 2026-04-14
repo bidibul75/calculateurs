@@ -158,6 +158,58 @@
   "@_module.ip.ipv6": {
     "description": "Module vocabulary: IP > IPv6"
   },
+  "menuIpv6Address": "IPv6 Address",
+  "menuIpv6Supernet": "IPv6 Supernet",
+  "ipv6Title": "IPv6 Address",
+  "ipv6InputLabel": "IPv6 CIDR address",
+  "ipv6InputHint": "Example: 2001:db8::1/64",
+  "ipv6ActionCalculate": "Calculate",
+  "ipv6ActionClear": "Clear",
+  "ipv6ResultCopy": "Copy result",
+  "ipv6ResultSave": "Save result",
+  "ipv6ResultCopied": "Result copied to clipboard.",
+  "ipv6ResultExportUnsupported": "File export is not available on this platform.",
+  "ipv6ResultExportError": "Unable to save result.",
+  "ipv6ResultExported": "Result saved to: {path}",
+  "@ipv6ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "ipv6ErrorEmptyAddress": "Empty IPv6 address.",
+  "ipv6ErrorGeneric": "Unable to process this IPv6 address.",
+  "ipv6InfoPrefix": "Prefix",
+  "ipv6InfoType": "Type",
+  "ipv6InfoExpandedAddress": "Expanded address",
+  "ipv6InfoSimplifiedAddress": "Simplified address",
+  "ipv6InfoNetwork": "Network address",
+  "ipv6InfoSimplifiedNetwork": "Simplified network address",
+  "ipv6InfoTotalAddresses": "Total addresses",
+  "ipv6InfoNetworkBinary": "Network (binary)",
+  "ipv6TypeUnknown": "Unknown address.",
+  "ipv6SupernetTitle": "IPv6 Supernet",
+  "ipv6SupernetInputLabel": "IPv6 CIDR address",
+  "ipv6SupernetInputHint": "Example: 2001:db8::/64",
+  "ipv6SupernetActionAdd": "Add",
+  "ipv6SupernetActionCalculate": "Calculate supernet",
+  "ipv6SupernetActionReset": "Reset",
+  "ipv6SupernetAddressesTitle": "Addresses",
+  "ipv6SupernetResultTitle": "Supernet result",
+  "ipv6SupernetResultValue": "Covering supernet",
+  "ipv6SupernetRelationsTitle": "Address relations",
+  "ipv6SupernetContiguousYes": "All addresses are contiguous.",
+  "ipv6SupernetContiguousNo": "Addresses are not all contiguous.",
+  "ipv6SupernetErrorEmptyAddress": "Please enter an IPv6 address.",
+  "ipv6SupernetErrorInvalidCidr": "Invalid IPv6 CIDR format.",
+  "ipv6SupernetErrorNeedTwo": "Please add at least two IPv6 addresses.",
+  "ipv6SupernetErrorGeneric": "Unable to compute supernet for this list.",
+  "ipv6SupernetDuplicateMessage": "Duplicate removed: {address} ({count} entries)",
+  "@ipv6SupernetDuplicateMessage": {
+    "placeholders": {
+      "address": {},
+      "count": {"type": "int"}
+    }
+  },
   "ipv6TypeLoopback": "Loopback address.",
   "ipv6TypeLinkLocal": "Link-Local address (communication on the same switch, non routable).",
   "ipv6TypeGlobalUnicast": "Global Unicast address (public address routable on Internet).",
@@ -165,7 +217,6 @@
   "ipv6TypeMulticast": "Multicast address.",
   "ipv6TypeUnspecified": "Unspecified address.",
   "ipv6ErrorInvalidCidrFormat": "Invalid IPv6 CIDR format.",
-  "ipv6ErrorEmptyAddress": "Empty IPv6 address.",
   "ipv6ErrorInvalidSuffix": "Invalid IPv6 suffix.",
   "ipv6ErrorInvalidAddress": "Invalid IPv6 address.",
   "ipv6ErrorInvalidMacFormat": "Invalid MAC address format."

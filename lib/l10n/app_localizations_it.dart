@@ -381,6 +381,136 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get menuIpv6Address => 'Indirizzo IPv6';
+
+  @override
+  String get menuIpv6Supernet => 'Supernet IPv6';
+
+  @override
+  String get ipv6Title => 'Indirizzo IPv6';
+
+  @override
+  String get ipv6InputLabel => 'Indirizzo IPv6 in CIDR';
+
+  @override
+  String get ipv6InputHint => 'Esempio: 2001:db8::1/64';
+
+  @override
+  String get ipv6ActionCalculate => 'Calcola';
+
+  @override
+  String get ipv6ActionClear => 'Cancella';
+
+  @override
+  String get ipv6ResultCopy => 'Copia risultato';
+
+  @override
+  String get ipv6ResultSave => 'Salva risultato';
+
+  @override
+  String get ipv6ResultCopied => 'Risultato copiato negli appunti.';
+
+  @override
+  String get ipv6ResultExportUnsupported =>
+      'L\'esportazione file non è disponibile su questa piattaforma.';
+
+  @override
+  String get ipv6ResultExportError => 'Impossibile salvare il risultato.';
+
+  @override
+  String ipv6ResultExported(Object path) {
+    return 'Risultato salvato in: $path';
+  }
+
+  @override
+  String get ipv6ErrorEmptyAddress => 'Indirizzo IPv6 vuoto.';
+
+  @override
+  String get ipv6ErrorGeneric => 'Impossibile elaborare questo indirizzo IPv6.';
+
+  @override
+  String get ipv6InfoPrefix => 'Prefisso';
+
+  @override
+  String get ipv6InfoType => 'Tipo';
+
+  @override
+  String get ipv6InfoExpandedAddress => 'Indirizzo espanso';
+
+  @override
+  String get ipv6InfoSimplifiedAddress => 'Indirizzo semplificato';
+
+  @override
+  String get ipv6InfoNetwork => 'Indirizzo di rete';
+
+  @override
+  String get ipv6InfoSimplifiedNetwork => 'Indirizzo di rete semplificato';
+
+  @override
+  String get ipv6InfoTotalAddresses => 'Totale indirizzi';
+
+  @override
+  String get ipv6InfoNetworkBinary => 'Rete (binario)';
+
+  @override
+  String get ipv6TypeUnknown => 'Indirizzo sconosciuto.';
+
+  @override
+  String get ipv6SupernetTitle => 'Supernet IPv6';
+
+  @override
+  String get ipv6SupernetInputLabel => 'Indirizzo IPv6 in CIDR';
+
+  @override
+  String get ipv6SupernetInputHint => 'Esempio: 2001:db8::/64';
+
+  @override
+  String get ipv6SupernetActionAdd => 'Aggiungi';
+
+  @override
+  String get ipv6SupernetActionCalculate => 'Calcola supernet';
+
+  @override
+  String get ipv6SupernetActionReset => 'Reimposta';
+
+  @override
+  String get ipv6SupernetAddressesTitle => 'Indirizzi';
+
+  @override
+  String get ipv6SupernetResultTitle => 'Risultato supernet';
+
+  @override
+  String get ipv6SupernetResultValue => 'Supernet di copertura';
+
+  @override
+  String get ipv6SupernetRelationsTitle => 'Relazioni tra indirizzi';
+
+  @override
+  String get ipv6SupernetContiguousYes => 'Tutti gli indirizzi sono contigui.';
+
+  @override
+  String get ipv6SupernetContiguousNo =>
+      'Gli indirizzi non sono tutti contigui.';
+
+  @override
+  String get ipv6SupernetErrorEmptyAddress => 'Inserisci un indirizzo IPv6.';
+
+  @override
+  String get ipv6SupernetErrorInvalidCidr => 'Formato CIDR IPv6 non valido.';
+
+  @override
+  String get ipv6SupernetErrorNeedTwo => 'Aggiungi almeno due indirizzi IPv6.';
+
+  @override
+  String get ipv6SupernetErrorGeneric =>
+      'Impossibile calcolare il supernet per questa lista.';
+
+  @override
+  String ipv6SupernetDuplicateMessage(Object address, int count) {
+    return 'Duplicato rimosso: $address ($count voci)';
+  }
+
+  @override
   String get ipv6TypeLoopback => 'Indirizzo loopback.';
 
   @override
@@ -403,9 +533,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidCidrFormat => 'Formato CIDR IPv6 non valido.';
-
-  @override
-  String get ipv6ErrorEmptyAddress => 'Indirizzo IPv6 vuoto.';
 
   @override
   String get ipv6ErrorInvalidSuffix => 'Suffisso IPv6 non valido.';

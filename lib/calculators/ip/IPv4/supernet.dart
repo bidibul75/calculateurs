@@ -5,10 +5,7 @@ class DuplicateProcessResult {
   final List<String> uniqueAddresses;
   final Map<String, int> duplicateCounts;
 
-  const DuplicateProcessResult({
-    required this.uniqueAddresses,
-    required this.duplicateCounts,
-  });
+  const DuplicateProcessResult({required this.uniqueAddresses, required this.duplicateCounts});
 }
 
 class Supernet extends Address {
@@ -153,16 +150,15 @@ class Supernet extends Address {
 
   /// Computes pairwise relations between all addresses in the list.
   static List<Relation> computeRelations(List<Address> list) {
+    String testInter;
     sortAddressList(list);
     final relations = <Relation>[];
     for (int i = 0; i < list.length - 1; i++) {
       for (int j = i + 1; j < list.length; j++) {
+        testInter = testOfIntersections(list[i], list[j]);
+        if (testInter == "outside" && j != i + 1) continue;
         relations.add(
-          Relation.implementationObjetRelation(
-            list[i].addressToProcess,
-            testOfIntersections(list[i], list[j]),
-            list[j].addressToProcess,
-          ),
+          Relation.implementationObjetRelation(list[i].addressToProcess, testInter, list[j].addressToProcess),
         );
       }
     }

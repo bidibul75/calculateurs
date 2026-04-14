@@ -313,7 +313,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ipv4SupernetActionAdd => 'Ajouter';
 
   @override
-  String get ipv4SupernetActionCalculate => 'Calculer le supernet';
+  String get ipv4SupernetActionCalculate => 'Calculer supernet';
 
   @override
   String get ipv4SupernetActionReset => 'Réinitialiser';
@@ -384,6 +384,138 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get menuIpv6Address => 'Adresse IPv6';
+
+  @override
+  String get menuIpv6Supernet => 'Supernet IPv6';
+
+  @override
+  String get ipv6Title => 'Adresse IPv6';
+
+  @override
+  String get ipv6InputLabel => 'Adresse IPv6 en CIDR';
+
+  @override
+  String get ipv6InputHint => 'Exemple : 2001:db8::1/64';
+
+  @override
+  String get ipv6ActionCalculate => 'Calculer';
+
+  @override
+  String get ipv6ActionClear => 'Effacer';
+
+  @override
+  String get ipv6ResultCopy => 'Copier le résultat';
+
+  @override
+  String get ipv6ResultSave => 'Enregistrer le résultat';
+
+  @override
+  String get ipv6ResultCopied => 'Résultat copié dans le presse-papiers.';
+
+  @override
+  String get ipv6ResultExportUnsupported =>
+      'L\'export de fichier n\'est pas disponible sur cette plateforme.';
+
+  @override
+  String get ipv6ResultExportError => 'Impossible d\'enregistrer le résultat.';
+
+  @override
+  String ipv6ResultExported(Object path) {
+    return 'Résultat enregistré dans : $path';
+  }
+
+  @override
+  String get ipv6ErrorEmptyAddress => 'Adresse IPv6 vide.';
+
+  @override
+  String get ipv6ErrorGeneric => 'Impossible de traiter cette adresse IPv6.';
+
+  @override
+  String get ipv6InfoPrefix => 'Préfixe';
+
+  @override
+  String get ipv6InfoType => 'Type';
+
+  @override
+  String get ipv6InfoExpandedAddress => 'Adresse étendue';
+
+  @override
+  String get ipv6InfoSimplifiedAddress => 'Adresse simplifiée';
+
+  @override
+  String get ipv6InfoNetwork => 'Adresse réseau';
+
+  @override
+  String get ipv6InfoSimplifiedNetwork => 'Adresse réseau simplifiée';
+
+  @override
+  String get ipv6InfoTotalAddresses => 'Nombre total d\'adresses';
+
+  @override
+  String get ipv6InfoNetworkBinary => 'Réseau (binaire)';
+
+  @override
+  String get ipv6TypeUnknown => 'Adresse inconnue.';
+
+  @override
+  String get ipv6SupernetTitle => 'Supernet IPv6';
+
+  @override
+  String get ipv6SupernetInputLabel => 'Adresse IPv6 en CIDR';
+
+  @override
+  String get ipv6SupernetInputHint => 'Exemple : 2001:db8::/64';
+
+  @override
+  String get ipv6SupernetActionAdd => 'Ajouter';
+
+  @override
+  String get ipv6SupernetActionCalculate => 'Calculer supernet';
+
+  @override
+  String get ipv6SupernetActionReset => 'Réinitialiser';
+
+  @override
+  String get ipv6SupernetAddressesTitle => 'Adresses';
+
+  @override
+  String get ipv6SupernetResultTitle => 'Résultat du supernet';
+
+  @override
+  String get ipv6SupernetResultValue => 'Supernet couvrant';
+
+  @override
+  String get ipv6SupernetRelationsTitle => 'Relations entre adresses';
+
+  @override
+  String get ipv6SupernetContiguousYes => 'Toutes les adresses sont contiguës.';
+
+  @override
+  String get ipv6SupernetContiguousNo =>
+      'Les adresses ne sont pas toutes contiguës.';
+
+  @override
+  String get ipv6SupernetErrorEmptyAddress =>
+      'Veuillez saisir une adresse IPv6.';
+
+  @override
+  String get ipv6SupernetErrorInvalidCidr => 'Format CIDR IPv6 invalide.';
+
+  @override
+  String get ipv6SupernetErrorNeedTwo =>
+      'Veuillez ajouter au moins deux adresses IPv6.';
+
+  @override
+  String get ipv6SupernetErrorGeneric =>
+      'Impossible de calculer le supernet pour cette liste.';
+
+  @override
+  String ipv6SupernetDuplicateMessage(Object address, int count) {
+    return 'Doublon retiré : $address ($count occurrences)';
+  }
+
+  @override
   String get ipv6TypeLoopback => 'Adresse loopback.';
 
   @override
@@ -406,9 +538,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidCidrFormat => 'Format CIDR IPv6 invalide.';
-
-  @override
-  String get ipv6ErrorEmptyAddress => 'Adresse IPv6 vide.';
 
   @override
   String get ipv6ErrorInvalidSuffix => 'Suffixe IPv6 invalide.';

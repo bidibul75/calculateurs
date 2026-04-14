@@ -158,6 +158,61 @@
   "@_module.ip.ipv6": {
     "description": "Vocabolario modulo: IP > IPv6"
   },
+  "@_module.ip.ipv6": {
+    "description": "Vocabolario del modulo: IP > IPv6"
+  },
+  "menuIpv6Address": "Indirizzo IPv6",
+  "menuIpv6Supernet": "Supernet IPv6",
+  "ipv6Title": "Indirizzo IPv6",
+  "ipv6InputLabel": "Indirizzo IPv6 in CIDR",
+  "ipv6InputHint": "Esempio: 2001:db8::1/64",
+  "ipv6ActionCalculate": "Calcola",
+  "ipv6ActionClear": "Cancella",
+  "ipv6ResultCopy": "Copia risultato",
+  "ipv6ResultSave": "Salva risultato",
+  "ipv6ResultCopied": "Risultato copiato negli appunti.",
+  "ipv6ResultExportUnsupported": "L'esportazione file non è disponibile su questa piattaforma.",
+  "ipv6ResultExportError": "Impossibile salvare il risultato.",
+  "ipv6ResultExported": "Risultato salvato in: {path}",
+  "@ipv6ResultExported": {
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "ipv6ErrorEmptyAddress": "Indirizzo IPv6 vuoto.",
+  "ipv6ErrorGeneric": "Impossibile elaborare questo indirizzo IPv6.",
+  "ipv6InfoPrefix": "Prefisso",
+  "ipv6InfoType": "Tipo",
+  "ipv6InfoExpandedAddress": "Indirizzo espanso",
+  "ipv6InfoSimplifiedAddress": "Indirizzo semplificato",
+  "ipv6InfoNetwork": "Indirizzo di rete",
+  "ipv6InfoSimplifiedNetwork": "Indirizzo di rete semplificato",
+  "ipv6InfoTotalAddresses": "Totale indirizzi",
+  "ipv6InfoNetworkBinary": "Rete (binario)",
+  "ipv6TypeUnknown": "Indirizzo sconosciuto.",
+  "ipv6SupernetTitle": "Supernet IPv6",
+  "ipv6SupernetInputLabel": "Indirizzo IPv6 in CIDR",
+  "ipv6SupernetInputHint": "Esempio: 2001:db8::/64",
+  "ipv6SupernetActionAdd": "Aggiungi",
+  "ipv6SupernetActionCalculate": "Calcola supernet",
+  "ipv6SupernetActionReset": "Reimposta",
+  "ipv6SupernetAddressesTitle": "Indirizzi",
+  "ipv6SupernetResultTitle": "Risultato supernet",
+  "ipv6SupernetResultValue": "Supernet di copertura",
+  "ipv6SupernetRelationsTitle": "Relazioni tra indirizzi",
+  "ipv6SupernetContiguousYes": "Tutti gli indirizzi sono contigui.",
+  "ipv6SupernetContiguousNo": "Gli indirizzi non sono tutti contigui.",
+  "ipv6SupernetErrorEmptyAddress": "Inserisci un indirizzo IPv6.",
+  "ipv6SupernetErrorInvalidCidr": "Formato CIDR IPv6 non valido.",
+  "ipv6SupernetErrorNeedTwo": "Aggiungi almeno due indirizzi IPv6.",
+  "ipv6SupernetErrorGeneric": "Impossibile calcolare il supernet per questa lista.",
+  "ipv6SupernetDuplicateMessage": "Duplicato rimosso: {address} ({count} voci)",
+  "@ipv6SupernetDuplicateMessage": {
+    "placeholders": {
+      "address": {},
+      "count": {"type": "int"}
+    }
+  },
   "ipv6TypeLoopback": "Indirizzo loopback.",
   "ipv6TypeLinkLocal": "Indirizzo link-local (comunicazione sullo stesso switch, non instradabile).",
   "ipv6TypeGlobalUnicast": "Indirizzo global unicast (indirizzo pubblico instradabile su Internet).",
