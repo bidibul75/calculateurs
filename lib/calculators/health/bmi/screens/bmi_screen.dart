@@ -94,10 +94,16 @@ class _BmiScreenState extends State<BmiScreen> {
 
   /// Builds an individual button
   Widget _buildButton(String label, {int flex = 1}) {
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+    final EdgeInsets buttonPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+        : const EdgeInsets.all(6.0);
+    final EdgeInsets contentPadding = isPhone ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6) : const EdgeInsets.all(12);
+    final double fontSize = isPhone ? 18 : 20;
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: buttonPadding,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: _getButtonColor(label),
@@ -108,10 +114,10 @@ class _BmiScreenState extends State<BmiScreen> {
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(color: Colors.grey[200]!, width: 2.0),
             ),
-            padding: const EdgeInsets.all(12),
+            padding: contentPadding,
           ),
           onPressed: () => _controller.onButtonPressed(label),
-          child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -119,8 +125,14 @@ class _BmiScreenState extends State<BmiScreen> {
 
   /// Builds the large Enter button
   Widget _buildEnterButton(String label) {
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+    final EdgeInsets buttonPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+        : const EdgeInsets.all(6.0);
+    final EdgeInsets contentPadding = isPhone ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6) : const EdgeInsets.all(12);
+    final double fontSize = isPhone ? 18 : 20;
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: buttonPadding,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
@@ -131,10 +143,10 @@ class _BmiScreenState extends State<BmiScreen> {
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(color: Colors.grey[200]!, width: 2.0),
           ),
-          padding: const EdgeInsets.all(12),
+          padding: contentPadding,
         ),
         onPressed: () => _controller.onButtonPressed(BmiController.actionEnter),
-        child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -162,9 +174,12 @@ class _BmiScreenState extends State<BmiScreen> {
     final bool hasComputedBmi = state.weight != null && state.prompt == l10n.bmiPromptResult;
     final String bmiCategory = hasComputedBmi ? _localizedBmiCategory(l10n, state.output) : '';
     final mediaSize = MediaQuery.sizeOf(context);
+    final double bottomInset = MediaQuery.paddingOf(context).bottom;
     final bool isDesktopLike = mediaSize.width >= 768;
-    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : 0.50))
-        .clamp(isDesktopLike ? 260.0 : 300.0, isDesktopLike ? 430.0 : 560.0)
+    final bool isPhone = mediaSize.width < 600;
+    final double keyboardBottomPadding = isPhone ? (bottomInset + 24.0).clamp(28.0, 56.0).toDouble() : 50.0;
+    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : (isPhone ? 0.42 : 0.50)))
+        .clamp(isDesktopLike ? 260.0 : (isPhone ? 245.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
         .toDouble();
     // Responsive height for output display (reserves space to prevent vertical shift on error)
     final double outputDisplayHeight = (mediaSize.height * (isDesktopLike ? 0.15 : 0.18))
@@ -257,43 +272,43 @@ class _BmiScreenState extends State<BmiScreen> {
                        ),
                       // Button grid area
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
+                        padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
                         child: SizedBox(
-                          height: keyboardHeight,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // Left side: numeric keypad
-                              Expanded(
-                                flex: 3,
-                                child: SizedBox.expand(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(child: Row(children: [_buildButton('C'), _buildButton('⌫')])),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                           height: keyboardHeight,
+                           child: Row(
+                             crossAxisAlignment: CrossAxisAlignment.stretch,
+                             children: [
+                               // Left side: numeric keypad
+                               Expanded(
+                                 flex: 3,
+                                 child: SizedBox.expand(
+                                   child: Column(
+                                     mainAxisAlignment: MainAxisAlignment.start,
+                                     children: [
+                                       Expanded(child: Row(children: [_buildButton('C'), _buildButton('⌫')])),
+                                       Expanded(
+                                         child: Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
+                                       ),
+                                       Expanded(
+                                         child: Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
+                                       ),
+                                       Expanded(
+                                         child: Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
+                                       ),
+                                       Expanded(
+                                         child: Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                               ),
 
-                              // Right side: large Enter button
-                              Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
-                            ],
-                          ),
-                        ),
-                      ),
+                               // Right side: large Enter button
+                               Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
+                             ],
+                           ),
+                         ),
+                       ),
                     ],
                   ),
                 ),
