@@ -64,7 +64,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   /// Builds an individual button
   Widget _buildButton(String label, {required bool compact}) {
-    final double fontSize = compact ? 14 : 20;
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+    final bool isLongLabel = label.length >= 3;
+    // Keep labels clearly larger on phone; slightly reduce only long labels.
+    final double baseFontSize = isPhone ? (compact ? 18 : 24) : (compact ? 14 : 20);
+    final double fontSize = (isPhone && isLongLabel) ? (baseFontSize - 2) : baseFontSize;
+    final double verticalPadding = isPhone ? (compact ? 4 : 8) : (compact ? 6 : 12);
     return Expanded(
       child: Padding(
         padding: EdgeInsets.all(compact ? 3.0 : 6.0),
@@ -82,20 +87,32 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 width: compact ? 1.2 : 2.0, // Width of border
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: compact ? 6 : 12),
+            padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: verticalPadding),
             minimumSize: Size.fromHeight(compact ? 34 : 44),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           onPressed: () => _controller.onButtonPressed(label),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              label,
-              maxLines: 1,
-              softWrap: false,
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
-          ),
+          child: isPhone
+              ? Align(
+                  alignment: const Alignment(0, -0.08),
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, height: 1.0),
+                  ),
+                )
+              : FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                  ),
+                ),
         ),
       ),
     );
