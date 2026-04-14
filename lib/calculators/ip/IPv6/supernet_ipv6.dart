@@ -13,11 +13,23 @@ class SupernetIPv6 extends AddressIPV6 {
     return AddressIPV6.cidrSimplifier(cidr.replaceAll(' ', '').toUpperCase());
   }
 
+  static String _networkBinaryString(AddressIPV6 address) {
+    final networkWithSuffix = <String>[...address.networkAdress6, address.suffix];
+    return AddressIPV6.hexListToBinaryString(networkWithSuffix);
+  }
+
+  static ({BigInt start, BigInt end}) _cidrRange(AddressIPV6 address) {
+    final start = BigInt.parse(_networkBinaryString(address), radix: 2);
+    final end = start + address.numberOfAddresses - BigInt.one;
+    return (start: start, end: end);
+  }
+
   /// Sorts a list of List<Address>
   static void sortAddress6List(List<AddressIPV6> list) {
     final indexed = list.asMap().entries.toList();
     indexed.sort((a, b) {
-      final binaryComparison = a.value.address6BinaryString.compareTo(b.value.address6BinaryString);
+      final binaryComparison =
+          _networkBinaryString(a.value).compareTo(_networkBinaryString(b.value));
       if (binaryComparison != 0) {
         return binaryComparison;
       }
@@ -52,11 +64,13 @@ class SupernetIPv6 extends AddressIPV6 {
   }
 
   /// Tests if two IPv6 CIDR networks overlap, touch, or are separated.
-  static String testOfIntersections(AddressIPV6 addressA, AddressIPV6 addressB) {
-    final startA = BigInt.parse(addressA.address6BinaryString, radix: 2);
-    final startB = BigInt.parse(addressB.address6BinaryString, radix: 2);
-    final endA = startA + addressA.numberOfAddresses - BigInt.one;
-    final endB = startB + addressB.numberOfAddresses - BigInt.one;
+  static String testOfIntersectionsIPv6(AddressIPV6 addressA, AddressIPV6 addressB) {
+    final rangeA = _cidrRange(addressA);
+    final rangeB = _cidrRange(addressB);
+    final startA = rangeA.start;
+    final endA = rangeA.end;
+    final startB = rangeB.start;
+    final endB = rangeB.end;
 
     if (startA == startB) {
       if (endA == endB) {
@@ -92,10 +106,9 @@ class SupernetIPv6 extends AddressIPV6 {
     final sorted = List<AddressIPV6>.from(list);
     sortAddress6List(sorted);
     for (int i = 0; i < sorted.length - 1; i++) {
-      final startA = BigInt.parse(sorted[i].address6BinaryString, radix: 2);
-      final endA = startA + sorted[i].numberOfAddresses - BigInt.one;
-      final startB = BigInt.parse(sorted[i + 1].address6BinaryString, radix: 2);
-      if (endA + BigInt.one != startB) {
+      final rangeA = _cidrRange(sorted[i]);
+      final rangeB = _cidrRange(sorted[i + 1]);
+      if (rangeA.end + BigInt.one != rangeB.start) {
         return false;
       }
     }
@@ -107,16 +120,15 @@ class SupernetIPv6 extends AddressIPV6 {
 
   /// Computes pairwise relations between consecutive IPv6 CIDR networks in a sorted list.
   static List<Relation> computeRelations(List<SupernetIPv6> list) {
+    String testInter;
     sortAddress6List(list);
     final relations = <Relation>[];
     for (int i = 0; i < list.length - 1; i++) {
-      relations.add(
-        Relation(
-          list[i].address6,
-          testOfIntersections(list[i], list[i + 1]),
-          list[i + 1].address6,
-        ),
-      );
+      for (int j = i + 1; j < list.length; j++) {
+        testInter = testOfIntersectionsIPv6(list[i], list[j]);
+        if (testInter == "outside" && j != i + 1) continue;
+        relations.add(Relation(list[i].address6, testInter, list[j].address6));
+      }
     }
     return relations;
   }
@@ -131,11 +143,12 @@ class SupernetIPv6 extends AddressIPV6 {
       return '${list.first.networkAdress6.join(':')}/${list.first.suffix}';
     }
 
-    final String firstBinary = list.first.address6BinaryString;
+    final binaries = list.map(_networkBinaryString).toList(growable: false);
+    final String firstBinary = binaries.first;
     int prefixLength = 0;
     for (int bitIndex = 0; bitIndex < 128; bitIndex++) {
       final String bit = firstBinary[bitIndex];
-      if (list.every((s) => s.address6BinaryString[bitIndex] == bit)) {
+      if (binaries.every((binary) => binary[bitIndex] == bit)) {
         prefixLength++;
       } else {
         break;
