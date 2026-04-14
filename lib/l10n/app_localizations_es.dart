@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appTitle => 'Calculadora básica';
+  String get appTitle => 'Calculadora';
 
   @override
   String get basicHistoryCopy => 'Copiar historial';

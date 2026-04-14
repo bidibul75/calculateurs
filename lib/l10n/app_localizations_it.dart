@@ -9,7 +9,7 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
-  String get appTitle => 'Calcolatrice base';
+  String get appTitle => 'Calcolatrice';
 
   @override
   String get basicHistoryCopy => 'Copia cronologia';
