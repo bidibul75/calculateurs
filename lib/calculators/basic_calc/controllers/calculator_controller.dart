@@ -268,7 +268,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleEqualOrMemory(String buttonText) {
-    String history;
     isLastClicNumber = false;
     Rational memo = _state.memory;
     String currentInputClean = _state.currentInput.toCleanMathString;
@@ -299,9 +298,9 @@ class CalculatorController extends ChangeNotifier {
         // Adds an entry in history containing the intermediate result
         // in case of ^ in second part of the calculation
         // Example if we calculate 1 + 2^3 , adds 2^3 = 8 and 1 + 2^3 = 9 in history
-        history =
+        final intermediateHistory =
             "${CalculatorLogic.updateHistory(_state.history, "^", _state.num2.toCleanMathString, currentInputClean)} ${secondOperandForHistory.formatRound()}";
-        final updatedHistoryEntries = _prependHistoryEntry(history, result);
+        final updatedHistoryEntries = _prependHistoryEntry(intermediateHistory, result);
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
       }
 
@@ -311,7 +310,7 @@ class CalculatorController extends ChangeNotifier {
         if (buttonText == "M-") memo -= resRational;
       }
 
-      history = _state.history.contains("=")
+      final history = _state.history.contains("=")
           ? "${_state.history} = $result"
           : CalculatorLogic.updateHistory(
               _state.history,

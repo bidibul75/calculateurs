@@ -22,7 +22,14 @@ class CalculatorLogic {
       // Handle case when num3 and operation2 are provided (x^y as second operand)
       if (num3 != "" && operation2 == "^") {
         final r3 = Rational.parse(num3);
-        r2 = r2.pow(r3.toBigInt().toInt());
+        // Keep exact rational math for integer exponents, fall back to double pow for decimal exponents.
+        if (r3.toString().contains('/')) {
+          final secondPow = math.pow(double.parse(num2), double.parse(num3)).toDouble();
+          if (!secondPow.isFinite || secondPow.isNaN) return "Error exp";
+          r2 = Rational.parse(secondPow.toString());
+        } else {
+          r2 = r2.pow(r3.toBigInt().toInt());
+        }
       }
 
       Rational result;
@@ -43,9 +50,14 @@ class CalculatorLogic {
           break;
         case "^":
         case "x^y":
-          // Rational.pow expects an int.
           try {
-            int exponent = r2.toBigInt().toInt();
+            if (r2.toString().contains('/')) {
+              final powValue = math.pow(double.parse(num1), double.parse(num2)).toDouble();
+              if (!powValue.isFinite || powValue.isNaN) return "Error exp";
+              return Decimal.parse(powValue.toString()).toPreciseFormattedString;
+            }
+
+            final exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
           } catch (e) {
             return "Error exp";

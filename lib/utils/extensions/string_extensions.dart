@@ -276,8 +276,10 @@ extension StringExtensions on String {
   String roundString({int limit = 10}) {
     if (double.tryParse(this) == null) return format;
     if (!contains('.')) return format;
-    double d = double.parse(this);
-    String r = "≈ ${d.roundTo(limit).toString().trim().format}";
+    final d = double.parse(this);
+    final l = split('.');
+    String r = l[1].length>limit?"≈ ":"";
+    r += d.roundTo(limit).toString().trim().format;
     return r.endsWith('.0') ? r.replaceLast('.0') : r;
   }
 
