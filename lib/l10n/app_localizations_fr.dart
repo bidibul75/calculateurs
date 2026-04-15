@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Calculatrice basique';
+  String get appTitle => 'Calculatrice';
 
   @override
   String get basicHistoryCopy => 'Copier l\'historique';

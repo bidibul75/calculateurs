@@ -68,7 +68,6 @@ class _BmiScreenState extends State<BmiScreen> {
     setState(() {});
   }
 
-
   /// Determines button color
   Color _getButtonColor(String label) {
     if (label == 'C' || label == "⌫") return Colors.redAccent;
@@ -92,12 +91,54 @@ class _BmiScreenState extends State<BmiScreen> {
     }
   }
 
+  Widget _buildStoredInputLine(String label, String? value) {
+    if (value == null || value.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '$label $value',
+        style: TextStyle(
+          color: _themeManager.displayTextColor.withAlpha(170),
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          height: 1.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPromptLine(String prompt) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        prompt,
+        style: TextStyle(
+          color: _themeManager.displayTextColor.withAlpha(180),
+          fontSize: 24,
+          fontWeight: FontWeight.w500,
+          height: 1.1,
+        ),
+      ),
+    );
+  }
+
   /// Builds an individual button
   Widget _buildButton(String label, {int flex = 1}) {
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+    final EdgeInsets buttonPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+        : const EdgeInsets.all(6.0);
+    final EdgeInsets contentPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+        : const EdgeInsets.all(12);
+    final double fontSize = isPhone ? 18 : 20;
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: buttonPadding,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: _getButtonColor(label),
@@ -108,10 +149,13 @@ class _BmiScreenState extends State<BmiScreen> {
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(color: Colors.grey[200]!, width: 2.0),
             ),
-            padding: const EdgeInsets.all(12),
+            padding: contentPadding,
           ),
           onPressed: () => _controller.onButtonPressed(label),
-          child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(
+            label,
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -119,8 +163,16 @@ class _BmiScreenState extends State<BmiScreen> {
 
   /// Builds the large Enter button
   Widget _buildEnterButton(String label) {
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+    final EdgeInsets buttonPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+        : const EdgeInsets.all(6.0);
+    final EdgeInsets contentPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+        : const EdgeInsets.all(12);
+    final double fontSize = isPhone ? 18 : 20;
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: buttonPadding,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
@@ -131,10 +183,13 @@ class _BmiScreenState extends State<BmiScreen> {
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(color: Colors.grey[200]!, width: 2.0),
           ),
-          padding: const EdgeInsets.all(12),
+          padding: contentPadding,
         ),
         onPressed: () => _controller.onButtonPressed(BmiController.actionEnter),
-        child: Text(label, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        child: Text(
+          label,
+          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -162,14 +217,20 @@ class _BmiScreenState extends State<BmiScreen> {
     final bool hasComputedBmi = state.weight != null && state.prompt == l10n.bmiPromptResult;
     final String bmiCategory = hasComputedBmi ? _localizedBmiCategory(l10n, state.output) : '';
     final mediaSize = MediaQuery.sizeOf(context);
+    final double bottomInset = MediaQuery.paddingOf(context).bottom;
     final bool isDesktopLike = mediaSize.width >= 768;
-    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : 0.50))
-        .clamp(isDesktopLike ? 260.0 : 300.0, isDesktopLike ? 430.0 : 560.0)
+    final bool isPhone = mediaSize.width < 600;
+    final double keyboardBottomPadding = isPhone ? (bottomInset + 24.0).clamp(22.0, 52.0).toDouble() : 50.0;
+    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : (isPhone ? 0.42 : 0.50)))
+        .clamp(isDesktopLike ? 260.0 : (isPhone ? 245.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
         .toDouble();
     // Responsive height for output display (reserves space to prevent vertical shift on error)
     final double outputDisplayHeight = (mediaSize.height * (isDesktopLike ? 0.15 : 0.18))
-        .clamp(isDesktopLike ? 80.0 : 90.0, isDesktopLike ? 120.0 : 140.0)
+        .clamp(isDesktopLike ? 80.0 : 76.0, isDesktopLike ? 120.0 : 120.0)
         .toDouble();
+    final double gapBeforePrompt = isPhone ? 50.0 : 60.0;
+    final double gapBeforeResult = isPhone ? 24.0 : 30.0;
+    final double bmiFontSize = state.hasError ? 24 : 40;
 
     return Container(
       decoration: _themeManager.backgroundDecoration,
@@ -191,73 +252,63 @@ class _BmiScreenState extends State<BmiScreen> {
                 child: SizedBox.expand(
                   child: Column(
                     children: [
-                       // Fixed prompt area (top, prevents vertical shift)
-                       Container(
-                         padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                         color: Colors.white.withAlpha(150),
-                         child: Align(
-                           alignment: Alignment.centerLeft,
-                           child: Text(
-                             state.prompt,
-                             style: TextStyle(
-                               color: _themeManager.displayTextColor.withAlpha(180),
-                               fontSize: 24,
-                             ),
-                           ),
-                         ),
-                       ),
-
-                       // Output display with reserved height (prevents vertical shift)
-                       Expanded(
-                         child: Container(
-                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                           color: Colors.white.withAlpha(150),
-                           child: Column(
-                             mainAxisAlignment: MainAxisAlignment.start,
-                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                             children: [
-                               // Reserved space for output
-                               SizedBox(
-                                 height: outputDisplayHeight,
-                                 child: Align(
-                                   alignment: Alignment.centerRight,
-                                   child: FittedBox(
-                                     fit: BoxFit.scaleDown,
-                                     alignment: Alignment.centerRight,
-                                     child: Text(
-                                       state.output,
-                                       maxLines: 1,
-                                       style: TextStyle(
-                                         color: state.hasError ? Colors.red : _themeManager.displayTextColor,
-                                         fontSize: state.hasError ? 30 : 50,
-                                         fontWeight: FontWeight.bold,
-                                       ),
-                                     ),
-                                   ),
-                                 ),
-                               ),
-
-                               if (bmiCategory.isNotEmpty) ...[
-                                 const SizedBox(height: 8),
-                                 Align(
-                                   alignment: Alignment.centerRight,
-                                   child: Text(
-                                     bmiCategory,
-                                     style: TextStyle(
-                                       color: _getCategoryColor(state.output),
-                                       fontSize: 20,
-                                       fontWeight: FontWeight.w600,
-                                     ),
-                                   ),
-                                 ),
-                               ],
-                             ],
-                           ),
-                         ),
-                       ),
+                      // Output display with reserved height (prevents vertical shift)
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(24, 50, 24, 12),
+                          color: Colors.white.withAlpha(150),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _buildStoredInputLine(l10n.bmiPromptHeight, state.height),
+                              _buildStoredInputLine(l10n.bmiPromptWeight, state.weight),
+                              SizedBox(height: gapBeforePrompt),
+                              _buildPromptLine(state.prompt),
+                              SizedBox(height: gapBeforeResult),
+                              // Reserved space for output
+                              SizedBox(
+                                height: outputDisplayHeight,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: state.output,
+                                            style: TextStyle(
+                                              color: state.hasError ? Colors.red : _themeManager.displayTextColor,
+                                              fontSize: bmiFontSize,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          if (bmiCategory.isNotEmpty)
+                                            TextSpan(
+                                              text: '       $bmiCategory',
+                                              style: TextStyle(
+                                                color: _getCategoryColor(state.output),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      maxLines: 1,
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       // Button grid area
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 50),
+                        padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
                         child: SizedBox(
                           height: keyboardHeight,
                           child: Row(
@@ -301,11 +352,7 @@ class _BmiScreenState extends State<BmiScreen> {
             ),
             // Photo credit at the bottom right, only when the Unsplash background is active.
             if (_themeManager.isUnsplashBackgroundActive)
-              const Positioned(
-                bottom: 16,
-                right: 16,
-                child: PhotoCreditLink(),
-              ),
+              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
           ],
         ),
       ),
