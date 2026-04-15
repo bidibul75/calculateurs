@@ -35,7 +35,14 @@ class CalculatorController extends ChangeNotifier {
         isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
           isLastClicClear = false;
-          _state = _state.copyWith(output: "0", currentInput: "", num1: "0", operation: "", history: "", historyEntries: const []);
+          _state = _state.copyWith(
+            output: "0",
+            currentInput: "",
+            num1: "0",
+            operation: "",
+            history: "",
+            historyEntries: const [],
+          );
         } else {
           isLastClicClear = true;
           // Clear only the current input and operation, preserve memory and history
@@ -332,6 +339,12 @@ class CalculatorController extends ChangeNotifier {
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
+        // Adds an entry in history containing the intermediate result
+        // Example if we calculate 1 + 2² , adds 2² = 4 and 1 + 2² = 5 in history
+        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
+        final updatedHistoryEntries = _prependHistoryEntry(history, result);
+        _state = _state.copyWith(historyEntries: updatedHistoryEntries);
+
         result = CalculatorLogic.calculateResult(
           num1: _state.num1.toCleanMathString,
           num2: result.toCleanMathString,
@@ -396,7 +409,13 @@ class CalculatorController extends ChangeNotifier {
     if (isLastClicEqualOrMemo) {
       isLastClicEqualOrMemo = false;
       String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
-      _state = CalculatorState(currentInput: val, output: val, history: "", historyEntries: _state.historyEntries, memory: _state.memory);
+      _state = CalculatorState(
+        currentInput: val,
+        output: val,
+        history: "",
+        historyEntries: _state.historyEntries,
+        memory: _state.memory,
+      );
       isLastClicNumber = true;
       return;
     }
@@ -448,9 +467,7 @@ class CalculatorController extends ChangeNotifier {
 
     return _state.historyEntries
         .map(
-          (entry) => entry.displayText.contains('= ≈')
-              ? entry.displayText.replaceLast('= ≈', '≈')
-              : entry.displayText,
+          (entry) => entry.displayText.contains('= ≈') ? entry.displayText.replaceLast('= ≈', '≈') : entry.displayText,
         )
         .join('\n');
   }
