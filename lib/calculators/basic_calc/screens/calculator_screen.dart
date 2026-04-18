@@ -95,6 +95,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         return 'x^y';
       case 'c':
       case 'C':
+      case '\x1B' :
         return 'C';
       default:
         return null;

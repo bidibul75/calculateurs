@@ -21,6 +21,7 @@ class CalculatorController extends ChangeNotifier {
   static const String _memoryKey = 'basic.memory.v1';
   static const int _maxHistoryEntries = 50;
   static const String multiplySymbol = 'x';
+  static const String divideSymbol = '÷';
 
   CalculatorState _state = CalculatorState();
 
@@ -33,6 +34,9 @@ class CalculatorController extends ChangeNotifier {
   String _canonicalButtonText(String buttonText) {
     if (buttonText == '*' || buttonText == '×') {
       return multiplySymbol;
+    }
+    if (buttonText == '/') {
+      return divideSymbol;
     }
     return buttonText;
   }
@@ -70,7 +74,7 @@ class CalculatorController extends ChangeNotifier {
       case "+":
       case "-":
       case multiplySymbol:
-      case "÷":
+      case divideSymbol:
       case "x^y":
         // Avoids to use Error message with operators (empty String allowed to allow to change the operator)
         if (_state.output.toCleanMathString.isNotEmpty && _state.output.toCleanMathString.isNotANumber) break;
