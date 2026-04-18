@@ -13,7 +13,7 @@ class CalculatorLogic {
     return operation;
   }
 
-  /// Calculates the result of a binary operation (+, -, *, /)
+  /// Calculates the result of a binary operation (+, -, x, /)
   static String calculateResult({
     required String num1,
     required String num2,
@@ -151,7 +151,7 @@ class CalculatorLogic {
           final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
           return sqrtResult.toPreciseFormattedString;
         case "%":
-          result=r/Rational.fromInt(100);
+          result = r / Rational.fromInt(100);
           break;
         default:
           return "Error";

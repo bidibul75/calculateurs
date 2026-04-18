@@ -31,6 +31,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
   final ScrollController _historyScrollController = ScrollController();
+  final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'basic_calc_keyboard_focus');
 
   @override
   void initState() {
@@ -39,6 +40,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _controller.addListener(_updateUI);
     _themeManager.addListener(_updateUI);
     unawaited(_controller.restorePersistedState());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _keyboardFocusNode.requestFocus();
+      }
+    });
   }
 
   @override
@@ -46,12 +52,109 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _controller.removeListener(_updateUI);
     _themeManager.removeListener(_updateUI);
     _historyScrollController.dispose();
+    _keyboardFocusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   void _updateUI() {
     setState(() {});
+  }
+
+  void _requestKeyboardFocus() {
+    if (!_keyboardFocusNode.hasFocus) {
+      _keyboardFocusNode.requestFocus();
+    }
+  }
+
+  String? _mapCharacterToButton(String character) {
+    if (character.length != 1) return null;
+
+    if (RegExp(r'^[0-9]$').hasMatch(character)) {
+      return character;
+    }
+
+    switch (character) {
+      case '.':
+      case ',':
+        return symbols.decimalSep;
+      case '+':
+        return '+';
+      case '-':
+        return '-';
+      case '/':
+        return '÷';
+      case '*':
+      case 'x':
+      case 'X':
+      case '×':
+        return CalculatorController.multiplySymbol;
+      case '%':
+        return '%';
+      case '^':
+        return 'x^y';
+      case 'c':
+      case 'C':
+        return 'C';
+      default:
+        return null;
+    }
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent) {
+      return KeyEventResult.ignored;
+    }
+
+    final LogicalKeyboardKey key = event.logicalKey;
+
+    if (key == LogicalKeyboardKey.enter || key == LogicalKeyboardKey.numpadEnter) {
+      _controller.onButtonPressed('=');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.backspace) {
+      _controller.onButtonPressed('⌫');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.escape || key == LogicalKeyboardKey.delete) {
+      _controller.onButtonPressed('C');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadAdd) {
+      _controller.onButtonPressed('+');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadSubtract) {
+      _controller.onButtonPressed('-');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadMultiply) {
+      _controller.onButtonPressed(CalculatorController.multiplySymbol);
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadDivide) {
+      _controller.onButtonPressed('÷');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadDecimal) {
+      _controller.onButtonPressed(symbols.decimalSep);
+      return KeyEventResult.handled;
+    }
+
+    final String? mapped = event.character == null ? null : _mapCharacterToButton(event.character!);
+    if (mapped != null) {
+      _controller.onButtonPressed(mapped);
+      return KeyEventResult.handled;
+    }
+
+    return KeyEventResult.ignored;
   }
 
   /// Determines the button color from its label.
@@ -90,7 +193,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             minimumSize: Size.fromHeight(compact ? 34 : 44),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          onPressed: () => _controller.onButtonPressed(label),
+          onPressed: () {
+            _controller.onButtonPressed(label);
+            _requestKeyboardFocus();
+          },
           child: isPhone
               ? Align(
                   alignment: const Alignment(0, -0.08),
@@ -267,185 +373,190 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final mediaSize = MediaQuery.sizeOf(context);
     final bool isDesktopLike = mediaSize.width >= 768;
 
-    return Container(
-      decoration: _themeManager.backgroundDecoration,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text(l10n.appTitle),
-          backgroundColor: Colors.white.withAlpha(150),
-          // Semi-transparent white.
-          foregroundColor: Colors.grey[150],
-          // Text and action color.
-          iconTheme: IconThemeData(color: Colors.grey[150]),
-          // Icon color.
-          elevation: 0,
-          leading: MenuDrawer(themeManager: _themeManager),
-        ),
-        body: Stack(
-          children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double availableHeight = constraints.maxHeight;
-                    final bool isCompactHeight = availableHeight < 700;
-                    // Compute keyboard height from the available space to avoid vertical overflow.
-                    final double keyboardHeight =
-                        (availableHeight * (isDesktopLike ? 0.44 : (isCompactHeight ? 0.52 : 0.50)))
-                            .clamp(
-                              isDesktopLike ? 300.0 : (isCompactHeight ? 250.0 : 320.0),
-                              isDesktopLike ? 560.0 : 640.0,
-                            )
-                            .toDouble();
-                    final double keyboardBottomPadding = isCompactHeight ? 8.0 : 50.0;
+    return Focus(
+      focusNode: _keyboardFocusNode,
+      autofocus: true,
+      onKeyEvent: _handleKeyEvent,
+      child: Container(
+        decoration: _themeManager.backgroundDecoration,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text(l10n.appTitle),
+            backgroundColor: Colors.white.withAlpha(150),
+            // Semi-transparent white.
+            foregroundColor: Colors.grey[150],
+            // Text and action color.
+            iconTheme: IconThemeData(color: Colors.grey[150]),
+            // Icon color.
+            elevation: 0,
+            leading: MenuDrawer(themeManager: _themeManager),
+          ),
+          body: Stack(
+            children: [
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double availableHeight = constraints.maxHeight;
+                      final bool isCompactHeight = availableHeight < 700;
+                      // Compute keyboard height from the available space to avoid vertical overflow.
+                      final double keyboardHeight =
+                          (availableHeight * (isDesktopLike ? 0.44 : (isCompactHeight ? 0.52 : 0.50)))
+                              .clamp(
+                                isDesktopLike ? 300.0 : (isCompactHeight ? 250.0 : 320.0),
+                                isDesktopLike ? 560.0 : 640.0,
+                              )
+                              .toDouble();
+                      final double keyboardBottomPadding = isCompactHeight ? 8.0 : 50.0;
 
-                    return Column(
-                      children: [
-                        // Display area with a semi-transparent background.
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                            color: Colors.white.withAlpha(150),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                if (_controller.memoryDisplay().isNotEmpty)
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      _controller.memoryDisplay(),
-                                      style: TextStyle(color: Colors.amber[800], fontSize: 24),
+                      return Column(
+                        children: [
+                          // Display area with a semi-transparent background.
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                              color: Colors.white.withAlpha(150),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (_controller.memoryDisplay().isNotEmpty)
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        _controller.memoryDisplay(),
+                                        style: TextStyle(color: Colors.amber[800], fontSize: 24),
+                                      ),
                                     ),
-                                  ),
-                                if (state.history.isNotEmpty)
-                                  Align(
+                                  if (state.history.isNotEmpty)
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        state.history.contains('= ≈')
+                                            ? state.history.replaceLast('= ≈', '≈')
+                                            : state.history,
+                                        style: TextStyle(
+                                          color: _themeManager.displayTextColor.withAlpha(180),
+                                          fontSize: 24,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  const SizedBox(height: 10),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      state.history.contains('= ≈')
-                                          ? state.history.replaceLast('= ≈', '≈')
-                                          : state.history,
+                                      state.output,
+                                      maxLines: 1,
                                       style: TextStyle(
-                                        color: _themeManager.displayTextColor.withAlpha(180),
-                                        fontSize: 24,
+                                        color: _themeManager.displayTextColor,
+                                        fontSize: 50,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      textAlign: TextAlign.right,
                                     ),
                                   ),
-                                const SizedBox(height: 10),
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    state.output,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      color: _themeManager.displayTextColor,
-                                      fontSize: 50,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Expanded(child: _buildHistoryList(state.historyEntries, l10n)),
-                              ],
+                                  const SizedBox(height: 16),
+                                  Expanded(child: _buildHistoryList(state.historyEntries, l10n)),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
 
-                        // Button grid area.
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
-                          child: SizedBox(
-                            height: keyboardHeight,
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('MC', compact: isCompactHeight),
-                                      _buildButton('MR', compact: isCompactHeight),
-                                      _buildButton('M+', compact: isCompactHeight),
-                                      _buildButton('M-', compact: isCompactHeight),
-                                    ],
+                          // Button grid area.
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
+                            child: SizedBox(
+                              height: keyboardHeight,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('MC', compact: isCompactHeight),
+                                        _buildButton('MR', compact: isCompactHeight),
+                                        _buildButton('M+', compact: isCompactHeight),
+                                        _buildButton('M-', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('%', compact: isCompactHeight),
-                                      _buildButton('x²', compact: isCompactHeight),
-                                      _buildButton('√', compact: isCompactHeight),
-                                      _buildButton('1/x', compact: isCompactHeight),
-                                      _buildButton('x^y', compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('%', compact: isCompactHeight),
+                                        _buildButton('x²', compact: isCompactHeight),
+                                        _buildButton('√', compact: isCompactHeight),
+                                        _buildButton('1/x', compact: isCompactHeight),
+                                        _buildButton('x^y', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('C', compact: isCompactHeight),
-                                      _buildButton('⌫', compact: isCompactHeight),
-                                      _buildButton('+/-', compact: isCompactHeight),
-                                      _buildButton('÷', compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('C', compact: isCompactHeight),
+                                        _buildButton('⌫', compact: isCompactHeight),
+                                        _buildButton('+/-', compact: isCompactHeight),
+                                        _buildButton('÷', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('7', compact: isCompactHeight),
-                                      _buildButton('8', compact: isCompactHeight),
-                                      _buildButton('9', compact: isCompactHeight),
-                                      _buildButton(CalculatorController.multiplySymbol, compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('7', compact: isCompactHeight),
+                                        _buildButton('8', compact: isCompactHeight),
+                                        _buildButton('9', compact: isCompactHeight),
+                                        _buildButton(CalculatorController.multiplySymbol, compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('4', compact: isCompactHeight),
-                                      _buildButton('5', compact: isCompactHeight),
-                                      _buildButton('6', compact: isCompactHeight),
-                                      _buildButton('-', compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('4', compact: isCompactHeight),
+                                        _buildButton('5', compact: isCompactHeight),
+                                        _buildButton('6', compact: isCompactHeight),
+                                        _buildButton('-', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('1', compact: isCompactHeight),
-                                      _buildButton('2', compact: isCompactHeight),
-                                      _buildButton('3', compact: isCompactHeight),
-                                      _buildButton('+', compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('1', compact: isCompactHeight),
+                                        _buildButton('2', compact: isCompactHeight),
+                                        _buildButton('3', compact: isCompactHeight),
+                                        _buildButton('+', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildButton('0', compact: isCompactHeight),
-                                      _buildButton('00', compact: isCompactHeight),
-                                      _buildButton(symbols.decimalSep, compact: isCompactHeight),
-                                      _buildButton('=', compact: isCompactHeight),
-                                    ],
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        _buildButton('0', compact: isCompactHeight),
+                                        _buildButton('00', compact: isCompactHeight),
+                                        _buildButton(symbols.decimalSep, compact: isCompactHeight),
+                                        _buildButton('=', compact: isCompactHeight),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            // Photo credit in the bottom-right corner, only when the Unsplash background is active.
-            if (mediaSize.height >= 700 && _themeManager.isUnsplashBackgroundActive)
-              Positioned(bottom: 16, right: 16, child: const PhotoCreditLink()),
-          ],
+              // Photo credit in the bottom-right corner, only when the Unsplash background is active.
+              if (mediaSize.height >= 700 && _themeManager.isUnsplashBackgroundActive)
+                Positioned(bottom: 16, right: 16, child: const PhotoCreditLink()),
+            ],
+          ),
         ),
       ),
     );
