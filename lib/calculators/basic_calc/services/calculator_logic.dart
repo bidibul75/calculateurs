@@ -6,6 +6,13 @@ import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
+  static String _canonicalBinaryOperator(String operation) {
+    if (operation == '*' || operation == '×') {
+      return 'x';
+    }
+    return operation;
+  }
+
   /// Calculates the result of a binary operation (+, -, *, /)
   static String calculateResult({
     required String num1,
@@ -18,6 +25,8 @@ class CalculatorLogic {
       // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
       Rational r2 = Rational.parse(num2);
+      // Keep a single internal symbol for multiplication so every branch uses the canonical `x` operator.
+      final normalizedOperator = _canonicalBinaryOperator(operation);
 
       // Handle case when num3 and operation2 are provided (x^y as second operand)
       if (num3 != "" && operation2 == "^") {
@@ -34,7 +43,7 @@ class CalculatorLogic {
 
       Rational result;
 
-      switch (operation) {
+      switch (normalizedOperator) {
         case "+":
           result = r1 + r2;
           break;
@@ -141,6 +150,9 @@ class CalculatorLogic {
           // Fall back to Newton-Raphson for irrational/complex cases
           final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
           return sqrtResult.toPreciseFormattedString;
+        case "%":
+          result=r/Rational.fromInt(100);
+          break;
         default:
           return "Error";
       }
@@ -200,6 +212,8 @@ class CalculatorLogic {
         return "${currentHistory == "" ? "" : currentHistory}1/($formattedInput) =";
       case "√":
         return "${currentHistory == "" ? "" : currentHistory}√($formattedInput) =";
+      case "%":
+        return "${currentHistory == "" ? "" : currentHistory}($formattedInput)% =";
       default:
         return "$operation($formattedInput) =";
     }

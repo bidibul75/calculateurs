@@ -256,7 +256,7 @@ extension StringExtensions on String {
 
   /// Determines if the string contains an operator (+, -, *, ÷)
   bool get containsOperator {
-    return RegExp(r'[+\-*÷]').hasMatch(this);
+    return RegExp(r'[+\-*÷x]').hasMatch(this);
   }
 
   /// Local function to format a raw number (e.g: "1000.5" -> "1 000,5")

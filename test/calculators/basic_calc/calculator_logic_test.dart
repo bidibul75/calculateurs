@@ -18,6 +18,33 @@ void main() {
   });
 
   group('CalculatorLogic.calculateResult exponentiation', () {
+    test('accepts multiplication aliases', () {
+      final starResult = CalculatorLogic.calculateResult(
+        num1: '6',
+        num2: '7',
+        operation: '*',
+      );
+
+      final crossResult = CalculatorLogic.calculateResult(
+        num1: '6',
+        num2: '7',
+        operation: '×',
+      );
+
+      expect(starResult, '42');
+      expect(crossResult, '42');
+    });
+
+    test('supports multiplication with x', () {
+      final result = CalculatorLogic.calculateResult(
+        num1: '6',
+        num2: '7',
+        operation: 'x',
+      );
+
+      expect(result, '42');
+    });
+
     test('keeps exact integer exponent behavior', () {
       final result = CalculatorLogic.calculateResult(
         num1: '2',

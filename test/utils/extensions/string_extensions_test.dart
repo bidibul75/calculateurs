@@ -256,6 +256,14 @@ void main() {
     });
   });
 
+  group('StringExtensions.containsOperator', () {
+    test('recognizes x as an operator', () {
+      expect('12 x 3'.containsOperator, isTrue);
+      expect('12 + 3'.containsOperator, isTrue);
+      expect('123'.containsOperator, isFalse);
+    });
+  });
+
   group('StringExtensions.formatRound', () {
     test('rounds a String reprensenting a number', () {
       expect('123456'.formatRound(limit:5), "123,456");

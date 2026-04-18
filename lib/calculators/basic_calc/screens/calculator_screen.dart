@@ -1,4 +1,4 @@
-// lib/calculators/basic_calc/sreens/calculator_screen.dart
+// lib/calculators/basic_calc/screens/calculator_screen.dart
 
 import 'dart:async';
 
@@ -35,7 +35,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    // We listen to shifts of the controller to update UI
+    // We listen to controller changes to refresh the UI.
     _controller.addListener(_updateUI);
     _themeManager.addListener(_updateUI);
     unawaited(_controller.restorePersistedState());
@@ -54,7 +54,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     setState(() {});
   }
 
-  /// Determines button color amongst text
+  /// Determines the button color from its label.
   Color _getButtonColor(String label) {
     if (label == 'C' || label == "⌫") return Colors.redAccent;
     if (['MC', 'MR', 'M+', 'M-'].contains(label)) return Colors.blueGrey;
@@ -66,7 +66,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget _buildButton(String label, {required bool compact}) {
     final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final bool isLongLabel = label.length >= 3;
-    // Keep labels clearly larger on phone; slightly reduce only long labels.
+    // Keep labels larger on phones; slightly reduce only long labels.
     final double baseFontSize = isPhone ? (compact ? 18 : 24) : (compact ? 14 : 20);
     final double fontSize = (isPhone && isLongLabel) ? (baseFontSize - 2) : baseFontSize;
     final double verticalPadding = isPhone ? (compact ? 4 : 8) : (compact ? 6 : 12);
@@ -82,9 +82,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(
-                // Border line
-                color: Colors.grey[200]!, // Color of border
-                width: compact ? 1.2 : 2.0, // Width of border
+                color: Colors.grey[200]!, // Border color.
+                width: compact ? 1.2 : 2.0, // Border width.
               ),
             ),
             padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: verticalPadding),
@@ -275,11 +274,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         appBar: AppBar(
           title: Text(l10n.appTitle),
           backgroundColor: Colors.white.withAlpha(150),
-          // Semi-transparent white
+          // Semi-transparent white.
           foregroundColor: Colors.grey[150],
-          // Text and actions color
+          // Text and action color.
           iconTheme: IconThemeData(color: Colors.grey[150]),
-          // Icon color
+          // Icon color.
           elevation: 0,
           leading: MenuDrawer(themeManager: _themeManager),
         ),
@@ -292,7 +291,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   builder: (context, constraints) {
                     final double availableHeight = constraints.maxHeight;
                     final bool isCompactHeight = availableHeight < 700;
-                    // Compute keyboard height from actual available space to avoid vertical overflow.
+                    // Compute keyboard height from the available space to avoid vertical overflow.
                     final double keyboardHeight =
                         (availableHeight * (isDesktopLike ? 0.44 : (isCompactHeight ? 0.52 : 0.50)))
                             .clamp(
@@ -304,7 +303,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
                     return Column(
                       children: [
-                        // Display area with semi-transparent background
+                        // Display area with a semi-transparent background.
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
@@ -355,7 +354,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                           ),
                         ),
 
-                        // Button grid area
+                        // Button grid area.
                         Padding(
                           padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
                           child: SizedBox(
@@ -375,6 +374,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                 Expanded(
                                   child: Row(
                                     children: [
+                                      _buildButton('%', compact: isCompactHeight),
                                       _buildButton('x²', compact: isCompactHeight),
                                       _buildButton('√', compact: isCompactHeight),
                                       _buildButton('1/x', compact: isCompactHeight),
@@ -398,7 +398,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                       _buildButton('7', compact: isCompactHeight),
                                       _buildButton('8', compact: isCompactHeight),
                                       _buildButton('9', compact: isCompactHeight),
-                                      _buildButton('x', compact: isCompactHeight),
+                                      _buildButton(CalculatorController.multiplySymbol, compact: isCompactHeight),
                                     ],
                                   ),
                                 ),
@@ -442,7 +442,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ),
             ),
-            // Photo credit at the bottom right, only when the Unsplash background is active.
+            // Photo credit in the bottom-right corner, only when the Unsplash background is active.
             if (mediaSize.height >= 700 && _themeManager.isUnsplashBackgroundActive)
               Positioned(bottom: 16, right: 16, child: const PhotoCreditLink()),
           ],
