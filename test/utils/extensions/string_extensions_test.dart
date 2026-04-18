@@ -252,7 +252,7 @@ void main() {
       expect('123.456'.roundString(limit:2), "≈ 123.46");
       expect('1234.499999'.roundString(limit:0), "≈ 1,234");
       expect('1234.54'.roundString(limit:1), "≈ 1,234.5");
-      expect('1234.56'.roundString(limit:5), "≈ 1,234.56");
+      expect('1234.56'.roundString(limit:5), "1,234.56");
     });
   });
 

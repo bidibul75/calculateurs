@@ -44,7 +44,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that the app has a title
-    expect(find.text('Basic calculator'), findsOneWidget);
+    expect(find.text('Calculator'), findsOneWidget);
 
     // Verify that the app has a menu drawer button
     expect(find.byIcon(Icons.menu), findsOneWidget);

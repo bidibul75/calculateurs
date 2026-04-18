@@ -1,6 +1,7 @@
 import 'package:calculators/calculators/ip/IPv4/screens/ipv4_address_screen.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart';
+import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +18,12 @@ const Key resultSaveButtonKey = ValueKey<String>('ipv4.result.save');
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+      GetIt.I.unregister<LocalNumberSymbols>();
+    }
+    final symbols = LocalNumberSymbols();
+    symbols.updateFromLocale('en-US');
+    GetIt.I.registerSingleton<LocalNumberSymbols>(symbols);
     if (GetIt.I.isRegistered<ThemeManager>()) {
       GetIt.I.unregister<ThemeManager>();
     }
