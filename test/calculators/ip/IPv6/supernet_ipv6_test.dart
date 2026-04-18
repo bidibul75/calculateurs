@@ -23,35 +23,35 @@ void main() {
       final a = SupernetIPv6('2001:db8:1::abcd/64');
       final b = SupernetIPv6('2001:db8:1::1/64');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'equal');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'equal');
     });
 
     test('returns contiguous for adjacent /65 networks with host bits in input', () {
       final a = SupernetIPv6('2001:db8:1::ffff/65');
       final b = SupernetIPv6('2001:db8:1:0:8000::1234/65');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'contiguous');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'contiguous');
     });
 
     test('returns outside when networks are separated', () {
       final a = SupernetIPv6('2001:db8:10::1/64');
       final b = SupernetIPv6('2001:db8:12::1/64');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'outside');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'outside');
     });
 
     test('returns B_inside_A when A contains B', () {
       final a = SupernetIPv6('2001:db8:200::beef/56');
       final b = SupernetIPv6('2001:db8:200:34::1234/64');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'B_inside_A');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'B_inside_A');
     });
 
     test('returns A_inside_B when A is contained in B', () {
       final a = SupernetIPv6('2001:db8:200:34::1234/64');
       final b = SupernetIPv6('2001:db8:200::beef/56');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'A_inside_B');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'A_inside_B');
     });
   });
 
@@ -60,7 +60,7 @@ void main() {
       final a = SupernetIPv6('2001:db8:1234:5678::2/64');
       final b = SupernetIPv6('2001:db8:1234:5679::1/64');
 
-      expect(SupernetIPv6.testOfIntersections(a, b), 'contiguous');
+      expect(SupernetIPv6.testOfIntersectionsIPv6(a, b), 'contiguous');
       expect(SupernetIPv6.isAListOfContiguousAddresses([a, b]), isTrue);
       expect(SupernetIPv6.computeRelations([a, b]).first.relationAB, 'contiguous');
     });

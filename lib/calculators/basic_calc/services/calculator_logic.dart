@@ -6,7 +6,14 @@ import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
-  /// Calculates the result of a binary operation (+, -, *, /)
+  static String _canonicalBinaryOperator(String operation) {
+    if (operation == '*' || operation == '×') {
+      return 'x';
+    }
+    return operation;
+  }
+
+  /// Calculates the result of a binary operation (+, -, x, /)
   static String calculateResult({
     required String num1,
     required String num2,
@@ -18,16 +25,25 @@ class CalculatorLogic {
       // Convert clean Strings (1000.5) to Rational
       final r1 = Rational.parse(num1);
       Rational r2 = Rational.parse(num2);
+      // Keep a single internal symbol for multiplication so every branch uses the canonical `x` operator.
+      final normalizedOperator = _canonicalBinaryOperator(operation);
 
       // Handle case when num3 and operation2 are provided (x^y as second operand)
       if (num3 != "" && operation2 == "^") {
         final r3 = Rational.parse(num3);
-        r2 = r2.pow(r3.toBigInt().toInt());
+        // Keep exact rational math for integer exponents, fall back to double pow for decimal exponents.
+        if (r3.toString().contains('/')) {
+          final secondPow = math.pow(double.parse(num2), double.parse(num3)).toDouble();
+          if (!secondPow.isFinite || secondPow.isNaN) return "Error exp";
+          r2 = Rational.parse(secondPow.toString());
+        } else {
+          r2 = r2.pow(r3.toBigInt().toInt());
+        }
       }
 
       Rational result;
 
-      switch (operation) {
+      switch (normalizedOperator) {
         case "+":
           result = r1 + r2;
           break;
@@ -43,9 +59,14 @@ class CalculatorLogic {
           break;
         case "^":
         case "x^y":
-          // Rational.pow expects an int.
           try {
-            int exponent = r2.toBigInt().toInt();
+            if (r2.toString().contains('/')) {
+              final powValue = math.pow(double.parse(num1), double.parse(num2)).toDouble();
+              if (!powValue.isFinite || powValue.isNaN) return "Error exp";
+              return Decimal.parse(powValue.toString()).toPreciseFormattedString;
+            }
+
+            final exponent = r2.toBigInt().toInt();
             result = r1.pow(exponent);
           } catch (e) {
             return "Error exp";
@@ -129,6 +150,9 @@ class CalculatorLogic {
           // Fall back to Newton-Raphson for irrational/complex cases
           final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
           return sqrtResult.toPreciseFormattedString;
+        case "%":
+          result = r / Rational.fromInt(100);
+          break;
         default:
           return "Error";
       }
@@ -188,6 +212,8 @@ class CalculatorLogic {
         return "${currentHistory == "" ? "" : currentHistory}1/($formattedInput) =";
       case "√":
         return "${currentHistory == "" ? "" : currentHistory}√($formattedInput) =";
+      case "%":
+        return "${currentHistory == "" ? "" : currentHistory}($formattedInput)% =";
       default:
         return "$operation($formattedInput) =";
     }

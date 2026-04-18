@@ -37,6 +37,27 @@ void main() {
     expect(controller.state.historyEntries.first.resultDisplay, '52');
     expect(controller.state.historyEntries.last.resultDisplay, '3');
   });
+
+  test('accepts multiplication aliases from keyboard input', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('6');
+    controller.onButtonPressed('*');
+    controller.onButtonPressed('7');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.output, '42');
+    expect(controller.state.historyEntries.first.displayText, '6 x 7 = 42');
+
+    controller.onButtonPressed('C');
+    controller.onButtonPressed('6');
+    controller.onButtonPressed('×');
+    controller.onButtonPressed('7');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.output, '42');
+    expect(controller.state.historyEntries.first.displayText, '6 x 7 = 42');
+  });
 }
 
 
