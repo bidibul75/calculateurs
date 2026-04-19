@@ -449,7 +449,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      state.output,
+                                      state.output.formatRound(),
                                       maxLines: 1,
                                       style: TextStyle(
                                         color: _themeManager.displayTextColor,

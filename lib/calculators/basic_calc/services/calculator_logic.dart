@@ -6,6 +6,8 @@ import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
 
 class CalculatorLogic {
+  static const int _internalPrecision = 20;
+
   static String _canonicalBinaryOperator(String operation) {
     if (operation == '*' || operation == '×') {
       return 'x';
@@ -76,8 +78,8 @@ class CalculatorLogic {
           return "Error default";
       }
 
-      // Convert to Decimal with precision, then to formatted String
-      return result.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
+      // Keep extra internal precision, then let formatRound decide if an approximation marker is needed.
+      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString;
     } catch (e) {
       return "Error end";
     }
@@ -157,7 +159,7 @@ class CalculatorLogic {
           return "Error";
       }
 
-      return result.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
+      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString;
     } catch (e) {
       return "Error";
     }

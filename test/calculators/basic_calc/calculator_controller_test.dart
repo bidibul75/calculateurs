@@ -58,6 +58,30 @@ void main() {
     expect(controller.state.output, '42');
     expect(controller.state.historyEntries.first.displayText, '6 x 7 = 42');
   });
+
+  test('marks repeating division results as approximate in history', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.output.startsWith('0.6666666666'), isTrue);
+    expect(controller.state.historyEntries.first.displayText, '2 ÷ 3 = ≈ 0.6666666667');
+  });
+
+  test('keeps exact division results without approximation marker in history', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('4');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.output, '0.25');
+    expect(controller.state.historyEntries.first.displayText, '1 ÷ 4 = 0.25');
+  });
 }
 
 
