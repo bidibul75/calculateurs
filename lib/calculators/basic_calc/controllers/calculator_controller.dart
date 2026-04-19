@@ -19,6 +19,9 @@ class CalculatorController extends ChangeNotifier {
   static const String _outputKey = 'basic.output.v1';
   static const String _currentInputKey = 'basic.currentInput.v1';
   static const String _memoryKey = 'basic.memory.v1';
+  static const String _currentInputValueKey = 'basic.currentInputValue.v1';
+  static const String _num1ValueKey = 'basic.num1Value.v1';
+  static const String _num2ValueKey = 'basic.num2Value.v1';
   static const int _maxHistoryEntries = 50;
   static const String multiplySymbol = 'x';
   static const String divideSymbol = '÷';
@@ -39,6 +42,28 @@ class CalculatorController extends ChangeNotifier {
     }
     try {
       return Rational.parse(clean);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Rational? _parsePersistedRationalOrNull(String? raw) {
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    final value = raw.trim();
+    final fractionParts = value.split('/');
+    if (fractionParts.length == 2) {
+      try {
+        final numerator = BigInt.parse(fractionParts[0]);
+        final denominator = BigInt.parse(fractionParts[1]);
+        return Rational(numerator, denominator);
+      } catch (_) {
+        // Fall back to decimal parsing below.
+      }
+    }
+    try {
+      return Rational.parse(value);
     } catch (_) {
       return null;
     }
@@ -213,6 +238,9 @@ class CalculatorController extends ChangeNotifier {
     final savedCurrentInput = prefs.getString(_currentInputKey) ?? '';
     final savedMemoryRaw = prefs.getString(_memoryKey);
     final savedEntriesRaw = prefs.getString(_historyEntriesKey);
+    final savedCurrentInputValueRaw = prefs.getString(_currentInputValueKey);
+    final savedNum1ValueRaw = prefs.getString(_num1ValueKey);
+    final savedNum2ValueRaw = prefs.getString(_num2ValueKey);
 
     Rational savedMemory = Rational.zero;
     if (savedMemoryRaw != null) {
@@ -248,6 +276,10 @@ class CalculatorController extends ChangeNotifier {
 
     final safeOutput = savedOutput.isEmpty ? '0' : savedOutput;
     final safeInput = savedCurrentInput;
+    final restoredCurrentInputValue =
+        _parsePersistedRationalOrNull(savedCurrentInputValueRaw) ?? _tryParseRational(safeInput);
+    final restoredNum1Value = _parsePersistedRationalOrNull(savedNum1ValueRaw) ?? _tryParseRational(safeInput);
+    final restoredNum2Value = _parsePersistedRationalOrNull(savedNum2ValueRaw);
 
     _state = CalculatorState(
       output: safeOutput,
@@ -258,8 +290,9 @@ class CalculatorController extends ChangeNotifier {
       operation: '',
       num2: '',
       operation2: '',
-      currentInputValue: _tryParseRational(safeInput),
-      num1Value: _tryParseRational(safeInput),
+      currentInputValue: restoredCurrentInputValue,
+      num1Value: restoredNum1Value,
+      num2Value: restoredNum2Value,
       memory: savedMemory,
     );
     notifyListeners();
@@ -672,5 +705,20 @@ class CalculatorController extends ChangeNotifier {
     await prefs.setString(_outputKey, _state.output);
     await prefs.setString(_currentInputKey, _state.currentInput);
     await prefs.setString(_memoryKey, _state.memory.toString());
+    if (_state.currentInputValue == null) {
+      await prefs.remove(_currentInputValueKey);
+    } else {
+      await prefs.setString(_currentInputValueKey, _state.currentInputValue.toString());
+    }
+    if (_state.num1Value == null) {
+      await prefs.remove(_num1ValueKey);
+    } else {
+      await prefs.setString(_num1ValueKey, _state.num1Value.toString());
+    }
+    if (_state.num2Value == null) {
+      await prefs.remove(_num2ValueKey);
+    } else {
+      await prefs.setString(_num2ValueKey, _state.num2Value.toString());
+    }
   }
 }

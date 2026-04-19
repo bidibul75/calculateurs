@@ -129,6 +129,30 @@ void main() {
     controller.onButtonPressed('=');
     expect(controller.state.currentInputValue, Rational.fromInt(51) / Rational.fromInt(50));
   });
+
+  test('restores persisted internal Rational value', () async {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('=');
+
+    final prefs = await SharedPreferences.getInstance();
+    for (int i = 0; i < 10; i++) {
+      if (prefs.getString('basic.currentInputValue.v1') != null) {
+        break;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+
+    final restoredController = CalculatorController();
+    await restoredController.restorePersistedState();
+
+    final oneThird = Rational.fromInt(1) / Rational.fromInt(3);
+    expect(restoredController.state.currentInputValue, oneThird);
+    expect(restoredController.state.currentInput, controller.state.currentInput);
+  });
 }
 
 
