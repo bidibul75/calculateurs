@@ -2,6 +2,7 @@ import 'package:calculators/calculators/basic_calc/services/calculator_logic.dar
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rational/rational.dart';
 
 void main() {
   setUpAll(() {
@@ -65,6 +66,15 @@ void main() {
       expect(result, '3');
     });
 
+    test('keeps exact rational value for fractional exponent when possible', () {
+      final exact = CalculatorLogic.tryExactPowerRational(
+        Rational.fromInt(27),
+        Rational.fromInt(2, 3),
+      );
+
+      expect(exact, Rational.fromInt(9));
+    });
+
     test('returns Error exp for non-real decimal exponent results', () {
       final result = CalculatorLogic.calculateResult(
         num1: '-2',
@@ -95,6 +105,32 @@ void main() {
       );
 
       expect(result, '4');
+    });
+
+    test('supports exact square root for rational numbers', () {
+      final result = CalculatorLogic.calculateUnary(
+        input: '0.5625',
+        operation: '√',
+      );
+
+      expect(result, '0.75');
+    });
+
+    test('keeps exact rational square root helper for perfect rational squares', () {
+      final exact = CalculatorLogic.tryExactSqrtRational(
+        Rational.fromInt(9, 16),
+      );
+
+      expect(exact, Rational.fromInt(3, 4));
+    });
+
+    test('keeps exact rational power helper for odd roots of negative values', () {
+      final exact = CalculatorLogic.tryExactPowerRational(
+        Rational.fromInt(-8),
+        Rational.fromInt(1, 3),
+      );
+
+      expect(exact, Rational.fromInt(-2));
     });
   });
 }

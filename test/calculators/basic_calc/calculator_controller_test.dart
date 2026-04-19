@@ -153,6 +153,33 @@ void main() {
     expect(restoredController.state.currentInputValue, oneThird);
     expect(restoredController.state.currentInput, controller.state.currentInput);
   });
+
+  test('keeps exact Rational value for square root when possible', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('.');
+    controller.onButtonPressed('5');
+    controller.onButtonPressed('6');
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('5');
+    controller.onButtonPressed('√');
+
+    expect(controller.state.currentInputValue, Rational.fromInt(3, 4));
+  });
+
+  test('keeps exact Rational value for x^y with rational exponent when possible', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('9');
+    controller.onButtonPressed('x^y');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('.');
+    controller.onButtonPressed('5');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.currentInputValue, Rational.fromInt(3));
+  });
 }
 
 

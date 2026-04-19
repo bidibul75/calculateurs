@@ -87,6 +87,9 @@ class CalculatorController extends ChangeNotifier {
         return left * right;
       case divideSymbol:
         return right == Rational.zero ? null : left / right;
+      case '^':
+      case 'x^y':
+        return CalculatorLogic.tryExactPowerRational(left, right);
       default:
         return null;
     }
@@ -103,6 +106,8 @@ class CalculatorController extends ChangeNotifier {
         return input == Rational.zero ? null : Rational.one / input;
       case '%':
         return input / Rational.fromInt(100);
+      case '√':
+        return CalculatorLogic.tryExactSqrtRational(input);
       default:
         return null;
     }
@@ -313,6 +318,11 @@ class CalculatorController extends ChangeNotifier {
       if (_state.operation.isNotEmpty) {
         if (canonicalOperator != "^") {
           if (_state.operation2 == "^") {
+            final baseValue = _state.num2Value ?? _tryParseRational(_state.num2);
+            final exponentValue = inputValue ?? _tryParseRational(inputClean);
+            final exactPow = (baseValue != null && exponentValue != null)
+                ? CalculatorLogic.tryExactPowerRational(baseValue, exponentValue)
+                : null;
             final num2Source = _state.num2Value != null
                 ? _toCleanFromRational(_state.num2Value!)
                 : _state.num2.toCleanMathString;
@@ -321,7 +331,7 @@ class CalculatorController extends ChangeNotifier {
               num2: inputClean,
               operation: "^",
             );
-            inputValue = _tryParseRational(inputClean);
+            inputValue = exactPow ?? _tryParseRational(inputClean);
           }
           // if the history contains a =, uses the result as the first number of the new calculation
           // else runs the calculation contained in the history
@@ -435,6 +445,19 @@ class CalculatorController extends ChangeNotifier {
         final num2Source = _state.num2Value != null
             ? _toCleanFromRational(_state.num2Value!)
             : _state.num2.toCleanMathString;
+        final leftValue = _state.num1Value ?? _tryParseRational(num1Source);
+        final baseValue = _state.num2Value ?? _tryParseRational(num2Source);
+        final exponentValue = currentInputValue ?? _tryParseRational(currentInputClean);
+        final secondPowExact = (baseValue != null && exponentValue != null)
+            ? CalculatorLogic.tryExactPowerRational(baseValue, exponentValue)
+            : null;
+        if (leftValue != null && secondPowExact != null) {
+          exactResultValue = _computeExactBinary(
+            left: leftValue,
+            right: secondPowExact,
+            operation: _state.operation,
+          );
+        }
         result = CalculatorLogic.calculateResult(
           num1: num1Source,
           num2: num2Source,
