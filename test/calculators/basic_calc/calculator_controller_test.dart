@@ -104,6 +104,31 @@ void main() {
     controller.onButtonPressed('=');
     expect(controller.state.currentInputValue, oneThird);
   });
+
+  test('keeps exact Rational values for unary reciprocal and square', () {
+    final controller = CalculatorController();
+    final oneThird = Rational.fromInt(1) / Rational.fromInt(3);
+
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('1/x');
+    expect(controller.state.currentInputValue, oneThird);
+
+    controller.onButtonPressed('x²');
+    expect(controller.state.currentInputValue, oneThird * oneThird);
+  });
+
+  test('keeps exact Rational value for percent and chained binary operation', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('%');
+    expect(controller.state.currentInputValue, Rational.fromInt(2) / Rational.fromInt(100));
+
+    controller.onButtonPressed('+');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('=');
+    expect(controller.state.currentInputValue, Rational.fromInt(51) / Rational.fromInt(50));
+  });
 }
 
 

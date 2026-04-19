@@ -67,6 +67,22 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
+  Rational? _computeExactUnary({
+    required Rational input,
+    required String operation,
+  }) {
+    switch (operation) {
+      case 'x²':
+        return input * input;
+      case '1/x':
+        return input == Rational.zero ? null : Rational.one / input;
+      case '%':
+        return input / Rational.fromInt(100);
+      default:
+        return null;
+    }
+  }
+
   String _canonicalButtonText(String buttonText) {
     if (buttonText == '*' || buttonText == '×') {
       return multiplySymbol;
@@ -452,7 +468,9 @@ class CalculatorController extends ChangeNotifier {
     if (_state.output.isNotEmpty) {
       String inputClean = _state.output.toCleanMathString;
       String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
-      print("result handle unary :$result");
+      final inputValue = _state.currentInputValue ?? _tryParseRational(inputClean);
+      final unaryExactValue = inputValue == null ? null : _computeExactUnary(input: inputValue, operation: op);
+      Rational? finalExactValue = unaryExactValue;
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
         // Adds an entry in history containing the intermediate result
@@ -460,12 +478,19 @@ class CalculatorController extends ChangeNotifier {
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
         final updatedHistoryEntries = _prependHistoryEntry(history, result);
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
+        final leftValue = _state.num1Value ?? _tryParseRational(_state.num1);
+        if (leftValue != null && unaryExactValue != null) {
+          finalExactValue = _computeExactBinary(
+            left: leftValue,
+            right: unaryExactValue,
+            operation: _state.operation,
+          );
+        }
         result = CalculatorLogic.calculateResult(
           num1: _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1.toCleanMathString,
           num2: result.toCleanMathString,
           operation: _state.operation,
         );
-        print("result 2 : $result");
       }
 
       if (_state.history.contains("=")) {
@@ -485,8 +510,8 @@ class CalculatorController extends ChangeNotifier {
         num1: result.toCleanMathString,
         num2: "",
         operation2: "",
-        currentInputValue: _tryParseRational(result),
-        num1Value: _tryParseRational(result),
+        currentInputValue: finalExactValue ?? _tryParseRational(result),
+        num1Value: finalExactValue ?? _tryParseRational(result),
         num2Value: null,
       );
     }
