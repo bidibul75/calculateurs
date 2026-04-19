@@ -267,6 +267,7 @@ class CalculatorController extends ChangeNotifier {
                 displayText: item['displayText'] as String? ?? '',
                 resultDisplay: item['resultDisplay'] as String? ?? '0',
                 resultClean: item['resultClean'] as String? ?? '0',
+                resultRational: item['resultRational'] as String?,
               ),
             )
             .where((entry) => entry.displayText.isNotEmpty)
@@ -476,7 +477,11 @@ class CalculatorController extends ChangeNotifier {
         // Example if we calculate 1 + 2^3 , adds 2^3 = 8 and 1 + 2^3 = 9 in history
         final intermediateHistory =
             "${CalculatorLogic.updateHistory(_state.history, "^", (_state.num2Value != null ? _toCleanFromRational(_state.num2Value!) : _state.num2.toCleanMathString), currentInputClean)} ${secondOperandForHistory.formatRound()}";
-        final updatedHistoryEntries = _prependHistoryEntry(intermediateHistory, result);
+        final updatedHistoryEntries = _prependHistoryEntry(
+          intermediateHistory,
+          result,
+          exactResultValue: secondPowExact,
+        );
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
       }
 
@@ -496,7 +501,11 @@ class CalculatorController extends ChangeNotifier {
               result,
             );
 
-      final updatedHistoryEntries = _prependHistoryEntry(history, result);
+      final updatedHistoryEntries = _prependHistoryEntry(
+        history,
+        result,
+        exactResultValue: exactResultValue,
+      );
       _state = _state.copyWith(
         output: result,
         history: "",
@@ -532,7 +541,11 @@ class CalculatorController extends ChangeNotifier {
         // Adds an entry in history containing the intermediate result
         // Example if we calculate 1 + 2² , adds 2² = 4 and 1 + 2² = 5 in history
         history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
-        final updatedHistoryEntries = _prependHistoryEntry(history, result);
+        final updatedHistoryEntries = _prependHistoryEntry(
+          history,
+          result,
+          exactResultValue: unaryExactValue,
+        );
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
         final leftValue = _state.num1Value ?? _tryParseRational(_state.num1);
         if (leftValue != null && unaryExactValue != null) {
@@ -556,7 +569,11 @@ class CalculatorController extends ChangeNotifier {
             "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} ${result.formatRound()}";
       }
 
-      final updatedHistoryEntries = _prependHistoryEntry(history, result);
+      final updatedHistoryEntries = _prependHistoryEntry(
+        history,
+        result,
+        exactResultValue: finalExactValue,
+      );
       _state = _state.copyWith(
         currentInput: result,
         output: result,
@@ -651,6 +668,8 @@ class CalculatorController extends ChangeNotifier {
     isLastClicClear = false;
     isLastClicEqualOrMemo = true;
     isLastClicNumber = false;
+    final selectedValue =
+        _parsePersistedRationalOrNull(entry.resultRational) ?? _tryParseRational(entry.resultClean);
     _state = _state.copyWith(
       currentInput: entry.resultClean,
       output: entry.resultDisplay,
@@ -659,8 +678,8 @@ class CalculatorController extends ChangeNotifier {
       operation: "",
       num2: "",
       operation2: "",
-      currentInputValue: _tryParseRational(entry.resultClean),
-      num1Value: _tryParseRational(entry.resultClean),
+      currentInputValue: selectedValue,
+      num1Value: selectedValue,
       num2Value: null,
     );
     notifyListeners();
@@ -696,7 +715,11 @@ class CalculatorController extends ChangeNotifier {
     unawaited(_persistState());
   }
 
-  List<CalculatorHistoryEntry> _prependHistoryEntry(String historyText, String resultDisplay) {
+  List<CalculatorHistoryEntry> _prependHistoryEntry(
+    String historyText,
+    String resultDisplay, {
+    Rational? exactResultValue,
+  }) {
     if (resultDisplay.toCleanMathString.isNotANumber) {
       return _state.historyEntries;
     }
@@ -705,6 +728,7 @@ class CalculatorController extends ChangeNotifier {
       displayText: historyText,
       resultDisplay: resultDisplay,
       resultClean: resultDisplay.toCleanMathString,
+      resultRational: exactResultValue?.toString(),
     );
     final updatedEntries = <CalculatorHistoryEntry>[entry, ..._state.historyEntries];
     return updatedEntries.length > _maxHistoryEntries ? updatedEntries.sublist(0, _maxHistoryEntries) : updatedEntries;
@@ -719,6 +743,7 @@ class CalculatorController extends ChangeNotifier {
               'displayText': entry.displayText,
               'resultDisplay': entry.resultDisplay,
               'resultClean': entry.resultClean,
+              'resultRational': entry.resultRational,
             },
           )
           .toList(),

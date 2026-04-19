@@ -154,6 +154,24 @@ void main() {
     expect(restoredController.state.currentInput, controller.state.currentInput);
   });
 
+  test('reuses exact Rational from history entry on selection', () {
+    final controller = CalculatorController();
+    final oneThird = Rational.fromInt(1) / Rational.fromInt(3);
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('=');
+
+    final entry = controller.state.historyEntries.first;
+
+    controller.onButtonPressed('C');
+    controller.onButtonPressed('C');
+    controller.selectHistoryEntry(entry);
+
+    expect(controller.state.currentInputValue, oneThird);
+  });
+
   test('keeps exact Rational value for square root when possible', () {
     final controller = CalculatorController();
 
