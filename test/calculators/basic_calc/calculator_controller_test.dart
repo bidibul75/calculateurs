@@ -198,6 +198,36 @@ void main() {
 
     expect(controller.state.currentInputValue, Rational.fromInt(3));
   });
+
+  test('reproduces exact calculation: 5 ÷ 6 × 6 from history selection', () {
+    final controller = CalculatorController();
+    final fiveSixths = Rational.fromInt(5) / Rational.fromInt(6);
+    final five = Rational.fromInt(5);
+
+    // First calculation: 5 ÷ 6
+    controller.onButtonPressed('5');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('6');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.currentInputValue, fiveSixths);
+    final entry = controller.state.historyEntries.first;
+
+    // Clear and select from history
+    controller.onButtonPressed('C');
+    controller.onButtonPressed('C');
+    controller.selectHistoryEntry(entry);
+
+    // Verify the selected value is still the exact rational
+    expect(controller.state.currentInputValue, fiveSixths);
+
+    // Now multiply by 6
+    controller.onButtonPressed('x');
+    controller.onButtonPressed('6');
+    controller.onButtonPressed('=');
+
+    // Should get exactly 5, not an approximation
+    expect(controller.state.currentInputValue, five);
+    expect(controller.state.output, '5');
+  });
 }
-
-

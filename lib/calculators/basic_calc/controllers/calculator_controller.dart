@@ -35,6 +35,18 @@ class CalculatorController extends ChangeNotifier {
   bool isLastClicNumber = false;
   final symbols = GetIt.I<LocalNumberSymbols>();
 
+  /// Converts an exact Rational to a displayable string that maintains precision.
+  /// This is used when we have an exact result to avoid converting to Decimal
+  /// (which loses precision) and back.
+  ///
+  /// Note: Does NOT add the "≈" approximation marker - that's done by formatRound()
+  /// in the UI. This ensures we get the precise decimal representation without
+  /// the extra formatting that could interfere with history entry creation.
+  String _formatExactRationalAsDisplay(Rational value) {
+    final decimal = value.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
+    return decimal.toString();
+  }
+
   Rational? _tryParseRational(String value) {
     final clean = value.toCleanMathString;
     if (clean.isEmpty || clean == '-' || clean == '+') {
@@ -466,11 +478,14 @@ class CalculatorController extends ChangeNotifier {
           operation: _state.operation,
           operation2: "^",
         );
-        secondOperandForHistory = CalculatorLogic.calculateResult(
-          num1: num2Source,
-          num2: currentInputClean,
-          operation: "^",
-        );
+        // Use exact value for history display if available
+        secondOperandForHistory = secondPowExact != null 
+            ? _formatExactRationalAsDisplay(secondPowExact)
+            : CalculatorLogic.calculateResult(
+                num1: num2Source,
+                num2: currentInputClean,
+                operation: "^",
+              );
 
         // Adds an entry in history containing the intermediate result
         // in case of ^ in second part of the calculation
@@ -486,36 +501,40 @@ class CalculatorController extends ChangeNotifier {
       }
 
       if (buttonText == "M+" || buttonText == "M-") {
-        Rational resRational = Rational.parse(result.toCleanMathString);
+        // Use exact value if available, otherwise parse from result string
+        Rational resRational = exactResultValue ?? Rational.parse(result.toCleanMathString);
         if (buttonText == "M+") memo += resRational;
         if (buttonText == "M-") memo -= resRational;
       }
 
+      // Use exact result for display if available, otherwise use calculated result
+      final finalResult = exactResultValue != null ? _formatExactRationalAsDisplay(exactResultValue) : result;
+
       final history = _state.history.contains("=")
-          ? "${_state.history} = $result"
+          ? "${_state.history} = $finalResult"
           : CalculatorLogic.updateHistory(
               _state.history,
               _state.operation,
               _state.num1,
               secondOperandForHistory,
-              result,
+              finalResult,
             );
 
       final updatedHistoryEntries = _prependHistoryEntry(
         history,
-        result,
+        finalResult,
         exactResultValue: exactResultValue,
       );
       _state = _state.copyWith(
-        output: result,
+        output: finalResult,
         history: "",
         historyEntries: updatedHistoryEntries,
-        currentInput: result,
+        currentInput: finalResult,
         operation: "",
         num1: "0",
         num2: "",
         operation2: "",
-        currentInputValue: exactResultValue ?? _tryParseRational(result),
+        currentInputValue: exactResultValue ?? _tryParseRational(finalResult),
         num1Value: null,
         num2Value: null,
         memory: memo,
