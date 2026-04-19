@@ -2,6 +2,7 @@ import 'package:calculators/calculators/basic_calc/controllers/calculator_contro
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rational/rational.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -81,6 +82,27 @@ void main() {
 
     expect(controller.state.output, '0.25');
     expect(controller.state.historyEntries.first.displayText, '1 ÷ 4 = 0.25');
+  });
+
+  test('keeps exact Rational values for chained division and addition', () {
+    final controller = CalculatorController();
+    final oneThird = Rational.fromInt(1) / Rational.fromInt(3);
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('÷');
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('=');
+    expect(controller.state.currentInputValue, oneThird);
+
+    controller.onButtonPressed('+');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('=');
+    expect(controller.state.currentInputValue, oneThird + Rational.fromInt(1));
+
+    controller.onButtonPressed('-');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('=');
+    expect(controller.state.currentInputValue, oneThird);
   });
 }
 

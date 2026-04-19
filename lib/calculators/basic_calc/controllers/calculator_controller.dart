@@ -22,6 +22,7 @@ class CalculatorController extends ChangeNotifier {
   static const int _maxHistoryEntries = 50;
   static const String multiplySymbol = 'x';
   static const String divideSymbol = '÷';
+  static const int _internalPrecision = 20;
 
   CalculatorState _state = CalculatorState();
 
@@ -30,6 +31,41 @@ class CalculatorController extends ChangeNotifier {
   bool isLastClicEqualOrMemo = false;
   bool isLastClicNumber = false;
   final symbols = GetIt.I<LocalNumberSymbols>();
+
+  Rational? _tryParseRational(String value) {
+    final clean = value.toCleanMathString;
+    if (clean.isEmpty || clean == '-' || clean == '+') {
+      return null;
+    }
+    try {
+      return Rational.parse(clean);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _toCleanFromRational(Rational value) {
+    return value.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toString();
+  }
+
+  Rational? _computeExactBinary({
+    required Rational left,
+    required Rational right,
+    required String operation,
+  }) {
+    switch (operation) {
+      case '+':
+        return left + right;
+      case '-':
+        return left - right;
+      case multiplySymbol:
+        return left * right;
+      case divideSymbol:
+        return right == Rational.zero ? null : left / right;
+      default:
+        return null;
+    }
+  }
 
   String _canonicalButtonText(String buttonText) {
     if (buttonText == '*' || buttonText == '×') {
@@ -56,6 +92,9 @@ class CalculatorController extends ChangeNotifier {
             operation: "",
             history: "",
             historyEntries: const [],
+            currentInputValue: null,
+            num1Value: null,
+            num2Value: null,
           );
         } else {
           isLastClicClear = true;
@@ -67,6 +106,9 @@ class CalculatorController extends ChangeNotifier {
             operation: "",
             // If the history already contains a result (=), keep it for reference, otherwise clear it
             history: "",
+            currentInputValue: null,
+            num1Value: null,
+            num2Value: null,
           );
         }
         break;
@@ -103,6 +145,7 @@ class CalculatorController extends ChangeNotifier {
             output: memVal,
             currentInput: memVal.toCleanMathString, // Clean for internal calculation
             history: "",
+            currentInputValue: _state.memory,
           );
         }
         break;
@@ -199,6 +242,8 @@ class CalculatorController extends ChangeNotifier {
       operation: '',
       num2: '',
       operation2: '',
+      currentInputValue: _tryParseRational(safeInput),
+      num1Value: _tryParseRational(safeInput),
       memory: savedMemory,
     );
     notifyListeners();
@@ -214,25 +259,44 @@ class CalculatorController extends ChangeNotifier {
     if (_state.currentInput.isNotEmpty) {
       // Store the first number (num1)
       String inputClean = _state.currentInput.toCleanMathString;
+      Rational? inputValue = _state.currentInputValue ?? _tryParseRational(inputClean);
 
       if (_state.operation.isNotEmpty) {
         if (canonicalOperator != "^") {
           if (_state.operation2 == "^") {
+            final num2Source = _state.num2Value != null
+                ? _toCleanFromRational(_state.num2Value!)
+                : _state.num2.toCleanMathString;
             inputClean = CalculatorLogic.calculateResult(
-              num1: _state.num2.toCleanMathString,
+              num1: num2Source,
               num2: inputClean,
               operation: "^",
             );
+            inputValue = _tryParseRational(inputClean);
           }
           // if the history contains a =, uses the result as the first number of the new calculation
           // else runs the calculation contained in the history
           String intermediateResult;
+          Rational? intermediateValue;
           if (_state.history.contains('=')) {
             intermediateResult = _state.output;
+            intermediateValue = _state.currentInputValue;
           } else {
+            final num1Source = _state.num1Value != null
+                ? _toCleanFromRational(_state.num1Value!)
+                : _state.num1.toCleanMathString;
+            final leftValue = _state.num1Value ?? _tryParseRational(num1Source);
+            final rightValue = inputValue ?? _tryParseRational(inputClean);
+            if (leftValue != null && rightValue != null) {
+              intermediateValue = _computeExactBinary(
+                left: leftValue,
+                right: rightValue,
+                operation: _state.operation,
+              );
+            }
             // If there's already an operation pending, compute it first before setting the new operator
             intermediateResult = CalculatorLogic.calculateResult(
-              num1: _state.num1.toCleanMathString,
+              num1: num1Source,
               num2: inputClean,
               operation: _state.operation,
             );
@@ -249,6 +313,9 @@ class CalculatorController extends ChangeNotifier {
             history: history,
             num2: "",
             operation2: "",
+            currentInputValue: null,
+            num1Value: intermediateValue ?? _tryParseRational(intermediateResult),
+            num2Value: null,
           );
         } else {
           _state = _state.copyWith(
@@ -257,6 +324,8 @@ class CalculatorController extends ChangeNotifier {
             operation2: canonicalOperator,
             // Keep the power chain in history as "1 000 x^y".
             history: CalculatorLogic.updateHistory(_state.history, "", "", inputClean, "", "^"),
+            currentInputValue: null,
+            num2Value: inputValue,
           );
         }
       } else {
@@ -266,6 +335,8 @@ class CalculatorController extends ChangeNotifier {
           currentInput: "",
           // Update history with the canonical operator, for example "1 000 +".
           history: CalculatorLogic.updateHistory(_state.history, canonicalOperator, inputClean),
+          currentInputValue: null,
+          num1Value: inputValue,
         );
       }
     } else if (_state.operation.isNotEmpty) {
@@ -273,7 +344,7 @@ class CalculatorController extends ChangeNotifier {
       // update only the operator in the history.
       String currentHist = _state.history.trim();
       if (currentHist.isNotEmpty) {
-        String base = _state.num1;
+        String base = _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1;
         String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString ?? base;
         String newHistory = "${formattedBase.formatRound()} $canonicalOperator ";
         _state = _state.copyWith(operation: canonicalOperator, history: newHistory);
@@ -284,27 +355,46 @@ class CalculatorController extends ChangeNotifier {
   void _handleEqualOrMemory(String buttonText) {
     isLastClicNumber = false;
     Rational memo = _state.memory;
-    String currentInputClean = _state.currentInput.toCleanMathString;
+    final currentInputValue = _state.currentInputValue ?? _tryParseRational(_state.currentInput);
+    String currentInputClean = currentInputValue != null
+        ? _toCleanFromRational(currentInputValue)
+        : _state.currentInput.toCleanMathString;
     if (currentInputClean.isNotEmpty && _state.operation.isNotEmpty && !_state.history.contains("=")) {
       String result;
       String secondOperandForHistory = currentInputClean;
+      Rational? exactResultValue;
+      final num1Source = _state.num1Value != null
+          ? _toCleanFromRational(_state.num1Value!)
+          : _state.num1.toCleanMathString;
 
-      if (_state.num2 == "") {
+      if (_state.num2.isEmpty && _state.num2Value == null) {
+        final leftValue = _state.num1Value ?? _tryParseRational(num1Source);
+        final rightValue = currentInputValue ?? _tryParseRational(currentInputClean);
+        if (leftValue != null && rightValue != null) {
+          exactResultValue = _computeExactBinary(
+            left: leftValue,
+            right: rightValue,
+            operation: _state.operation,
+          );
+        }
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1.toCleanMathString,
+          num1: num1Source,
           num2: currentInputClean,
           operation: _state.operation,
         );
       } else {
+        final num2Source = _state.num2Value != null
+            ? _toCleanFromRational(_state.num2Value!)
+            : _state.num2.toCleanMathString;
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1.toCleanMathString,
-          num2: _state.num2.toCleanMathString,
+          num1: num1Source,
+          num2: num2Source,
           num3: currentInputClean,
           operation: _state.operation,
           operation2: "^",
         );
         secondOperandForHistory = CalculatorLogic.calculateResult(
-          num1: _state.num2.toCleanMathString,
+          num1: num2Source,
           num2: currentInputClean,
           operation: "^",
         );
@@ -313,7 +403,7 @@ class CalculatorController extends ChangeNotifier {
         // in case of ^ in second part of the calculation
         // Example if we calculate 1 + 2^3 , adds 2^3 = 8 and 1 + 2^3 = 9 in history
         final intermediateHistory =
-            "${CalculatorLogic.updateHistory(_state.history, "^", _state.num2.toCleanMathString, currentInputClean)} ${secondOperandForHistory.formatRound()}";
+            "${CalculatorLogic.updateHistory(_state.history, "^", (_state.num2Value != null ? _toCleanFromRational(_state.num2Value!) : _state.num2.toCleanMathString), currentInputClean)} ${secondOperandForHistory.formatRound()}";
         final updatedHistoryEntries = _prependHistoryEntry(intermediateHistory, result);
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
       }
@@ -344,10 +434,13 @@ class CalculatorController extends ChangeNotifier {
         num1: "0",
         num2: "",
         operation2: "",
+        currentInputValue: exactResultValue ?? _tryParseRational(result),
+        num1Value: null,
+        num2Value: null,
         memory: memo,
       );
     } else if (buttonText.startsWith("M") && currentInputClean.isNotEmpty) {
-      Rational val = Rational.parse(currentInputClean);
+      Rational val = currentInputValue ?? Rational.parse(currentInputClean);
       if (buttonText == "M+") memo += val;
       if (buttonText == "M-") memo -= val;
       _state = _state.copyWith(memory: memo);
@@ -368,7 +461,7 @@ class CalculatorController extends ChangeNotifier {
         final updatedHistoryEntries = _prependHistoryEntry(history, result);
         _state = _state.copyWith(historyEntries: updatedHistoryEntries);
         result = CalculatorLogic.calculateResult(
-          num1: _state.num1.toCleanMathString,
+          num1: _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1.toCleanMathString,
           num2: result.toCleanMathString,
           operation: _state.operation,
         );
@@ -392,6 +485,9 @@ class CalculatorController extends ChangeNotifier {
         num1: result.toCleanMathString,
         num2: "",
         operation2: "",
+        currentInputValue: _tryParseRational(result),
+        num1Value: _tryParseRational(result),
+        num2Value: null,
       );
     }
     isLastClicEqualOrMemo = true;
@@ -407,6 +503,7 @@ class CalculatorController extends ChangeNotifier {
         if (current != "0") current = "-$current";
       }
       _state = _state.copyWith(currentInput: current, output: current);
+      _state = _state.copyWith(currentInputValue: _tryParseRational(current));
     }
   }
 
@@ -414,7 +511,11 @@ class CalculatorController extends ChangeNotifier {
     if (_state.currentInput.isNotEmpty) {
       String newVal = _state.currentInput.substring(0, _state.currentInput.length - 1);
       if (newVal.isEmpty || newVal == "-") newVal = "";
-      _state = _state.copyWith(currentInput: newVal, output: newVal.isEmpty ? "0" : newVal);
+      _state = _state.copyWith(
+        currentInput: newVal,
+        output: newVal.isEmpty ? "0" : newVal,
+        currentInputValue: _tryParseRational(newVal),
+      );
     }
   }
 
@@ -437,6 +538,7 @@ class CalculatorController extends ChangeNotifier {
         output: val,
         history: "",
         historyEntries: _state.historyEntries,
+        currentInputValue: _tryParseRational(val),
         memory: _state.memory,
       );
       isLastClicNumber = true;
@@ -451,7 +553,11 @@ class CalculatorController extends ChangeNotifier {
           ? current = "0${symbols.decimalSep}"
           : current += buttonText;
     }
-    _state = _state.copyWith(currentInput: current, output: current.format);
+    _state = _state.copyWith(
+      currentInput: current,
+      output: current.format,
+      currentInputValue: _tryParseRational(current),
+    );
     isLastClicNumber = true;
   }
 
@@ -472,6 +578,9 @@ class CalculatorController extends ChangeNotifier {
       operation: "",
       num2: "",
       operation2: "",
+      currentInputValue: _tryParseRational(entry.resultClean),
+      num1Value: _tryParseRational(entry.resultClean),
+      num2Value: null,
     );
     notifyListeners();
     unawaited(_persistState());
