@@ -14,6 +14,13 @@ import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
 
+enum _LastAction {
+  none,
+  clear,
+  equalOrMemory,
+  number,
+}
+
 class CalculatorController extends ChangeNotifier {
   static const String _historyEntriesKey = 'basic.history.entries.v1';
   static const String _outputKey = 'basic.output.v1';
@@ -22,18 +29,54 @@ class CalculatorController extends ChangeNotifier {
   static const String _currentInputValueKey = 'basic.currentInputValue.v1';
   static const String _num1ValueKey = 'basic.num1Value.v1';
   static const String _num2ValueKey = 'basic.num2Value.v1';
+  static const String _lastActionKey = 'basic.lastAction.v1';
   static const int _maxHistoryEntries = 50;
   static const String multiplySymbol = 'x';
   static const String divideSymbol = '÷';
   static const int _internalPrecision = 20;
 
   CalculatorState _state = CalculatorState();
+  _LastAction _lastAction = _LastAction.none;
 
   CalculatorState get state => _state;
   bool isLastClicClear = false;
   bool isLastClicEqualOrMemo = false;
   bool isLastClicNumber = false;
   final symbols = GetIt.I<LocalNumberSymbols>();
+
+  void _setLastAction(_LastAction action) {
+    _lastAction = action;
+    isLastClicClear = action == _LastAction.clear;
+    isLastClicEqualOrMemo = action == _LastAction.equalOrMemory;
+    isLastClicNumber = action == _LastAction.number;
+  }
+
+  String _serializeLastAction(_LastAction action) {
+    switch (action) {
+      case _LastAction.clear:
+        return 'clear';
+      case _LastAction.equalOrMemory:
+        return 'equal_or_memory';
+      case _LastAction.number:
+        return 'number';
+      case _LastAction.none:
+        return 'none';
+    }
+  }
+
+  _LastAction _deserializeLastAction(String? value) {
+    switch (value) {
+      case 'clear':
+        return _LastAction.clear;
+      case 'equal_or_memory':
+        return _LastAction.equalOrMemory;
+      case 'number':
+        return _LastAction.number;
+      case 'none':
+      default:
+        return _LastAction.none;
+    }
+  }
 
   /// Converts an exact Rational to a displayable string that maintains precision.
   /// This is used when we have an exact result to avoid converting to Decimal
@@ -140,9 +183,8 @@ class CalculatorController extends ChangeNotifier {
 
     switch (buttonText) {
       case "C":
-        isLastClicEqualOrMemo = false;
         if (isLastClicClear) {
-          isLastClicClear = false;
+          _setLastAction(_LastAction.none);
           _state = _state.copyWith(
             output: "0",
             currentInput: "",
@@ -155,7 +197,7 @@ class CalculatorController extends ChangeNotifier {
             num2Value: null,
           );
         } else {
-          isLastClicClear = true;
+          _setLastAction(_LastAction.clear);
           // Clear only the current input and operation, preserve memory and history
           _state = _state.copyWith(
             output: "0",
@@ -178,8 +220,7 @@ class CalculatorController extends ChangeNotifier {
       case "x^y":
         // Avoids to use Error message with operators (empty String allowed to allow to change the operator)
         if (_state.output.toCleanMathString.isNotEmpty && _state.output.toCleanMathString.isNotANumber) break;
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = false;
+        _setLastAction(_LastAction.none);
         _handleOperator(buttonText);
         break;
 
@@ -188,14 +229,12 @@ class CalculatorController extends ChangeNotifier {
       case "M-":
         // Avoids to use Error message or empty String with equal or memory button
         if (_state.output.toCleanMathString.isNotANumber) break;
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = true;
+        _setLastAction(_LastAction.equalOrMemory);
         _handleEqualOrMemory(buttonText);
         break;
 
       case "MR":
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = true;
+        _setLastAction(_LastAction.equalOrMemory);
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
           String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
@@ -209,16 +248,14 @@ class CalculatorController extends ChangeNotifier {
         break;
 
       case "MC":
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = false;
+        _setLastAction(_LastAction.none);
         _state = _state.copyWith(memory: Rational.zero);
         break;
 
       case "+/-":
         // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = false;
+        _setLastAction(_LastAction.none);
         _handlePlusMinus();
         break;
 
@@ -228,21 +265,18 @@ class CalculatorController extends ChangeNotifier {
       case "%":
         // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = false;
+        _setLastAction(_LastAction.none);
         _handleUnary(buttonText);
         break;
 
       case "⌫":
         // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
-        isLastClicClear = false;
-        isLastClicEqualOrMemo = false;
+        _setLastAction(_LastAction.none);
         _handleBackspace();
         break;
 
       default: // Digits and dot
-        isLastClicClear = false;
         _handleNumber(buttonText);
     }
     notifyListeners();
@@ -258,6 +292,7 @@ class CalculatorController extends ChangeNotifier {
     final savedCurrentInputValueRaw = prefs.getString(_currentInputValueKey);
     final savedNum1ValueRaw = prefs.getString(_num1ValueKey);
     final savedNum2ValueRaw = prefs.getString(_num2ValueKey);
+    final savedLastActionRaw = prefs.getString(_lastActionKey);
 
     Rational savedMemory = Rational.zero;
     if (savedMemoryRaw != null) {
@@ -313,13 +348,13 @@ class CalculatorController extends ChangeNotifier {
       num2Value: restoredNum2Value,
       memory: savedMemory,
     );
+    _setLastAction(_deserializeLastAction(savedLastActionRaw));
     notifyListeners();
   }
 
   // --- Private Logic ---
 
   void _handleOperator(String label) {
-    isLastClicNumber = false;
     // Convert the UI label to the internal canonical operator symbol.
     String canonicalOperator = (label == "x^y") ? "^" : label;
 
@@ -425,7 +460,6 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void _handleEqualOrMemory(String buttonText) {
-    isLastClicNumber = false;
     Rational memo = _state.memory;
     final currentInputValue = _state.currentInputValue ?? _tryParseRational(_state.currentInput);
     String currentInputClean = currentInputValue != null
@@ -607,7 +641,7 @@ class CalculatorController extends ChangeNotifier {
         num2Value: null,
       );
     }
-    isLastClicEqualOrMemo = true;
+    _setLastAction(_LastAction.equalOrMemory);
   }
 
   void _handlePlusMinus() {
@@ -648,7 +682,6 @@ class CalculatorController extends ChangeNotifier {
 
     // If a digit is typed after a result (=), start over
     if (isLastClicEqualOrMemo) {
-      isLastClicEqualOrMemo = false;
       String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
       _state = CalculatorState(
         currentInput: val,
@@ -658,7 +691,7 @@ class CalculatorController extends ChangeNotifier {
         currentInputValue: _tryParseRational(val),
         memory: _state.memory,
       );
-      isLastClicNumber = true;
+      _setLastAction(_LastAction.number);
       return;
     }
 
@@ -675,7 +708,7 @@ class CalculatorController extends ChangeNotifier {
       output: current.format,
       currentInputValue: _tryParseRational(current),
     );
-    isLastClicNumber = true;
+    _setLastAction(_LastAction.number);
   }
 
   String memoryDisplay() {
@@ -684,9 +717,7 @@ class CalculatorController extends ChangeNotifier {
   }
 
   void selectHistoryEntry(CalculatorHistoryEntry entry) {
-    isLastClicClear = false;
-    isLastClicEqualOrMemo = true;
-    isLastClicNumber = false;
+    _setLastAction(_LastAction.equalOrMemory);
     final selectedValue =
         _parsePersistedRationalOrNull(entry.resultRational) ?? _tryParseRational(entry.resultClean);
     _state = _state.copyWith(
@@ -772,6 +803,7 @@ class CalculatorController extends ChangeNotifier {
     await prefs.setString(_outputKey, _state.output);
     await prefs.setString(_currentInputKey, _state.currentInput);
     await prefs.setString(_memoryKey, _state.memory.toString());
+    await prefs.setString(_lastActionKey, _serializeLastAction(_lastAction));
     if (_state.currentInputValue == null) {
       await prefs.remove(_currentInputValueKey);
     } else {

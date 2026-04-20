@@ -154,6 +154,61 @@ void main() {
     expect(restoredController.state.currentInput, controller.state.currentInput);
   });
 
+  test('restores last interaction state so digit after restart replaces result', () async {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('+');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('=');
+    expect(controller.state.output, '2');
+
+    final prefs = await SharedPreferences.getInstance();
+    for (int i = 0; i < 10; i++) {
+      if (prefs.getString('basic.lastAction.v1') != null) {
+        break;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+
+    final restoredController = CalculatorController();
+    await restoredController.restorePersistedState();
+
+    restoredController.onButtonPressed('7');
+
+    expect(restoredController.state.currentInput, '7');
+    expect(restoredController.state.output, '7');
+  });
+
+  test('restores clear interaction state so second C after restart clears history', () async {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('+');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('=');
+    expect(controller.state.historyEntries, isNotEmpty);
+
+    controller.onButtonPressed('C');
+
+    final prefs = await SharedPreferences.getInstance();
+    for (int i = 0; i < 10; i++) {
+      if (prefs.getString('basic.lastAction.v1') != null) {
+        break;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    expect(prefs.getString('basic.lastAction.v1'), 'clear');
+
+    final restoredController = CalculatorController();
+    await restoredController.restorePersistedState();
+
+    restoredController.onButtonPressed('C');
+
+    expect(restoredController.state.historyEntries, isEmpty);
+    expect(restoredController.state.output, '0');
+  });
+
   test('reuses exact Rational from history entry on selection', () {
     final controller = CalculatorController();
     final oneThird = Rational.fromInt(1) / Rational.fromInt(3);
