@@ -14,12 +14,7 @@ import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../services/calculator_logic.dart';
 
-enum _LastAction {
-  none,
-  clear,
-  equalOrMemory,
-  number,
-}
+enum _LastAction { none, clear, equalOrMemory, number }
 
 class CalculatorController extends ChangeNotifier {
   static const String _historyEntriesKey = 'basic.history.entries.v1';
@@ -128,11 +123,7 @@ class CalculatorController extends ChangeNotifier {
     return value.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toString();
   }
 
-  Rational? _computeExactBinary({
-    required Rational left,
-    required Rational right,
-    required String operation,
-  }) {
+  Rational? _computeExactBinary({required Rational left, required Rational right, required String operation}) {
     switch (operation) {
       case '+':
         return left + right;
@@ -150,10 +141,7 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  Rational? _computeExactUnary({
-    required Rational input,
-    required String operation,
-  }) {
+  Rational? _computeExactUnary({required Rational input, required String operation}) {
     switch (operation) {
       case 'x²':
         return input * input;
@@ -374,11 +362,7 @@ class CalculatorController extends ChangeNotifier {
             final num2Source = _state.num2Value != null
                 ? _toCleanFromRational(_state.num2Value!)
                 : _state.num2.toCleanMathString;
-            inputClean = CalculatorLogic.calculateResult(
-              num1: num2Source,
-              num2: inputClean,
-              operation: "^",
-            );
+            inputClean = CalculatorLogic.calculateResult(num1: num2Source, num2: inputClean, operation: "^");
             inputValue = exactPow ?? _tryParseRational(inputClean);
           }
           // if the history contains a =, uses the result as the first number of the new calculation
@@ -395,11 +379,7 @@ class CalculatorController extends ChangeNotifier {
             final leftValue = _state.num1Value ?? _tryParseRational(num1Source);
             final rightValue = inputValue ?? _tryParseRational(inputClean);
             if (leftValue != null && rightValue != null) {
-              intermediateValue = _computeExactBinary(
-                left: leftValue,
-                right: rightValue,
-                operation: _state.operation,
-              );
+              intermediateValue = _computeExactBinary(left: leftValue, right: rightValue, operation: _state.operation);
             }
             // If there's already an operation pending, compute it first before setting the new operator
             intermediateResult = CalculatorLogic.calculateResult(
@@ -477,11 +457,7 @@ class CalculatorController extends ChangeNotifier {
         final leftValue = _state.num1Value ?? _tryParseRational(num1Source);
         final rightValue = currentInputValue ?? _tryParseRational(currentInputClean);
         if (leftValue != null && rightValue != null) {
-          exactResultValue = _computeExactBinary(
-            left: leftValue,
-            right: rightValue,
-            operation: _state.operation,
-          );
+          exactResultValue = _computeExactBinary(left: leftValue, right: rightValue, operation: _state.operation);
         }
         result = CalculatorLogic.calculateResult(
           num1: num1Source,
@@ -499,11 +475,7 @@ class CalculatorController extends ChangeNotifier {
             ? CalculatorLogic.tryExactPowerRational(baseValue, exponentValue)
             : null;
         if (leftValue != null && secondPowExact != null) {
-          exactResultValue = _computeExactBinary(
-            left: leftValue,
-            right: secondPowExact,
-            operation: _state.operation,
-          );
+          exactResultValue = _computeExactBinary(left: leftValue, right: secondPowExact, operation: _state.operation);
         }
         result = CalculatorLogic.calculateResult(
           num1: num1Source,
@@ -513,13 +485,9 @@ class CalculatorController extends ChangeNotifier {
           operation2: "^",
         );
         // Use exact value for history display if available
-        secondOperandForHistory = secondPowExact != null 
+        secondOperandForHistory = secondPowExact != null
             ? _formatExactRationalAsDisplay(secondPowExact)
-            : CalculatorLogic.calculateResult(
-                num1: num2Source,
-                num2: currentInputClean,
-                operation: "^",
-              );
+            : CalculatorLogic.calculateResult(num1: num2Source, num2: currentInputClean, operation: "^");
 
         // Adds an entry in history containing the intermediate result
         // in case of ^ in second part of the calculation
@@ -554,11 +522,7 @@ class CalculatorController extends ChangeNotifier {
               finalResult,
             );
 
-      final updatedHistoryEntries = _prependHistoryEntry(
-        history,
-        finalResult,
-        exactResultValue: exactResultValue,
-      );
+      final updatedHistoryEntries = _prependHistoryEntry(history, finalResult, exactResultValue: exactResultValue);
       _state = _state.copyWith(
         output: finalResult,
         history: "",
@@ -593,20 +557,15 @@ class CalculatorController extends ChangeNotifier {
       if (_state.history.containsOperator && !_state.history.contains("=")) {
         // Adds an entry in history containing the intermediate result
         // Example if we calculate 1 + 2² , adds 2² = 4 and 1 + 2² = 5 in history
-        history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
-        final updatedHistoryEntries = _prependHistoryEntry(
-          history,
-          result,
-          exactResultValue: unaryExactValue,
-        );
-        _state = _state.copyWith(historyEntries: updatedHistoryEntries);
-        final leftValue = _state.num1Value ?? _tryParseRational(_state.num1);
-        if (leftValue != null && unaryExactValue != null) {
-          finalExactValue = _computeExactBinary(
-            left: leftValue,
-            right: unaryExactValue,
-            operation: _state.operation,
-          );
+        // Excepted with %
+        if (op != "%") {
+          history = "${CalculatorLogic.updateHistoryUnary(inputClean, op, result)} ${result.formatRound()}";
+          final updatedHistoryEntries = _prependHistoryEntry(history, result, exactResultValue: unaryExactValue);
+          _state = _state.copyWith(historyEntries: updatedHistoryEntries);
+          final leftValue = _state.num1Value ?? _tryParseRational(_state.num1);
+          if (leftValue != null && unaryExactValue != null) {
+            finalExactValue = _computeExactBinary(left: leftValue, right: unaryExactValue, operation: _state.operation);
+          }
         }
         result = CalculatorLogic.calculateResult(
           num1: _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1.toCleanMathString,
@@ -622,11 +581,7 @@ class CalculatorController extends ChangeNotifier {
             "${CalculatorLogic.updateHistoryUnary(inputClean, op, result, _state.history)} ${result.formatRound()}";
       }
 
-      final updatedHistoryEntries = _prependHistoryEntry(
-        history,
-        result,
-        exactResultValue: finalExactValue,
-      );
+      final updatedHistoryEntries = _prependHistoryEntry(history, result, exactResultValue: finalExactValue);
       _state = _state.copyWith(
         currentInput: result,
         output: result,
@@ -731,8 +686,7 @@ class CalculatorController extends ChangeNotifier {
 
   void selectHistoryEntry(CalculatorHistoryEntry entry) {
     _setLastAction(_LastAction.equalOrMemory);
-    final selectedValue =
-        _parsePersistedRationalOrNull(entry.resultRational) ?? _tryParseRational(entry.resultClean);
+    final selectedValue = _parsePersistedRationalOrNull(entry.resultRational) ?? _tryParseRational(entry.resultClean);
     _state = _state.copyWith(
       currentInput: entry.resultClean,
       output: entry.resultDisplay,
