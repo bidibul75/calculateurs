@@ -713,7 +713,20 @@ class CalculatorController extends ChangeNotifier {
 
   String memoryDisplay() {
     if (_state.memory == Rational.zero) return "";
-    return "M = ${Decimal.parse(_state.memory.toDecimal().toString()).toPreciseFormattedString}";
+    // Convert the stored Rational to a Decimal using a defined scale so we
+    // don't hit the Rational.toDecimal assertion for non-finite rationals.
+    try {
+      final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
+      return "M = ${Decimal.parse(dec.toString()).toPreciseFormattedString}";
+    } catch (_) {
+      // Fallback to a smaller scale, then to the rational textual form.
+      try {
+        final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: 10);
+        return "M = ${Decimal.parse(dec.toString()).toPreciseFormattedString}";
+      } catch (_) {
+        return "M = ${_state.memory.toString()}";
+      }
+    }
   }
 
   void selectHistoryEntry(CalculatorHistoryEntry entry) {
