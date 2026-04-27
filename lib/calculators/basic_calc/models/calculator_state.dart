@@ -2,6 +2,8 @@ import 'package:rational/rational.dart';
 import 'calculator_history_entry.dart';
 
 class CalculatorState {
+  static const Object _unset = Object();
+
   final String output;
   final String history;
   final List<CalculatorHistoryEntry> historyEntries;
@@ -10,6 +12,10 @@ class CalculatorState {
   final String operation;
   final String num2;
   final String operation2;
+  // Internal exact values used for chained calculations.
+  final Rational? currentInputValue;
+  final Rational? num1Value;
+  final Rational? num2Value;
   final Rational memory;
 
   CalculatorState({
@@ -21,6 +27,9 @@ class CalculatorState {
     this.operation = "",
     this.num2 = "",
     this.operation2 = "",
+    this.currentInputValue,
+    this.num1Value,
+    this.num2Value,
     Rational? memory,
   })  : historyEntries = historyEntries ?? const [],
         memory = memory ?? Rational.zero;
@@ -34,6 +43,9 @@ class CalculatorState {
     String? operation,
     String? num2,
     String? operation2,
+    Object? currentInputValue = _unset,
+    Object? num1Value = _unset,
+    Object? num2Value = _unset,
     Rational? memory,
   }) {
     return CalculatorState(
@@ -45,6 +57,10 @@ class CalculatorState {
       operation: operation ?? this.operation,
       num2: num2 ?? this.num2,
       operation2: operation2 ?? this.operation2,
+      currentInputValue:
+          identical(currentInputValue, _unset) ? this.currentInputValue : currentInputValue as Rational?,
+      num1Value: identical(num1Value, _unset) ? this.num1Value : num1Value as Rational?,
+      num2Value: identical(num2Value, _unset) ? this.num2Value : num2Value as Rational?,
       memory: memory ?? this.memory,
     );
   }
