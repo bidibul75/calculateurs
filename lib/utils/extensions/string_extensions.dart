@@ -148,23 +148,20 @@ extension StringExtensions on String {
   /// Determines if a String represents a number
   /// Beware ! works fine only with unformatted numbers
   bool get isANumber {
-    if (double.tryParse(this) == null) return false;
-    return true;
+    return !(double.tryParse(this) == null);
   }
 
   /// Determines if a string represents a double (.0 excluded)
   /// Beware ! works fine only with unformatted numbers
   bool get isADouble {
     String temp = trim().cleanPointZero;
-    if (isANumber && temp.contains(".")) return true;
-    return false;
+    return isANumber && temp.contains(".");
   }
 
   /// Determines if a String does NOT represents a number
   /// Beware ! works fine only with unformatted numbers
   bool get isNotANumber {
-    if (isANumber) return false;
-    return true;
+    return !isANumber;
   }
 
   /// Determines if the string represents a number or a single expression with a single operator ( for instance 3² or √(1+2) ).
@@ -200,18 +197,12 @@ extension StringExtensions on String {
 
   /// Determines if the string represents a squared number or a squared expression as a whole.
   bool get isAGlobalSquared {
-    if (trim().endsWith("²") && hasAGlobalOperator) {
-      return true;
-    }
-    return false;
+    return trim().endsWith("²") && hasAGlobalOperator;
   }
 
   /// Determines if the string represents a number inside a square root or an entire expression inside a square root.
   bool get isAGlobalSQR {
-    if (trim().startsWith("√") && hasAGlobalOperator) {
-      return true;
-    }
-    return false;
+    return trim().startsWith("√") && hasAGlobalOperator;
   }
 
   /// Replaces the last occurrence of a pattern in a string
@@ -278,7 +269,7 @@ extension StringExtensions on String {
     if (!contains('.')) return format;
     final d = double.parse(this);
     final l = split('.');
-    String r = l[1].length>limit?"≈ ":"";
+    String r = l[1].length > limit ? "≈ " : "";
     r += d.roundTo(limit).toString().trim().format;
     return r.endsWith('.0') ? r.replaceLast('.0') : r;
   }
