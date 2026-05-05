@@ -285,4 +285,56 @@ void main() {
     expect(controller.state.currentInputValue, five);
     expect(controller.state.output, '5');
   });
+
+  test('decimal separator displays immediately without waiting for next digit (en-US)', () {
+    final controller = CalculatorController();
+    final symbols = GetIt.I<LocalNumberSymbols>();
+
+    // Press 0
+    controller.onButtonPressed('0');
+    expect(controller.state.output, '0');
+
+    // Press decimal separator (. for en-US)
+    controller.onButtonPressed(symbols.decimalSep);
+    // Verify that "0." appears immediately, not waiting for the next digit
+    expect(controller.state.output, '0.');
+
+    // Press 5 to complete the decimal
+    controller.onButtonPressed('5');
+    expect(controller.state.output, '0.5');
+  });
+
+  test('allows 00 immediately after decimal separator (en-US)', () {
+    final controller = CalculatorController();
+    final symbols = GetIt.I<LocalNumberSymbols>();
+
+    controller.onButtonPressed('0');
+    controller.onButtonPressed(symbols.decimalSep);
+
+    // 00 should append right away and produce 0.00
+    controller.onButtonPressed('00');
+
+    expect(controller.state.output, '0.00');
+  });
+
+  test('decimal separator displays immediately without waiting for next digit (fr-FR)', () async {
+    // Switch to French locale
+    final symbols = GetIt.I<LocalNumberSymbols>();
+    symbols.updateFromLocale('fr-FR');
+
+    final controller = CalculatorController();
+
+    // Press 0
+    controller.onButtonPressed('0');
+    expect(controller.state.output, '0');
+
+    // Press decimal separator (, for fr-FR)
+    controller.onButtonPressed(symbols.decimalSep);
+    // Verify that "0," appears immediately in French locale
+    expect(controller.state.output, '0,');
+
+    // Press 5 to complete the decimal
+    controller.onButtonPressed('5');
+    expect(controller.state.output, '0,5');
+  });
 }
