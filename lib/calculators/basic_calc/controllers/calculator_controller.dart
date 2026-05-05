@@ -625,10 +625,19 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
+  /// Convert a math string (e.g., "0.5") directly to locale format (e.g., "0,5")
+  /// without passing through Rational parsing, which would strip trailing decimals.
+  /// This ensures that incomplete decimals like "0." are immediately visible to the user.
+  String _formatInputForDisplay(String mathString) {
+    return mathString.replaceAll('.', symbols.decimalSep);
+  }
+
   void _handleNumber(String buttonText) {
-    // Get the local decimal separator (comma or dot) via extensions or Intl
-    // To simplify, assume the UI sends "." and we display "."
-    // If you want to handle comma input, replace "." with "," here.
+    // Normalize buttonText from locale to math string format first.
+    // This ensures consistent handling: buttonText="," becomes "." in math string.
+    String buttonTextMath = buttonText == symbols.decimalSep ? "." : buttonText;
+
+    // Get current input in math string format
     String current = _state.currentInput.toCleanMathString;
 
     if (buttonText == "00") {
@@ -637,32 +646,43 @@ class CalculatorController extends ChangeNotifier {
 
     // If a digit is typed after a result (=), start over
     if (isLastClicEqualOrMemo) {
-      String val = (buttonText == symbols.decimalSep) ? "0${symbols.decimalSep}" : buttonText;
+      String valMath = buttonTextMath == "." ? "0." : buttonTextMath;
+      String displayVal = _formatInputForDisplay(valMath);
       _state = CalculatorState(
-        currentInput: val,
-        output: val,
+        currentInput: displayVal,
+        output: displayVal,
         history: "",
         historyEntries: _state.historyEntries,
-        currentInputValue: _tryParseRational(val),
+        currentInputValue: _tryParseRational(valMath),
         memory: _state.memory,
       );
+      // Treat the decimal separator as a numeric input so that "00" can follow it.
       _setLastAction(_LastAction.number);
       return;
     }
 
-    if (current == "0" && buttonText != symbols.decimalSep) {
-      current = buttonText;
+    if (current == "0" && buttonTextMath != ".") {
+      // Replace leading "0" with the digit, unless it's the decimal separator
+      current = buttonTextMath;
     } else {
-      if (buttonText == symbols.decimalSep && current.contains(symbols.decimalSep)) return;
-      (buttonText == symbols.decimalSep && current.isEmpty)
-          ? current = "0${symbols.decimalSep}"
-          : current += buttonText;
+      // Check for duplicate decimal separator
+      if (buttonTextMath == "." && current.contains(".")) return;
+      // If decimal is pressed on "0" or empty, ensure "0." format
+      if (buttonTextMath == "." && (current.isEmpty || current == "0")) {
+        current = "0.";
+      } else {
+        // Append the button text to current (both in math string format)
+        current += buttonTextMath;
+      }
     }
+
+    String displayVal = _formatInputForDisplay(current);
     _state = _state.copyWith(
-      currentInput: current,
-      output: current.format,
+      currentInput: displayVal,
+      output: displayVal,
       currentInputValue: _tryParseRational(current),
     );
+    // Treat the decimal separator as a numeric input so that "00" can follow it.
     _setLastAction(_LastAction.number);
   }
 
