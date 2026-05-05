@@ -270,4 +270,27 @@ void main() {
       expect('10,123.456'.formatRound(limit:2), "≈ 10,123.46");
     });
   });
+
+  group('StringExtensions.isANumber', () {
+    test('tests if a String is a number', () {
+      expect('123456'.isANumber, true);
+      expect('10,123.456'.isANumber, false);
+      expect('e1a'.isANumber, false);
+    });
+  });
+
+  group('StringExtensions.isNotANumber', () {
+    test('tests if a String is a number', () {
+      expect('123456'.isNotANumber, false);
+      expect('a'.isNotANumber, true);
+    });
+  });
+
+  group('StringExtensions.isADouble', () {
+    test('tests if a String is a double', () {
+      expect('123456'.isADouble, false);
+      expect('123456.0'.isADouble, false);
+      expect('10,123.456'.toCleanMathString.isADouble, true);
+    });
+  });
 }

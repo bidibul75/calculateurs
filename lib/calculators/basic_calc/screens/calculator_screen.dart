@@ -12,6 +12,7 @@ import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:get_it/get_it.dart';
 import '../controllers/calculator_controller.dart';
 import '../models/calculator_history_entry.dart';
+import '../models/calculator_state.dart';
 import '../../../shared/widgets/menu_drawer.dart';
 import '../services/history_export_service.dart';
 
@@ -95,7 +96,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         return 'x^y';
       case 'c':
       case 'C':
-      case '\x1B' :
+      case '\x1B':
         return 'C';
       default:
         return null;
@@ -164,6 +165,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (['MC', 'MR', 'M+', 'M-'].contains(label)) return Colors.blueGrey;
     if (['÷', 'x', '-', '+', '='].contains(label)) return Colors.orange;
     return _themeManager.buttonGroupColor;
+  }
+
+  /// Returns the text to show in the main output area.
+  ///
+  /// When the user is typing, we keep the controller's raw output so we do not
+  /// lose trailing decimals or trailing zeros such as `0.00`.
+  /// Otherwise we keep the rounded display behavior for stored results.
+  String _buildMainOutputText(CalculatorState state) {
+    return state.currentInput.isNotEmpty ? state.output : state.output.formatRound();
   }
 
   /// Builds an individual button
@@ -449,7 +459,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      state.output.formatRound(),
+                                      _buildMainOutputText(state),
                                       maxLines: 1,
                                       style: TextStyle(
                                         color: _themeManager.displayTextColor,
