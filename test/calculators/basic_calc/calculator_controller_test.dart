@@ -337,4 +337,51 @@ void main() {
     controller.onButtonPressed('5');
     expect(controller.state.output, '0,5');
   });
+
+  test('formats large numbers with thousand separators (en-US)', () {
+    final controller = CalculatorController();
+
+    // Build 1000 gradually
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('0');
+    // Should display with thousand separator: "1,000"
+    expect(controller.state.output, '1,000');
+
+    // Add more
+    controller.onButtonPressed('0');
+    // Should display "10,000"
+    expect(controller.state.output, '10,000');
+  });
+
+  test('formats large numbers with thousand separators (fr-FR)', () {
+    final symbols = GetIt.I<LocalNumberSymbols>();
+    symbols.updateFromLocale('fr-FR');
+    
+    // Create new controller after locale is set
+    final controller = CalculatorController();
+
+    // Build 1000 gradually
+    controller.onButtonPressed('1');
+    expect(controller.state.output, '1');
+    
+    controller.onButtonPressed('0');
+    expect(controller.state.output, '10');
+    
+    controller.onButtonPressed('0');
+    expect(controller.state.output, '100');
+    
+    controller.onButtonPressed('0');
+    // Should display with French thousand separator: "1 000"
+    expect(controller.state.output, '1 000', reason: 'Large number should have thousand separator in fr-FR');
+
+    // Add decimal
+    controller.onButtonPressed(symbols.decimalSep);
+    expect(controller.state.output, '1 000,', reason: 'Decimal point should appear immediately');
+    
+    controller.onButtonPressed('5');
+    // Should display "1 000,5"
+    expect(controller.state.output, '1 000,5', reason: 'Decimal number should show with both separators');
+  });
 }

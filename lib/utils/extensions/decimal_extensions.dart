@@ -4,6 +4,7 @@ import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 
+/// Converts a number into a local formatted number
 extension DecimalFormatting on Decimal {
   String get toPreciseFormattedString {
     // 1. Get the locale (e.g., "fr_FR" or "en_US")
