@@ -169,11 +169,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   /// Returns the text to show in the main output area.
   ///
-  /// When the user is typing, we keep the controller's raw output so we do not
-  /// lose trailing decimals or trailing zeros such as `0.00`.
-  /// Otherwise we keep the rounded display behavior for stored results.
-  String _buildMainOutputText(CalculatorState state) {
-    return state.currentInput.isNotEmpty ? state.output : state.output.formatRound();
+  /// When the user is typing, we show the current input as-is.
+  /// Otherwise we localize the stored output for display.
+  String _buildDisplayText(CalculatorState state) {
+    return _controller.isLastClicNumber && state.currentInput.isNotEmpty
+        ? state.currentInput
+        : state.output.formatRound();
   }
 
   /// Builds an individual button
@@ -459,7 +460,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                     fit: BoxFit.scaleDown,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      _buildMainOutputText(state),
+                                      _buildDisplayText(state),
                                       maxLines: 1,
                                       style: TextStyle(
                                         color: _themeManager.displayTextColor,
