@@ -625,11 +625,49 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  /// Convert a math string (e.g., "0.5") directly to locale format (e.g., "0,5")
-  /// without passing through Rational parsing, which would strip trailing decimals.
-  /// This ensures that incomplete decimals like "0." are immediately visible to the user.
+  /// Convert a math string (e.g., "1000.5") to locale format (e.g., "1 000,5" in fr-FR)
+  /// with both thousand separators and decimal separator localization.
+  /// Preserves incomplete decimals like "0." so they remain visible.
   String _formatInputForDisplay(String mathString) {
-    return mathString.replaceAll('.', symbols.decimalSep);
+    // Check if the string has a trailing decimal point (even if empty after it)
+    bool hasTrailingDecimal = mathString.endsWith('.');
+
+    // Handle simple decimal separator cases
+    if (mathString == "." || mathString == "0.") {
+      return mathString.replaceAll('.', symbols.decimalSep);
+    }
+
+    // Split by decimal point (math string uses ".")
+    final parts = mathString.split('.');
+    String integerPart = parts[0];
+    String decimalPart = parts.length > 1 ? parts[1] : "";
+
+    // Handle negative numbers
+    bool isNegative = integerPart.startsWith('-');
+    String absIntegerPart = isNegative ? integerPart.substring(1) : integerPart;
+
+    // Add thousands separator to integer part
+    // Normalize non-breaking spaces: FR uses U+202F (narrow), some use U+00A0 (standard)
+    String sep = symbols.thousandsSep
+        .replaceAll('\u00A0', ' ')  // NO-BREAK SPACE
+        .replaceAll('\u202F', ' '); // NARROW NO-BREAK SPACE
+
+    final formattedInteger = absIntegerPart.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => sep,
+    );
+
+    String result = isNegative ? '-$formattedInteger' : formattedInteger;
+
+    // Add decimal part with localized separator if exists, or just the separator if trailing
+    if (decimalPart.isNotEmpty) {
+      result += symbols.decimalSep + decimalPart;
+    } else if (hasTrailingDecimal) {
+      // Preserve trailing decimal separator
+      result += symbols.decimalSep;
+    }
+
+    return result;
   }
 
   void _handleNumber(String buttonText) {
