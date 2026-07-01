@@ -8,163 +8,168 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(l10n.themeSettingsTitle),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.themeBackgroundColor, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+      return AnimatedBuilder(
+        animation: themeManager,
+        builder: (context, _) {
+          return AlertDialog(
+            title: Text(l10n.themeSettingsTitle),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _BackgroundImageOption(
-                    assetPath: ThemeManager.wallpaperAssetPath,
-                    label: l10n.themeBackgroundWallpaper,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWallpaper,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWallpaper),
+                  Text(l10n.themeBackgroundColor, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _BackgroundImageOption(
+                        assetPath: ThemeManager.wallpaperAssetPath,
+                        label: l10n.themeBackgroundWallpaper,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWallpaper,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWallpaper),
+                      ),
+                      _BackgroundImageOption(
+                        assetPath: ThemeManager.brushedMetalAssetPath,
+                        label: l10n.themeBackgroundMetal,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetBrushedMetal,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetBrushedMetal),
+                      ),
+                      _ColorOption(
+                        color: Colors.grey[200]!,
+                        label: l10n.themeBackgroundNeutral,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetSoftGrey,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetSoftGrey),
+                      ),
+                      _ColorOption(
+                        color: Colors.white,
+                        label: l10n.colorWhite,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWhite,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWhite),
+                      ),
+                      _ColorOption(
+                        color: Colors.grey[900]!,
+                        label: l10n.colorDark,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetDark,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetDark),
+                      ),
+                      _ColorOption(
+                        color: Colors.blue[50]!,
+                        label: l10n.colorLightBlue,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightBlue,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightBlue),
+                      ),
+                      _ColorOption(
+                        color: Colors.amber[50]!,
+                        label: l10n.colorLightAmber,
+                        isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightAmber,
+                        onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightAmber),
+                      ),
+                    ],
                   ),
-                  _BackgroundImageOption(
-                    assetPath: ThemeManager.brushedMetalAssetPath,
-                    label: l10n.themeBackgroundMetal,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetBrushedMetal,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetBrushedMetal),
+                  const SizedBox(height: 20),
+                  Text(l10n.themeDisplayTextColor, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _TextColorOption(
+                        color: Colors.black,
+                        label: l10n.colorBlack,
+                        isSelected: themeManager.displayTextColor == Colors.black,
+                        onTap: () => themeManager.setDisplayTextColor(Colors.black),
+                      ),
+                      _TextColorOption(
+                        color: Colors.white,
+                        label: l10n.colorWhite,
+                        isSelected: themeManager.displayTextColor == Colors.white,
+                        onTap: () => themeManager.setDisplayTextColor(Colors.white),
+                      ),
+                      _TextColorOption(
+                        color: Colors.blue[800]!,
+                        label: l10n.colorBlue,
+                        isSelected: themeManager.displayTextColor == Colors.blue[800]!,
+                        onTap: () => themeManager.setDisplayTextColor(Colors.blue[800]!),
+                      ),
+                      _TextColorOption(
+                        color: Colors.green[800]!,
+                        label: l10n.colorGreen,
+                        isSelected: themeManager.displayTextColor == Colors.green[800]!,
+                        onTap: () => themeManager.setDisplayTextColor(Colors.green[800]!),
+                      ),
+                    ],
                   ),
-                  _ColorOption(
-                    color: Colors.grey[200]!,
-                    label: l10n.themeBackgroundNeutral,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetSoftGrey,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetSoftGrey),
+                  const SizedBox(height: 20),
+                  Text(l10n.themeButtonGroupsColor, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _ButtonGroupColorOption(
+                        color: Colors.grey[850]!,
+                        label: l10n.colorDarkGrey,
+                        isSelected: themeManager.buttonGroupColor == Colors.grey[850]!,
+                        onTap: () => themeManager.setButtonGroupColor(Colors.grey[850]!),
+                      ),
+                      _ButtonGroupColorOption(
+                        color: Colors.blue[800]!,
+                        label: l10n.colorBlue,
+                        isSelected: themeManager.buttonGroupColor == Colors.blue[800]!,
+                        onTap: () => themeManager.setButtonGroupColor(Colors.blue[800]!),
+                      ),
+                      _ButtonGroupColorOption(
+                        color: Colors.purple[800]!,
+                        label: l10n.colorPurple,
+                        isSelected: themeManager.buttonGroupColor == Colors.purple[800]!,
+                        onTap: () => themeManager.setButtonGroupColor(Colors.purple[800]!),
+                      ),
+                      _ButtonGroupColorOption(
+                        color: Colors.teal[800]!,
+                        label: l10n.colorTeal,
+                        isSelected: themeManager.buttonGroupColor == Colors.teal[800]!,
+                        onTap: () => themeManager.setButtonGroupColor(Colors.teal[800]!),
+                      ),
+                    ],
                   ),
-                  _ColorOption(
-                    color: Colors.white,
-                    label: l10n.colorWhite,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetWhite,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetWhite),
-                  ),
-                  _ColorOption(
-                    color: Colors.grey[900]!,
-                    label: l10n.colorDark,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetDark,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetDark),
-                  ),
-                  _ColorOption(
-                    color: Colors.blue[50]!,
-                    label: l10n.colorLightBlue,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightBlue,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightBlue),
-                  ),
-                  _ColorOption(
-                    color: Colors.amber[50]!,
-                    label: l10n.colorLightAmber,
-                    isSelected: themeManager.backgroundPresetId == ThemeManager.backgroundPresetLightAmber,
-                    onTap: () => themeManager.setBackgroundPreset(ThemeManager.backgroundPresetLightAmber),
+                  const SizedBox(height: 20),
+                  Text(l10n.themeButtonTextColor, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _TextColorOption(
+                        color: Colors.grey[200]!,
+                        label: l10n.colorLightGrey,
+                        isSelected: themeManager.buttonTextColor == Colors.grey[200]!,
+                        onTap: () => themeManager.setButtonTextColor(Colors.grey[200]!),
+                      ),
+                      _TextColorOption(
+                        color: Colors.white,
+                        label: l10n.colorWhite,
+                        isSelected: themeManager.buttonTextColor == Colors.white,
+                        onTap: () => themeManager.setButtonTextColor(Colors.white),
+                      ),
+                      _TextColorOption(
+                        color: Colors.black,
+                        label: l10n.colorBlack,
+                        isSelected: themeManager.buttonTextColor == Colors.black,
+                        onTap: () => themeManager.setButtonTextColor(Colors.black),
+                      ),
+                      _TextColorOption(
+                        color: Colors.yellow[700]!,
+                        label: l10n.colorYellow,
+                        isSelected: themeManager.buttonTextColor == Colors.yellow[700]!,
+                        onTap: () => themeManager.setButtonTextColor(Colors.yellow[700]!),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(l10n.themeDisplayTextColor, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  _TextColorOption(
-                    color: Colors.black,
-                    label: l10n.colorBlack,
-                    isSelected: themeManager.displayTextColor == Colors.black,
-                    onTap: () => themeManager.setDisplayTextColor(Colors.black),
-                  ),
-                  _TextColorOption(
-                    color: Colors.white,
-                    label: l10n.colorWhite,
-                    isSelected: themeManager.displayTextColor == Colors.white,
-                    onTap: () => themeManager.setDisplayTextColor(Colors.white),
-                  ),
-                  _TextColorOption(
-                    color: Colors.blue[800]!,
-                    label: l10n.colorBlue,
-                    isSelected: themeManager.displayTextColor == Colors.blue[800]!,
-                    onTap: () => themeManager.setDisplayTextColor(Colors.blue[800]!),
-                  ),
-                  _TextColorOption(
-                    color: Colors.green[800]!,
-                    label: l10n.colorGreen,
-                    isSelected: themeManager.displayTextColor == Colors.green[800]!,
-                    onTap: () => themeManager.setDisplayTextColor(Colors.green[800]!),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(l10n.themeButtonGroupsColor, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  _ButtonGroupColorOption(
-                    color: Colors.grey[850]!,
-                    label: l10n.colorDarkGrey,
-                    isSelected: themeManager.buttonGroupColor == Colors.grey[850]!,
-                    onTap: () => themeManager.setButtonGroupColor(Colors.grey[850]!),
-                  ),
-                  _ButtonGroupColorOption(
-                    color: Colors.blue[800]!,
-                    label: l10n.colorBlue,
-                    isSelected: themeManager.buttonGroupColor == Colors.blue[800]!,
-                    onTap: () => themeManager.setButtonGroupColor(Colors.blue[800]!),
-                  ),
-                  _ButtonGroupColorOption(
-                    color: Colors.purple[800]!,
-                    label: l10n.colorPurple,
-                    isSelected: themeManager.buttonGroupColor == Colors.purple[800]!,
-                    onTap: () => themeManager.setButtonGroupColor(Colors.purple[800]!),
-                  ),
-                  _ButtonGroupColorOption(
-                    color: Colors.teal[800]!,
-                    label: l10n.colorTeal,
-                    isSelected: themeManager.buttonGroupColor == Colors.teal[800]!,
-                    onTap: () => themeManager.setButtonGroupColor(Colors.teal[800]!),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(l10n.themeButtonTextColor, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  _TextColorOption(
-                    color: Colors.grey[200]!,
-                    label: l10n.colorLightGrey,
-                    isSelected: themeManager.buttonTextColor == Colors.grey[200]!,
-                    onTap: () => themeManager.setButtonTextColor(Colors.grey[200]!),
-                  ),
-                  _TextColorOption(
-                    color: Colors.white,
-                    label: l10n.colorWhite,
-                    isSelected: themeManager.buttonTextColor == Colors.white,
-                    onTap: () => themeManager.setButtonTextColor(Colors.white),
-                  ),
-                  _TextColorOption(
-                    color: Colors.black,
-                    label: l10n.colorBlack,
-                    isSelected: themeManager.buttonTextColor == Colors.black,
-                    onTap: () => themeManager.setButtonTextColor(Colors.black),
-                  ),
-                  _TextColorOption(
-                    color: Colors.yellow[700]!,
-                    label: l10n.colorYellow,
-                    isSelected: themeManager.buttonTextColor == Colors.yellow[700]!,
-                    onTap: () => themeManager.setButtonTextColor(Colors.yellow[700]!),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.close))],
+            ),
+            actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.close))],
+          );
+        },
       );
     },
   );
