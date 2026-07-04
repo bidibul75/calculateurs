@@ -51,7 +51,8 @@
     "description": "Section labels for grouped calculator modules in the burger menu"
   },
   "menuSectionHealth": "Sağlık",
-  "menuSectionConversions": "IP Araçları",
+  "menuSectionConversions": "Dönüşümler",
+  "menuSectionIpTools": "IP Araçları",
   "menuSectionFinance": "Finans",
   "menuSectionRealEstate": "Gayrimenkul",
   "@_module.health.bmi": {
@@ -70,6 +71,17 @@
   "bmiCategoryNormal": "Normal ağırlık",
   "bmiCategoryOverweight": "Fazla kilolu",
   "bmiCategoryObese": "Obez",
+
+  "@_module.conversions.temperature": {
+    "description": "Modül kelime bilgisi: Dönüşümler > Sıcaklık"
+  },
+  "temperatureTitle": "Temperature Converter",
+  "menuTemperature": "Temperature Converter",
+  "temperatureLabelCelsius": "Celsius",
+  "temperatureLabelFahrenheit": "Fahrenheit",
+  "temperatureLabelKelvin": "Kelvin",
+  "temperatureLabelRankine": "Rankine",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

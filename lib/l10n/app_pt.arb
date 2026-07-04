@@ -51,7 +51,8 @@
     "description": "Section labels for grouped calculator modules in the burger menu"
   },
   "menuSectionHealth": "Saúde",
-  "menuSectionConversions": "Ferramentas IP",
+  "menuSectionConversions": "Conversões",
+  "menuSectionIpTools": "Ferramentas IP",
   "menuSectionFinance": "Financiar",
   "menuSectionRealEstate": "Imobiliária",
   "@_module.health.bmi": {
@@ -70,6 +71,17 @@
   "bmiCategoryNormal": "Peso normal",
   "bmiCategoryOverweight": "Sobrepeso",
   "bmiCategoryObese": "Obeso",
+
+  "@_module.conversions.temperature": {
+    "description": "Vocabulário do módulo: Conversões > Temperatura"
+  },
+  "temperatureTitle": "Temperature Converter",
+  "menuTemperature": "Temperature Converter",
+  "temperatureLabelCelsius": "Celsius",
+  "temperatureLabelFahrenheit": "Fahrenheit",
+  "temperatureLabelKelvin": "Kelvin",
+  "temperatureLabelRankine": "Rankine",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

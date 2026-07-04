@@ -4,6 +4,7 @@ import 'package:calculators/navigation/app_routes.dart';
 enum ModuleSection {
   health,
   conversions,
+  ipTools,
   finance,
   realEstate,
 }
@@ -29,21 +30,26 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
     ),
     ModuleMenuItem(
       section: ModuleSection.conversions,
+      routeName: AppRoutes.temperature,
+      label: l10n.menuTemperature,
+    ),
+    ModuleMenuItem(
+      section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv4Address,
       label: l10n.menuIpv4Address,
     ),
     ModuleMenuItem(
-      section: ModuleSection.conversions,
+      section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv4Supernet,
       label: l10n.menuIpv4Supernet,
     ),
     ModuleMenuItem(
-      section: ModuleSection.conversions,
+      section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv6Address,
       label: l10n.menuIpv6Address,
     ),
     ModuleMenuItem(
-      section: ModuleSection.conversions,
+      section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv6Supernet,
       label: l10n.menuIpv6Supernet,
     ),
@@ -56,10 +62,11 @@ String sectionTitle(ModuleSection section, AppLocalizations l10n) {
       return l10n.menuSectionHealth;
     case ModuleSection.conversions:
       return l10n.menuSectionConversions;
+    case ModuleSection.ipTools:
+      return l10n.menuSectionIpTools;
     case ModuleSection.finance:
       return l10n.menuSectionFinance;
     case ModuleSection.realEstate:
       return l10n.menuSectionRealEstate;
   }
 }
-

@@ -141,6 +141,7 @@ class MenuDrawer extends StatelessWidget {
     AppLocalizations l10n,
     List<ModuleMenuItem> healthModules,
     List<ModuleMenuItem> conversionModules,
+    List<ModuleMenuItem> ipToolsModules,
   ) {
     return [
       ListTile(
@@ -208,6 +209,22 @@ class MenuDrawer extends StatelessWidget {
               ),
           ],
         ),
+      if (ipToolsModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.language_outlined),
+          title: Text(sectionTitle(ModuleSection.ipTools, l10n)),
+          children: [
+            for (final module in ipToolsModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
     ];
   }
 
@@ -216,6 +233,7 @@ class MenuDrawer extends StatelessWidget {
     final modules = buildModuleMenuCatalog(l10n);
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
     final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
+    final ipToolsModules = modules.where((module) => module.section == ModuleSection.ipTools).toList();
     final isMobileSheet = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
 
     showModalBottomSheet<void>(
@@ -225,7 +243,7 @@ class MenuDrawer extends StatelessWidget {
       builder: (sheetContext) {
         final menuList = ListView(
           padding: EdgeInsets.only(top: isMobileSheet ? 8 : 0, bottom: isMobileSheet ? 16 : 0),
-          children: _buildMenuTiles(context, sheetContext, l10n, healthModules, conversionModules),
+          children: _buildMenuTiles(context, sheetContext, l10n, healthModules, conversionModules, ipToolsModules),
         );
 
         return SafeArea(

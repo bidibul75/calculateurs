@@ -52,7 +52,8 @@
     "description": "Etichette sezioni per raggruppare i moduli nel menu"
   },
   "menuSectionHealth": "Salute",
-  "menuSectionConversions": "Strumenti IP",
+  "menuSectionConversions": "Conversioni",
+  "menuSectionIpTools": "Strumenti IP",
   "menuSectionFinance": "Finanza",
   "menuSectionRealEstate": "Immobiliare",
 
@@ -72,6 +73,16 @@
   "bmiCategoryNormal": "Peso normale",
   "bmiCategoryOverweight": "Sovrappeso",
   "bmiCategoryObese": "Obesità",
+
+  "@_module.conversions.temperature": {
+    "description": "Vocabolario del modulo: Conversioni > Temperatura"
+  },
+  "temperatureTitle": "Temperature Converter",
+  "menuTemperature": "Temperature Converter",
+  "temperatureLabelCelsius": "Celsius",
+  "temperatureLabelFahrenheit": "Fahrenheit",
+  "temperatureLabelKelvin": "Kelvin",
+  "temperatureLabelRankine": "Rankine",
 
   "@_module.ip.ipv4": {
     "description": "Vocabolario modulo: IP > Indirizzo IPv4"

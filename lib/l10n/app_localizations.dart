@@ -375,8 +375,14 @@ abstract class AppLocalizations {
   /// No description provided for @menuSectionConversions.
   ///
   /// In en, this message translates to:
-  /// **'IP Tools'**
+  /// **'Conversions'**
   String get menuSectionConversions;
+
+  /// No description provided for @menuSectionIpTools.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Tools'**
+  String get menuSectionIpTools;
 
   /// No description provided for @menuSectionFinance.
   ///
@@ -467,6 +473,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Obese'**
   String get bmiCategoryObese;
+
+  /// No description provided for @temperatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature Converter'**
+  String get temperatureTitle;
+
+  /// No description provided for @menuTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature Converter'**
+  String get menuTemperature;
+
+  /// No description provided for @temperatureLabelCelsius.
+  ///
+  /// In en, this message translates to:
+  /// **'Celsius'**
+  String get temperatureLabelCelsius;
+
+  /// No description provided for @temperatureLabelFahrenheit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fahrenheit'**
+  String get temperatureLabelFahrenheit;
+
+  /// No description provided for @temperatureLabelKelvin.
+  ///
+  /// In en, this message translates to:
+  /// **'Kelvin'**
+  String get temperatureLabelKelvin;
+
+  /// No description provided for @temperatureLabelRankine.
+  ///
+  /// In en, this message translates to:
+  /// **'Rankine'**
+  String get temperatureLabelRankine;
 
   /// No description provided for @menuIpv4Address.
   ///

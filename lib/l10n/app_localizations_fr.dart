@@ -145,7 +145,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuSectionHealth => 'Santé';
 
   @override
-  String get menuSectionConversions => 'Outils IP';
+  String get menuSectionConversions => 'Conversions';
+
+  @override
+  String get menuSectionIpTools => 'Outils IP';
 
   @override
   String get menuSectionFinance => 'Finances';
@@ -191,6 +194,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get bmiCategoryObese => 'Obésité';
+
+  @override
+  String get temperatureTitle => 'Convertisseur de température';
+
+  @override
+  String get menuTemperature => 'Convertisseur de température';
+
+  @override
+  String get temperatureLabelCelsius => 'Celsius';
+
+  @override
+  String get temperatureLabelFahrenheit => 'Fahrenheit';
+
+  @override
+  String get temperatureLabelKelvin => 'Kelvin';
+
+  @override
+  String get temperatureLabelRankine => 'Rankine';
 
   @override
   String get menuIpv4Address => 'Adresse IPv4';
