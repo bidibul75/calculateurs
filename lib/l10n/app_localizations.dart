@@ -510,6 +510,90 @@ abstract class AppLocalizations {
   /// **'Rankine'**
   String get temperatureLabelRankine;
 
+  /// No description provided for @menuDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance Converter'**
+  String get menuDistance;
+
+  /// No description provided for @distanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance Converter'**
+  String get distanceTitle;
+
+  /// No description provided for @distanceLabelMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Metric'**
+  String get distanceLabelMetric;
+
+  /// No description provided for @distanceLabelImperial.
+  ///
+  /// In en, this message translates to:
+  /// **'Imperial'**
+  String get distanceLabelImperial;
+
+  /// No description provided for @distanceLabelNautical.
+  ///
+  /// In en, this message translates to:
+  /// **'Nautical mile'**
+  String get distanceLabelNautical;
+
+  /// No description provided for @distanceUnitKm.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get distanceUnitKm;
+
+  /// No description provided for @distanceUnitM.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get distanceUnitM;
+
+  /// No description provided for @distanceUnitCm.
+  ///
+  /// In en, this message translates to:
+  /// **'cm'**
+  String get distanceUnitCm;
+
+  /// No description provided for @distanceUnitMm.
+  ///
+  /// In en, this message translates to:
+  /// **'mm'**
+  String get distanceUnitMm;
+
+  /// No description provided for @distanceUnitMi.
+  ///
+  /// In en, this message translates to:
+  /// **'mi'**
+  String get distanceUnitMi;
+
+  /// No description provided for @distanceUnitYd.
+  ///
+  /// In en, this message translates to:
+  /// **'yd'**
+  String get distanceUnitYd;
+
+  /// No description provided for @distanceUnitFt.
+  ///
+  /// In en, this message translates to:
+  /// **'ft'**
+  String get distanceUnitFt;
+
+  /// No description provided for @distanceUnitInch.
+  ///
+  /// In en, this message translates to:
+  /// **'inch'**
+  String get distanceUnitInch;
+
+  /// No description provided for @distanceUnitNmi.
+  ///
+  /// In en, this message translates to:
+  /// **'nmi'**
+  String get distanceUnitNmi;
+
   /// No description provided for @menuIpv4Address.
   ///
   /// In en, this message translates to:

@@ -214,6 +214,48 @@ class AppLocalizationsFr extends AppLocalizations {
   String get temperatureLabelRankine => 'Rankine';
 
   @override
+  String get menuDistance => 'Convertisseur de distance';
+
+  @override
+  String get distanceTitle => 'Convertisseur de distance';
+
+  @override
+  String get distanceLabelMetric => 'Métrique';
+
+  @override
+  String get distanceLabelImperial => 'Impérial';
+
+  @override
+  String get distanceLabelNautical => 'Mille nautique';
+
+  @override
+  String get distanceUnitKm => 'km';
+
+  @override
+  String get distanceUnitM => 'm';
+
+  @override
+  String get distanceUnitCm => 'cm';
+
+  @override
+  String get distanceUnitMm => 'mm';
+
+  @override
+  String get distanceUnitMi => 'mi';
+
+  @override
+  String get distanceUnitYd => 'yd';
+
+  @override
+  String get distanceUnitFt => 'ft';
+
+  @override
+  String get distanceUnitInch => 'po';
+
+  @override
+  String get distanceUnitNmi => 'nmi';
+
+  @override
   String get menuIpv4Address => 'Adresse IPv4';
 
   @override

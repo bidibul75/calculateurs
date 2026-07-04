@@ -35,6 +35,11 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       label: l10n.menuTemperature,
     ),
     ModuleMenuItem(
+      section: ModuleSection.conversions,
+      routeName: AppRoutes.distance,
+      label: l10n.menuDistance,
+    ),
+    ModuleMenuItem(
       section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv4Address,
       label: l10n.menuIpv4Address,

@@ -82,6 +82,24 @@
   "temperatureLabelKelvin": "Kelvin",
   "temperatureLabelRankine": "Rankine",
 
+  "@_module.conversions.distance": {
+    "description": "Vocabular de modul: Conversii > Distanță"
+  },
+  "menuDistance": "Convertor de distanță",
+  "distanceTitle": "Convertor de distanță",
+  "distanceLabelMetric": "Metric",
+  "distanceLabelImperial": "Imperial",
+  "distanceLabelNautical": "Milă nautică",
+  "distanceUnitKm": "km",
+  "distanceUnitM": "m",
+  "distanceUnitCm": "cm",
+  "distanceUnitMm": "mm",
+  "distanceUnitMi": "mi",
+  "distanceUnitYd": "yd",
+  "distanceUnitFt": "ft",
+  "distanceUnitInch": "inch",
+  "distanceUnitNmi": "nmi",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

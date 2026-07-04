@@ -8,6 +8,7 @@ import 'package:calculators/calculators/ip/IPv6/screens/ipv6_address_screen.dart
 import 'package:calculators/calculators/ip/IPv6/screens/ipv6_supernet_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:calculators/calculators/conversions/distance/screens/distance_screen.dart';
 
 abstract final class AppRoutes {
   static const String home = '/';
@@ -17,6 +18,7 @@ abstract final class AppRoutes {
   static const String ipv4Supernet = '/ip/ipv4/supernet';
   static const String ipv6Address = '/ip/ipv6/address';
   static const String ipv6Supernet = '/ip/ipv6/supernet';
+  static const String distance = '/distance';
 
   static const String initialRoute = home;
   static const String _lastRoutePreferenceKey = 'navigation.lastRoute';
@@ -29,6 +31,7 @@ abstract final class AppRoutes {
     ipv4Supernet: (context) => const Ipv4SupernetScreen(),
     ipv6Address: (context) => const Ipv6AddressScreen(),
     ipv6Supernet: (context) => const Ipv6SupernetScreen(),
+    distance: (context) => const DistanceScreen(),
   };
 
   static Future<String> resolveInitialRoute() async {

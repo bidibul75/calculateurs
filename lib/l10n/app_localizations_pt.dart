@@ -213,6 +213,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String get temperatureLabelRankine => 'Rankine';
 
   @override
+  String get menuDistance => 'Conversor de distância';
+
+  @override
+  String get distanceTitle => 'Conversor de distância';
+
+  @override
+  String get distanceLabelMetric => 'Métrico';
+
+  @override
+  String get distanceLabelImperial => 'Imperial';
+
+  @override
+  String get distanceLabelNautical => 'Milha náutica';
+
+  @override
+  String get distanceUnitKm => 'km';
+
+  @override
+  String get distanceUnitM => 'm';
+
+  @override
+  String get distanceUnitCm => 'cm';
+
+  @override
+  String get distanceUnitMm => 'mm';
+
+  @override
+  String get distanceUnitMi => 'mi';
+
+  @override
+  String get distanceUnitYd => 'yd';
+
+  @override
+  String get distanceUnitFt => 'ft';
+
+  @override
+  String get distanceUnitInch => 'inch';
+
+  @override
+  String get distanceUnitNmi => 'nmi';
+
+  @override
   String get menuIpv4Address => 'Endereço IPv4';
 
   @override

@@ -84,6 +84,24 @@
   "temperatureLabelKelvin": "Kelvin",
   "temperatureLabelRankine": "Rankine",
 
+  "@_module.conversions.distance": {
+    "description": "Module vocabulary: Conversions > Distance"
+  },
+  "menuDistance": "Distance Converter",
+  "distanceTitle": "Distance Converter",
+  "distanceLabelMetric": "Metric",
+  "distanceLabelImperial": "Imperial",
+  "distanceLabelNautical": "Nautical mile",
+  "distanceUnitKm": "km",
+  "distanceUnitM": "m",
+  "distanceUnitCm": "cm",
+  "distanceUnitMm": "mm",
+  "distanceUnitMi": "mi",
+  "distanceUnitYd": "yd",
+  "distanceUnitFt": "ft",
+  "distanceUnitInch": "inch",
+  "distanceUnitNmi": "nmi",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

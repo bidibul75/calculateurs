@@ -213,6 +213,48 @@ class AppLocalizationsTr extends AppLocalizations {
   String get temperatureLabelRankine => 'Rankine';
 
   @override
+  String get menuDistance => 'Mesafe dönüştürücü';
+
+  @override
+  String get distanceTitle => 'Mesafe dönüştürücü';
+
+  @override
+  String get distanceLabelMetric => 'Metrik';
+
+  @override
+  String get distanceLabelImperial => 'İmparatorluk';
+
+  @override
+  String get distanceLabelNautical => 'Deniz mili';
+
+  @override
+  String get distanceUnitKm => 'km';
+
+  @override
+  String get distanceUnitM => 'm';
+
+  @override
+  String get distanceUnitCm => 'cm';
+
+  @override
+  String get distanceUnitMm => 'mm';
+
+  @override
+  String get distanceUnitMi => 'mi';
+
+  @override
+  String get distanceUnitYd => 'yd';
+
+  @override
+  String get distanceUnitFt => 'ft';
+
+  @override
+  String get distanceUnitInch => 'inch';
+
+  @override
+  String get distanceUnitNmi => 'nmi';
+
+  @override
   String get menuIpv4Address => 'IPv4 Adresi';
 
   @override
