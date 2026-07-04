@@ -3,6 +3,7 @@ import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../utils/i18n/local_number_symbols.dart';
@@ -20,24 +21,37 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
   final TemperatureController _controller = TemperatureController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
+  final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'temperature_keyboard_focus');
 
   @override
   void initState() {
     super.initState();
     _controller.addListener(_updateUI);
     _themeManager.addListener(_updateUI);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _keyboardFocusNode.requestFocus();
+      }
+    });
   }
 
   @override
   void dispose() {
     _controller.removeListener(_updateUI);
     _themeManager.removeListener(_updateUI);
+    _keyboardFocusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   void _updateUI() {
     setState(() {});
+  }
+
+  void _requestKeyboardFocus() {
+    if (!_keyboardFocusNode.hasFocus) {
+      _keyboardFocusNode.requestFocus();
+    }
   }
 
   Color _getButtonColor(String label) {
@@ -51,7 +65,10 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     final Color backgroundColor = isActive ? Colors.white.withAlpha(210) : Colors.white.withAlpha(150);
 
     return InkWell(
-      onTap: () => _controller.onScaleSelected(scale),
+      onTap: () {
+        _controller.onScaleSelected(scale);
+        _requestKeyboardFocus();
+      },
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: double.infinity,
@@ -87,6 +104,76 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     );
   }
 
+  String? _mapCharacterToButton(String character) {
+    if (character.length != 1) return null;
+    if (RegExp(r'^[0-9]$').hasMatch(character)) return character;
+    switch (character) {
+      case '.':
+      case ',':
+    return symbols.decimalSep;
+      case '-':
+    return '-';
+      case 'c':
+      case 'C':
+      case '\x1B':
+    return 'C';
+      default:
+    return null;
+    }
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent) {
+      return KeyEventResult.ignored;
+    }
+
+    final LogicalKeyboardKey key = event.logicalKey;
+    final String keyLabel = key.keyLabel;
+
+    if (key == LogicalKeyboardKey.enter || key == LogicalKeyboardKey.numpadEnter) {
+      _controller.onButtonPressed(TemperatureController.actionEnter);
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.backspace) {
+      _controller.onButtonPressed('⌫');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.escape || key == LogicalKeyboardKey.delete) {
+      _controller.onButtonPressed('C');
+      return KeyEventResult.handled;
+    }
+
+    if (key == LogicalKeyboardKey.numpadDecimal) {
+      _controller.onButtonPressed(symbols.decimalSep);
+      return KeyEventResult.handled;
+    }
+
+    if (RegExp(r'^[0-9]$').hasMatch(keyLabel)) {
+      _controller.onButtonPressed(keyLabel);
+      return KeyEventResult.handled;
+    }
+
+    if (keyLabel == '.' || keyLabel == ',') {
+      _controller.onButtonPressed(symbols.decimalSep);
+      return KeyEventResult.handled;
+    }
+
+    if (keyLabel == '-') {
+      _controller.onButtonPressed('-');
+      return KeyEventResult.handled;
+    }
+
+    final String? mapped = event.character == null ? null : _mapCharacterToButton(event.character!);
+    if (mapped != null) {
+      _controller.onButtonPressed(mapped);
+      return KeyEventResult.handled;
+    }
+
+    return KeyEventResult.ignored;
+  }
+
   Widget _buildButton(String label) {
     final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final EdgeInsets buttonPadding = isPhone
@@ -112,7 +199,10 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
             ),
             padding: contentPadding,
           ),
-          onPressed: () => _controller.onButtonPressed(label),
+          onPressed: () {
+            _controller.onButtonPressed(label);
+            _requestKeyboardFocus();
+          },
           child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
         ),
       ),
@@ -143,7 +233,10 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
           ),
           padding: contentPadding,
         ),
-        onPressed: () => _controller.onButtonPressed(TemperatureController.actionEnter),
+        onPressed: () {
+          _controller.onButtonPressed(TemperatureController.actionEnter);
+          _requestKeyboardFocus();
+        },
         child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
       ),
     );
@@ -162,87 +255,92 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
         .clamp(isDesktopLike ? 260.0 : (isPhone ? 245.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
         .toDouble();
 
-    return Container(
-      decoration: _themeManager.backgroundDecoration,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text(l10n.temperatureTitle),
-          backgroundColor: Colors.white.withAlpha(150),
-          foregroundColor: Colors.grey[150],
-          iconTheme: IconThemeData(color: Colors.grey[150]),
-          elevation: 0,
-          leading: MenuDrawer(themeManager: _themeManager),
-        ),
-        body: Stack(
-          children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: SizedBox.expand(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(24, 40, 24, 12),
-                          color: Colors.white.withAlpha(150),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _buildFieldCard(l10n.temperatureLabelCelsius, state.celsius, TemperatureScale.celsius),
-                              const SizedBox(height: 12),
-                              _buildFieldCard(l10n.temperatureLabelFahrenheit, state.fahrenheit, TemperatureScale.fahrenheit),
-                              const SizedBox(height: 12),
-                              _buildFieldCard(l10n.temperatureLabelKelvin, state.kelvin, TemperatureScale.kelvin),
-                              const SizedBox(height: 12),
-                              _buildFieldCard(l10n.temperatureLabelRankine, state.rankine, TemperatureScale.rankine),
-                            ],
+    return Focus(
+      focusNode: _keyboardFocusNode,
+      autofocus: true,
+      onKeyEvent: _handleKeyEvent,
+      child: Container(
+        decoration: _themeManager.backgroundDecoration,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text(l10n.temperatureTitle),
+            backgroundColor: Colors.white.withAlpha(150),
+            foregroundColor: Colors.grey[150],
+            iconTheme: IconThemeData(color: Colors.grey[150]),
+            elevation: 0,
+            leading: MenuDrawer(themeManager: _themeManager),
+          ),
+          body: Stack(
+            children: [
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: SizedBox.expand(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(24, 40, 24, 12),
+                            color: Colors.white.withAlpha(150),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildFieldCard(l10n.temperatureLabelCelsius, state.celsius, TemperatureScale.celsius),
+                                const SizedBox(height: 12),
+                                _buildFieldCard(l10n.temperatureLabelFahrenheit, state.fahrenheit, TemperatureScale.fahrenheit),
+                                const SizedBox(height: 12),
+                                _buildFieldCard(l10n.temperatureLabelKelvin, state.kelvin, TemperatureScale.kelvin),
+                                const SizedBox(height: 12),
+                                _buildFieldCard(l10n.temperatureLabelRankine, state.rankine, TemperatureScale.rankine),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
-                        child: SizedBox(
-                          height: keyboardHeight,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: SizedBox.expand(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(child: Row(children: [_buildButton('C'), _buildButton('⌫')])),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
-                                      ),
-                                      Expanded(
-                                        child: Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
-                                      ),
-                                    ],
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
+                          child: SizedBox(
+                            height: keyboardHeight,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: SizedBox.expand(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: Row(children: [_buildButton('C'), _buildButton('⌫')])),
+                                        Expanded(
+                                          child: Row(children: [_buildButton('7'), _buildButton('8'), _buildButton('9')]),
+                                        ),
+                                        Expanded(
+                                          child: Row(children: [_buildButton('4'), _buildButton('5'), _buildButton('6')]),
+                                        ),
+                                        Expanded(
+                                          child: Row(children: [_buildButton('1'), _buildButton('2'), _buildButton('3')]),
+                                        ),
+                                        Expanded(
+                                          child: Row(children: [_buildButton('0'), _buildButton(symbols.decimalSep)]),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
-                            ],
+                                Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (_themeManager.isUnsplashBackgroundActive)
-              const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
-          ],
+              if (_themeManager.isUnsplashBackgroundActive)
+                const Positioned(bottom: 16, right: 16, child: PhotoCreditLink()),
+            ],
+          ),
         ),
       ),
     );
