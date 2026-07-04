@@ -109,9 +109,15 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
   }
 
   Widget _buildFieldCard(String label, String value, TemperatureScale scale) {
+    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final bool isActive = _controller.state.activeScale == scale;
     final Color borderColor = isActive ? _themeManager.buttonGroupColor : Colors.grey.withAlpha(100);
     final Color backgroundColor = isActive ? Colors.white.withAlpha(210) : Colors.white.withAlpha(150);
+    final double titleFontSize = isPhone ? 16 : 20;
+    final double valueFontSize = isPhone ? (isActive ? 24 : 21) : (isActive ? 32 : 26);
+    final EdgeInsets cardPadding = isPhone
+        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 10)
+        : const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
 
     return InkWell(
       onTap: () {
@@ -121,7 +127,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: cardPadding,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(10),
@@ -134,7 +140,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                 label,
                 style: TextStyle(
                   color: _themeManager.displayTextColor.withAlpha(190),
-                  fontSize: 20,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -143,7 +149,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
               value,
               style: TextStyle(
                 color: isActive ? _themeManager.displayTextColor : _themeManager.displayTextColor.withAlpha(230),
-                fontSize: isActive ? 32 : 26,
+                fontSize: valueFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -221,12 +227,12 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
   Widget _buildButton(String label) {
     final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final EdgeInsets buttonPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+        ? const EdgeInsets.symmetric(horizontal: 1.5, vertical: 1.0)
         : const EdgeInsets.all(6.0);
     final EdgeInsets contentPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+        ? const EdgeInsets.symmetric(horizontal: 6, vertical: 4)
         : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 18 : 20;
+    final double fontSize = isPhone ? 16 : 20;
 
     return Expanded(
       child: Padding(
@@ -261,9 +267,9 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     final double bottomInset = MediaQuery.paddingOf(context).bottom;
     final bool isDesktopLike = mediaSize.width >= 768;
     final bool isPhone = mediaSize.width < 600;
-    final double keyboardBottomPadding = isPhone ? (bottomInset + 24.0).clamp(22.0, 52.0).toDouble() : 50.0;
-    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : (isPhone ? 0.42 : 0.50)))
-        .clamp(isDesktopLike ? 260.0 : (isPhone ? 245.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
+    final double keyboardBottomPadding = isPhone ? (bottomInset + 8.0).clamp(8.0, 24.0).toDouble() : 50.0;
+    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : (isPhone ? 0.36 : 0.50)))
+        .clamp(isDesktopLike ? 260.0 : (isPhone ? 215.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
         .toDouble();
 
     return Focus(
@@ -292,7 +298,12 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                       children: [
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.fromLTRB(24, 40, 24, 12),
+                            padding: EdgeInsets.fromLTRB(
+                              isPhone ? 16 : 24,
+                              isPhone ? 24 : 40,
+                              isPhone ? 16 : 24,
+                              isPhone ? 8 : 12,
+                            ),
                             color: Colors.white.withAlpha(150),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -320,18 +331,18 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                                   ),
                                 ),
                                 _buildFieldCard(l10n.temperatureLabelCelsius, state.celsius, TemperatureScale.celsius),
-                                const SizedBox(height: 12),
+                                SizedBox(height: isPhone ? 8 : 12),
                                 _buildFieldCard(l10n.temperatureLabelFahrenheit, state.fahrenheit, TemperatureScale.fahrenheit),
-                                const SizedBox(height: 12),
+                                SizedBox(height: isPhone ? 8 : 12),
                                 _buildFieldCard(l10n.temperatureLabelKelvin, state.kelvin, TemperatureScale.kelvin),
-                                const SizedBox(height: 12),
+                                SizedBox(height: isPhone ? 8 : 12),
                                 _buildFieldCard(l10n.temperatureLabelRankine, state.rankine, TemperatureScale.rankine),
                               ],
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(8, 5, 8, keyboardBottomPadding),
+                          padding: EdgeInsets.fromLTRB(8, isPhone ? 2 : 5, 8, keyboardBottomPadding),
                           child: SizedBox(
                             height: keyboardHeight,
                             child: Row(
