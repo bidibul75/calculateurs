@@ -1,3 +1,4 @@
+// lib/utils/my_exception.dart
 class MyException implements Exception {
   final String error;
   final String incorrectElement;

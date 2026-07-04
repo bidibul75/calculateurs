@@ -1,3 +1,4 @@
+// lib/shared/widgets/photo_credit_link.dart
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';

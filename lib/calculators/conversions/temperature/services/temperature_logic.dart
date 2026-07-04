@@ -1,3 +1,4 @@
+// lib/calculators/conversions/temperature/services/temperature_logic.dart
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:get_it/get_it.dart';
 

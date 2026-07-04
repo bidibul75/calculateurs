@@ -1,3 +1,4 @@
+// lib/navigation/menu_catalog.dart
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/navigation/app_routes.dart';
 

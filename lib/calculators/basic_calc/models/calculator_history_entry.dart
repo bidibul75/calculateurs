@@ -1,3 +1,4 @@
+// lib/calculators/basic_calc/models/calculator_history_entry.dart
 class CalculatorHistoryEntry {
   final String displayText;
   final String resultDisplay;

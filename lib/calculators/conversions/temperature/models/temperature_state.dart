@@ -1,3 +1,4 @@
+// lib/calculators/conversions/temperature/models/temperature_state.dart
 enum TemperatureScale {
   celsius,
   fahrenheit,

@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

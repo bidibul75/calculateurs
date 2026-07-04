@@ -1,3 +1,4 @@
+// lib/calculators/basic_calc/models/calculator_state.dart
 import 'package:rational/rational.dart';
 import 'calculator_history_entry.dart';
 
