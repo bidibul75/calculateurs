@@ -54,5 +54,10 @@ void main() {
     expect(find.text('25'), findsWidgets);
     expect(find.text('77.00'), findsOneWidget);
     expect(find.text('536.67'), findsOneWidget);
+    expect(find.text('Enter'), findsNothing);
+    expect(find.byKey(const ValueKey<String>('temperature.save')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('temperature.copy')));
+    await tester.pumpAndSettle();
   });
 }

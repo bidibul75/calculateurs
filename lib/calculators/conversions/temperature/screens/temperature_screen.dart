@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:calculators/l10n/app_localizations.dart';
+import 'package:calculators/calculators/basic_calc/services/history_export_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
@@ -18,6 +21,9 @@ class TemperatureScreen extends StatefulWidget {
 }
 
 class _TemperatureScreenState extends State<TemperatureScreen> {
+  static const Key _copyButtonKey = ValueKey<String>('temperature.copy');
+  static const Key _saveButtonKey = ValueKey<String>('temperature.save');
+
   final TemperatureController _controller = TemperatureController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
@@ -57,6 +63,49 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
   Color _getButtonColor(String label) {
     if (label == 'C' || label == '⌫') return Colors.redAccent;
     return _themeManager.buttonGroupColor;
+  }
+
+  String _buildTemperatureReport() {
+    final state = _controller.state;
+    return [
+      '${AppLocalizations.of(context).temperatureLabelCelsius}: ${state.celsius}',
+      '${AppLocalizations.of(context).temperatureLabelFahrenheit}: ${state.fahrenheit}',
+      '${AppLocalizations.of(context).temperatureLabelKelvin}: ${state.kelvin}',
+      '${AppLocalizations.of(context).temperatureLabelRankine}: ${state.rankine}',
+    ].join('\n');
+  }
+
+  void _showTemperatureSnackBar(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _copyTemperatureToClipboard(AppLocalizations l10n) async {
+    await Clipboard.setData(ClipboardData(text: _buildTemperatureReport()));
+    _showTemperatureSnackBar(l10n.basicHistoryCopied);
+  }
+
+  Future<void> _saveTemperatureToFile(AppLocalizations l10n) async {
+    final content = _buildTemperatureReport();
+
+    if (!isHistoryFileExportSupported) {
+      _showTemperatureSnackBar(l10n.basicHistoryExportUnsupported);
+      return;
+    }
+
+    try {
+      final filePath = await exportHistoryToTextFile(content);
+      if (filePath == null || filePath.isEmpty) {
+        _showTemperatureSnackBar(l10n.basicHistoryExportError);
+        return;
+      }
+      _showTemperatureSnackBar(l10n.basicHistoryExported(filePath));
+    } catch (_) {
+      _showTemperatureSnackBar(l10n.basicHistoryExportError);
+    }
   }
 
   Widget _buildFieldCard(String label, String value, TemperatureScale scale) {
@@ -110,15 +159,15 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     switch (character) {
       case '.':
       case ',':
-    return symbols.decimalSep;
+        return symbols.decimalSep;
       case '-':
-    return '-';
+        return '-';
       case 'c':
       case 'C':
       case '\x1B':
-    return 'C';
+        return 'C';
       default:
-    return null;
+        return null;
     }
   }
 
@@ -129,11 +178,6 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
 
     final LogicalKeyboardKey key = event.logicalKey;
     final String keyLabel = key.keyLabel;
-
-    if (key == LogicalKeyboardKey.enter || key == LogicalKeyboardKey.numpadEnter) {
-      _controller.onButtonPressed(TemperatureController.actionEnter);
-      return KeyEventResult.handled;
-    }
 
     if (key == LogicalKeyboardKey.backspace) {
       _controller.onButtonPressed('⌫');
@@ -209,39 +253,6 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     );
   }
 
-  Widget _buildEnterButton(String label) {
-    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
-    final EdgeInsets buttonPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
-        : const EdgeInsets.all(6.0);
-    final EdgeInsets contentPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
-        : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 18 : 20;
-
-    return Padding(
-      padding: buttonPadding,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          foregroundColor: _themeManager.buttonTextColor,
-          elevation: 6,
-          shadowColor: Colors.black.withAlpha(120),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-          ),
-          padding: contentPadding,
-        ),
-        onPressed: () {
-          _controller.onButtonPressed(TemperatureController.actionEnter);
-          _requestKeyboardFocus();
-        },
-        child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = _controller.state;
@@ -286,6 +297,28 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        key: _copyButtonKey,
+                                        onPressed: () => unawaited(_copyTemperatureToClipboard(l10n)),
+                                        tooltip: l10n.basicHistoryCopy,
+                                        icon: const Icon(Icons.content_copy_outlined),
+                                        color: _themeManager.displayTextColor,
+                                      ),
+                                      IconButton(
+                                        key: _saveButtonKey,
+                                        onPressed: () => unawaited(_saveTemperatureToFile(l10n)),
+                                        tooltip: l10n.basicHistorySave,
+                                        icon: const Icon(Icons.save_alt_outlined),
+                                        color: _themeManager.displayTextColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 _buildFieldCard(l10n.temperatureLabelCelsius, state.celsius, TemperatureScale.celsius),
                                 const SizedBox(height: 12),
                                 _buildFieldCard(l10n.temperatureLabelFahrenheit, state.fahrenheit, TemperatureScale.fahrenheit),
@@ -327,7 +360,6 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                                     ),
                                   ),
                                 ),
-                                Expanded(flex: 1, child: _buildEnterButton(l10n.bmiActionEnter)),
                               ],
                             ),
                           ),
