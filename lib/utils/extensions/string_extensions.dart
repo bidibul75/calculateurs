@@ -309,4 +309,24 @@ extension StringExtensions on String {
     );
     return substring(0, pos) + s + substring(pos);
   }
+
+  /// Localize input along key tap
+  String realTimeL10n (String char, String decimalSep){
+    if (char == decimalSep && endsWith(decimalSep)) {
+      return this;
+    }
+
+    if (char == decimalSep && this == '0') {
+      return '0$char';
+    } else if (this == '0' && char != decimalSep) {
+      return char;
+    } else {
+      if (char == decimalSep) {
+        return this + char;
+      } else {
+        return (toCleanMathString + char).format;
+      }
+    }
+  }
+
 }

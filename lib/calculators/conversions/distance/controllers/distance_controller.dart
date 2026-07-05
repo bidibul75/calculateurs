@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import '../../../../utils/i18n/local_number_symbols.dart';
 import '../models/distance_state.dart';
 import '../services/distance_logic.dart';
+import 'package:calculators/utils/extensions/string_extensions.dart';
+
 
 /// Controller handling user input and state updates for the distance converter.
 class DistanceController extends ChangeNotifier {
@@ -61,17 +63,7 @@ class DistanceController extends ChangeNotifier {
     final current = _state.currentInput;
     final String nextInput;
 
-    if (char == _decimalSeparator && current.contains(_decimalSeparator)) {
-      return;
-    }
-
-    if (char == _decimalSeparator && current == '0') {
-      nextInput = '0$char';
-    } else if (current == '0' && char != _decimalSeparator) {
-      nextInput = char;
-    } else {
-      nextInput = current + char;
-    }
+    nextInput = current.realTimeL10n(char, _decimalSeparator);
 
     _state = _state.copyWith(currentInput: nextInput);
     _recalculateFromCurrentInput();

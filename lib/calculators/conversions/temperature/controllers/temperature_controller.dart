@@ -5,10 +5,9 @@ import 'package:get_it/get_it.dart';
 
 import '../models/temperature_state.dart';
 import '../services/temperature_logic.dart';
+import 'package:calculators/utils/extensions/string_extensions.dart';
 
 class TemperatureController extends ChangeNotifier {
-  static const String actionEnter = 'action_enter';
-
   TemperatureState _state = const TemperatureState();
 
   TemperatureState get state => _state;
@@ -28,8 +27,6 @@ class TemperatureController extends ChangeNotifier {
       _clear();
     } else if (label == '⌫') {
       _backspace();
-    } else if (label == actionEnter) {
-      _cycleActiveScale();
     } else {
       _appendToInput(label);
     }
@@ -54,30 +51,10 @@ class TemperatureController extends ChangeNotifier {
     final current = _state.currentInput;
     final String nextInput;
 
-    if (char == _decimalSeparator && current.contains(_decimalSeparator)) {
-      return;
-    }
-
-    if (char == _decimalSeparator && current == '0') {
-      nextInput = '0$char';
-    } else if (current == '0' && char != _decimalSeparator) {
-      nextInput = char;
-    } else {
-      nextInput = current + char;
-    }
+    nextInput = current.realTimeL10n(char, _decimalSeparator);
 
     _state = _state.copyWith(currentInput: nextInput);
     _recalculateFromCurrentInput();
-  }
-
-  void _cycleActiveScale() {
-    final nextScale = switch (_state.activeScale) {
-      TemperatureScale.celsius => TemperatureScale.fahrenheit,
-      TemperatureScale.fahrenheit => TemperatureScale.kelvin,
-      TemperatureScale.kelvin => TemperatureScale.rankine,
-      TemperatureScale.rankine => TemperatureScale.celsius,
-    };
-    onScaleSelected(nextScale);
   }
 
   void _recalculateFromCurrentInput() {

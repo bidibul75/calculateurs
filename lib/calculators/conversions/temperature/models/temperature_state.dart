@@ -1,10 +1,5 @@
 // lib/calculators/conversions/temperature/models/temperature_state.dart
-enum TemperatureScale {
-  celsius,
-  fahrenheit,
-  kelvin,
-  rankine,
-}
+enum TemperatureScale { celsius, fahrenheit, kelvin, rankine }
 
 class TemperatureState {
   final String currentInput;
