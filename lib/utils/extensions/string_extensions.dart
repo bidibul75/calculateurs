@@ -313,7 +313,7 @@ extension StringExtensions on String {
   /// Localize input along key tap
   String realTimeL10n(String char, String decimalSep) {
     // Prevents from entering too long inputs
-    if (length > 21) return this;
+    if (length > 16) return this;
 
     // Takes into account special beahavior to have with "0" numbers
     if (this == '0') return char == decimalSep ? '0$char' : char;
