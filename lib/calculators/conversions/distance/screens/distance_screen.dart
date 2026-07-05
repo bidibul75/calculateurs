@@ -272,7 +272,7 @@ class _DistanceScreenState extends State<DistanceScreen> {
     final double bottomInset = MediaQuery.paddingOf(context).bottom;
     final bool isDesktopLike = mediaSize.width >= 768;
     final bool isPhone = mediaSize.width < 600;
-    final double keyboardBottomPadding = isPhone ? (bottomInset + 8.0).clamp(8.0, 24.0).toDouble() : 50.0;
+    final double keyboardBottomPadding = isPhone ? (bottomInset + 8.0).clamp(8.0, 38.0).toDouble() : 50.0;
     final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.36 : (isPhone ? 0.36 : 0.50)))
         .clamp(isDesktopLike ? 260.0 : (isPhone ? 215.0 : 300.0), isDesktopLike ? 430.0 : 560.0)
         .toDouble();

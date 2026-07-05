@@ -1,7 +1,5 @@
 // lib/calculators/conversions/temperature/services/temperature_logic.dart
 import 'package:calculators/utils/extensions/string_extensions.dart';
-import 'package:calculators/utils/i18n/local_number_symbols.dart';
-import 'package:get_it/get_it.dart';
 
 import '../models/temperature_state.dart';
 
@@ -22,7 +20,6 @@ class TemperatureValues {
 class TemperatureLogic {
 
   static TemperatureValues convert(String input, TemperatureScale scale) {
-    final symbols = GetIt.I<LocalNumberSymbols>();
     final normalizedInput = input.toCleanMathString;
     final value = double.tryParse(normalizedInput) ?? 0.0;
 

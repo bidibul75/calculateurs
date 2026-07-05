@@ -314,19 +314,14 @@ extension StringExtensions on String {
   String realTimeL10n(String char, String decimalSep) {
     // Prevents from entering too long inputs
     if (length > 21) return this;
-    // Avoids double decimal separators
-    if (char == decimalSep && endsWith(decimalSep)) return this;
 
-    if (char == decimalSep && this == '0') {
-      return '0$char';
-    } else if (this == '0' && char != decimalSep) {
-      return char;
-    } else {
-      if (char == decimalSep) {
-        return this + char;
-      } else {
-        return (toCleanMathString + char).format;
-      }
-    }
+    // Takes into account special beahavior to have with "0" numbers
+    if (this == '0') return char == decimalSep ? '0$char' : char;
+
+    // Avoids double decimal separators else returns non formatted number + decimal separator
+    if (char == decimalSep) return contains(decimalSep) ? this : this + char;
+
+    // Applies localized format only if the new character is added to a non-decimal number
+    return contains(decimalSep) ? this + char : (toCleanMathString + char).format;
   }
 }
