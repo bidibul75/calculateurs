@@ -311,10 +311,11 @@ extension StringExtensions on String {
   }
 
   /// Localize input along key tap
-  String realTimeL10n (String char, String decimalSep){
-    if (char == decimalSep && endsWith(decimalSep)) {
-      return this;
-    }
+  String realTimeL10n(String char, String decimalSep) {
+    // Prevents from entering too long inputs
+    if (length > 21) return this;
+    // Avoids double decimal separators
+    if (char == decimalSep && endsWith(decimalSep)) return this;
 
     if (char == decimalSep && this == '0') {
       return '0$char';
@@ -328,5 +329,4 @@ extension StringExtensions on String {
       }
     }
   }
-
 }
