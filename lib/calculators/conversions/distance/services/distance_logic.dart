@@ -37,16 +37,16 @@ class DistanceLogic {
   // -------------------------------------------------------------------------
 
   /// Metres per kilometre.
-  static Rational _M_PER_KM = Rational(BigInt.from(1000));
+  static final Rational _mPerKm = Rational(BigInt.from(1000));
 
   /// Metres per mile (international survey foot, exactly 1609.344 m).
-  static Rational _M_PER_MILE = Rational.parse('1609.344');
+  static final Rational _mPerMile = Rational.parse('1609.344');
 
   /// Metres per foot (exactly 0.3048 m).
-  static Rational _M_PER_FOOT = Rational.parse('0.3048');
+  static final Rational _mPerFoot = Rational.parse('0.3048');
 
   /// Metres per inch (exactly 0.0254 m = 2.54 cm).
-  static final Rational _M_PER_INCH = Rational.parse('0.0254');
+  static final Rational _mPerInch = Rational.parse('0.0254');
 
   /// Converts [input] (a string in the given [scale]) to all five distance
   /// units.  The field matching [scale] is returned as-is (the raw user input);
@@ -65,17 +65,17 @@ class DistanceLogic {
     // ---- Pivot: convert the source value to metres ----
     final metersIn = switch (scale) {
       DistanceScale.meter => rationalVal,
-      DistanceScale.kilometer => rationalVal * _M_PER_KM,
-      DistanceScale.mile => rationalVal * _M_PER_MILE,
-      DistanceScale.foot => rationalVal * _M_PER_FOOT,
-      DistanceScale.inch => rationalVal * _M_PER_INCH,
+      DistanceScale.kilometer => rationalVal * _mPerKm,
+      DistanceScale.mile => rationalVal * _mPerMile,
+      DistanceScale.foot => rationalVal * _mPerFoot,
+      DistanceScale.inch => rationalVal * _mPerInch,
     };
 
     // ---- Compute the four non-active units from the metre pivot ----
-    final km = metersIn / _M_PER_KM;
-    final miles = metersIn / _M_PER_MILE;
-    final feet = metersIn / _M_PER_FOOT;
-    final inches = metersIn / _M_PER_INCH;
+    final km = metersIn / _mPerKm;
+    final miles = metersIn / _mPerMile;
+    final feet = metersIn / _mPerFoot;
+    final inches = metersIn / _mPerInch;
 
     // Convert to Decimal for display; Rational.toDecimal() with 10-digit
     // scale preserves sub-millimetre precision for all common use cases.
