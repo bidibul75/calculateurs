@@ -20,9 +20,9 @@ class TemperatureValues {
 }
 
 class TemperatureLogic {
-  static final Rational _kRational9 = Rational.parse('9');
-  static final Rational _kRational5 = Rational.parse('5');
-  static final Rational _kRational32 = Rational.parse('32');
+  static final Rational _kRational9 = Rational.fromInt(9);
+  static final Rational _kRational5 = Rational.fromInt(5);
+  static final Rational _kRational32 = Rational.fromInt(32);
   static final Rational _kRational27315 = Rational.parse('273.15');
   static final Rational _kRational45967 = Rational.parse('459.67');
   static final Rational _kRational49167 = Rational.parse('491.67');
