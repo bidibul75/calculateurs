@@ -315,7 +315,7 @@ extension StringExtensions on String {
     // Prevents from entering too long inputs
     if (length > 16) return this;
 
-    // Takes into account special beahavior to have with "0" numbers
+    // Takes into account special behavior to have with "0" numbers
     if (this == '0') return char == decimalSep ? '0$char' : char;
 
     // Avoids double decimal separators else returns non formatted number + decimal separator
@@ -323,5 +323,28 @@ extension StringExtensions on String {
 
     // Applies localized format only if the new character is added to a non-decimal number
     return contains(decimalSep) ? this + char : (toCleanMathString + char).format;
+  }
+
+  /// Scientific display for big numbers only
+  /// Warning : returns a toCleanMathString number
+  /// Warning : only use it for result display because of lose of precision
+  String get scientificDisplay {
+    final int maxNumbers = 10;
+    final String n = toCleanMathString;
+    if (n.length <= maxNumbers) return this;
+    return double.parse(n).toStringAsPrecision(maxNumbers).removeNonSignificantZeros;
+  }
+
+  /// Removes non significant 0 in decimal numbers
+  /// Warning : returns a toCleanMathString number
+  String get removeNonSignificantZeros {
+    if (isEmpty) return this;
+    String n = toCleanMathString;
+    if (!n.contains('.')) return n;
+    for (int i = (n.length - 1); i >= 0; i--) {
+      if (!(n[i] == "0" || n[i] == ".")) return n;
+      n = n.substring(0, i);
+    }
+    return n;
   }
 }
