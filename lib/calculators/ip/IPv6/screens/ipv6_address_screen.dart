@@ -548,7 +548,7 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                             return FadeTransition(
                               opacity: animation,
                               child: SizeTransition(
-                                axisAlignment: -1,
+                                alignment: Alignment.topCenter,
                                 sizeFactor: animation,
                                 child: child,
                               ),

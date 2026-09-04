@@ -592,7 +592,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           transitionBuilder: (child, animation) {
                             return FadeTransition(
                               opacity: animation,
-                              child: SizeTransition(axisAlignment: -1, sizeFactor: animation, child: child),
+                              child: SizeTransition(alignment: Alignment.topCenter, sizeFactor: animation, child: child),
                             );
                           },
                           child: showMobileKeypad
