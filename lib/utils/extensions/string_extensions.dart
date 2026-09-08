@@ -147,9 +147,7 @@ extension StringExtensions on String {
 
   /// Determines if a String represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool get isANumber {
-    return !(double.tryParse(this) == null);
-  }
+  bool get isANumber => !(double.tryParse(this) == null);
 
   /// Determines if a string represents a double (.0 excluded)
   /// Beware ! works fine only with unformatted numbers
@@ -160,9 +158,7 @@ extension StringExtensions on String {
 
   /// Determines if a String does NOT represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool get isNotANumber {
-    return !isANumber;
-  }
+  bool get isNotANumber => !isANumber;
 
   /// Determines if the string represents a number or a single expression with a single operator ( for instance 3² or √(1+2) ).
   bool get hasAGlobalOperator {
@@ -332,12 +328,12 @@ extension StringExtensions on String {
     final int maxNumbers = 10;
     final String n = toCleanMathString;
     if (n.length <= maxNumbers) return this;
-    return double.parse(n).toStringAsPrecision(maxNumbers).removeNonSignificantZeros;
+    return double.parse(n).toStringAsPrecision(maxNumbers).removeTrailingZeros;
   }
 
   /// Removes non significant 0 in decimal numbers
   /// Warning : returns a toCleanMathString number
-  String get removeNonSignificantZeros {
+  String get removeTrailingZeros {
     if (isEmpty) return this;
     String n = toCleanMathString;
     if (!n.contains('.')) return n;
