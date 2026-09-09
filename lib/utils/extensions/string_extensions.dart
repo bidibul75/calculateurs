@@ -328,14 +328,14 @@ extension StringExtensions on String {
     final int maxNumbers = 10;
     final String n = toCleanMathString;
     if (n.length <= maxNumbers) return this;
-    return double.parse(n).toStringAsPrecision(maxNumbers).removeTrailingZeros;
+    return double.parse(n).toStringAsPrecision(maxNumbers).removeTrailingZeros(isCleanMathString: true);
   }
 
   /// Removes non significant 0 in decimal numbers
   /// Warning : returns a toCleanMathString number
-  String get removeTrailingZeros {
+  String removeTrailingZeros ({bool isCleanMathString = false}){
     if (isEmpty) return this;
-    String n = toCleanMathString;
+    String n=isCleanMathString? this:toCleanMathString;
     if (!n.contains('.')) return n;
     for (int i = (n.length - 1); i >= 0; i--) {
       if (!(n[i] == "0" || n[i] == ".")) return n;

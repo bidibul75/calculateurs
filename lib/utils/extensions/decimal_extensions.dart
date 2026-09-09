@@ -66,9 +66,10 @@ extension DecimalFormatting on Decimal {
     final useScientific = exponent >= n || exponent <= -n;
 
     final String result = useScientific
-        ? '${mantissa.removeTrailingZeros}E$expPart'
-        : absVal.toStringAsPrecision(n);
+        ? '${mantissa.removeTrailingZeros(isCleanMathString: true)}E$expPart'
+        : absVal.toStringAsPrecision(n).removeTrailingZeros(isCleanMathString: true);
 
     return negative ? '-$result' : result;
   }
+
 }
