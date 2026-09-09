@@ -1,4 +1,4 @@
-# CALCULATORS
+# CALCULATION CENTER
 
 ## Présentation
 
@@ -15,13 +15,14 @@ Côté technique, le projet est développé avec Flutter afin d’offrir une exp
 ## Fonctionnalités
 Détection automatique de la langue du navigateur / du smartphone (français, anglais, espagnol, italien, portugais, roumain, allemand, polonais, néerlandais, turc).
 
-Thèmes configurables.
+Thèmes configurables persistants.
 
 Affichage persistant des données dans tous les calculateurs.
 
-Voici une liste des fonctionnalités actuellement présentes (ce nombre est amené à augmenter progressivement) :
+Voici une liste des calculateurs actuellement présents :
 
 ### Calculatrice
+
 Affichage des nombres selon le format de la langue détectée (par exemple 1 000,5 en langue française et 1,000.5 en langue anglaise).
 
 Recherche de précision avec l'utilisation des librairies Rational et Decimal.
@@ -37,11 +38,13 @@ Historique des calculs persistant et récupérable.
 Copie dans le presse-papier ou enregistrement local de l’historique.
 
 ### Calculs professionnels : adresses IP
+
 Sous-réseaux et super-réseaux IPv4 et IPv6.
 
 Détection de la position des plages d’adresses entre elles : incluses / chevauchantes / contigües / non contigües.
 
 ### Calcul grand public : IMC
+
 Calcul de l’Indice de Masse Corporelle.
 
 Indication de la catégorie d’IMC.
