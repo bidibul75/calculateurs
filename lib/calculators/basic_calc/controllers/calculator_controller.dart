@@ -225,7 +225,7 @@ class CalculatorController extends ChangeNotifier {
         _setLastAction(_LastAction.equalOrMemory);
         if (_state.memory != Rational.zero) {
           // Retrieve the formatted memory
-          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toPreciseFormattedString;
+          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toSciPreciseFormattedString();
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString, // Clean for internal calculation
@@ -432,7 +432,8 @@ class CalculatorController extends ChangeNotifier {
       String currentHist = _state.history.trim();
       if (currentHist.isNotEmpty) {
         String base = _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1;
-        String formattedBase = Decimal.tryParse(base)?.toPreciseFormattedString ?? base;
+        print ("base : $base");
+        String formattedBase = Decimal.tryParse(base) == null? base: Decimal.parse(base).toSciPreciseFormattedString();
         String newHistory = "${formattedBase.formatRound()} $canonicalOperator ";
         _state = _state.copyWith(operation: canonicalOperator, history: newHistory);
       }
@@ -730,12 +731,12 @@ class CalculatorController extends ChangeNotifier {
     // don't hit the Rational.toDecimal assertion for non-finite rationals.
     try {
       final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
-      return "M = ${Decimal.parse(dec.toString()).toPreciseFormattedString}";
+      return "M = ${dec.toSciPreciseFormattedString()}";
     } catch (_) {
       // Fallback to a smaller scale, then to the rational textual form.
       try {
         final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: 10);
-        return "M = ${Decimal.parse(dec.toString()).toPreciseFormattedString}";
+        return "M = ${dec.toSciPreciseFormattedString()}";
       } catch (_) {
         return "M = ${_state.memory.toString()}";
       }
