@@ -73,7 +73,7 @@ extension DecimalFormatting on Decimal {
   }
 
   /// Converts scientific notation AND non-scientific notation numbers into l10n numbers
-  String toSciPreciseFormattedString ({int n = 10}) {
+  String toSciPreciseFormattedString ({int n = 15}) {
     String sciValue = formatResult(n: n);
     if (!sciValue.contains('E')) return Decimal.parse(sciValue).toPreciseFormattedString;
     Decimal part1 = Decimal.parse(sciValue.split('E')[0]);

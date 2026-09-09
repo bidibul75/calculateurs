@@ -161,7 +161,7 @@ class CalculatorLogic {
             } else {
               final powValue = math.pow(double.parse(num1), double.parse(num2)).toDouble();
               if (!powValue.isFinite || powValue.isNaN) return "Error exp";
-              return Decimal.parse(powValue.toString()).toPreciseFormattedString;
+              return Decimal.parse(powValue.toString()).toSciPreciseFormattedString();
             }
           } catch (e) {
             return "Error exp";
@@ -172,8 +172,8 @@ class CalculatorLogic {
       }
 
       // Keep extra internal precision, then let formatRound decide if an approximation marker is needed.
-      print(result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString);
-      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString;
+      print(result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString());
+      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString();
     } catch (e) {
       return "Error end";
     }
@@ -221,7 +221,7 @@ class CalculatorLogic {
         case "√":
           final exactSqrt = tryExactSqrtRational(r);
           if (exactSqrt != null) {
-            return exactSqrt.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString;
+            return exactSqrt.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString();
           }
           // Try to use built-in sqrt first for rational results.
           // If input is irrational, fall back to Newton-Raphson for precision.
@@ -240,7 +240,7 @@ class CalculatorLogic {
               if ((scaled - roundedScaled).abs() < 1e-9 && (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
                 // Rational result: use the double result converted to Decimal
                 // This handles both integers (âˆš9 = 3) and decimals (âˆš6.25 = 2.5)
-                return Decimal.parse(sqrtDouble.toString()).toPreciseFormattedString;
+                return Decimal.parse(sqrtDouble.toString()).toSciPreciseFormattedString();
               }
             }
           } else {
@@ -249,7 +249,7 @@ class CalculatorLogic {
 
           // Fall back to Newton-Raphson for irrational/complex cases
           final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
-          return sqrtResult.toPreciseFormattedString;
+          return sqrtResult.toSciPreciseFormattedString();
         case "%":
           result = r / Rational.fromInt(100);
           break;
@@ -257,7 +257,7 @@ class CalculatorLogic {
           return "Error";
       }
 
-      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toPreciseFormattedString;
+      return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString();
     } catch (e) {
       return "Error";
     }

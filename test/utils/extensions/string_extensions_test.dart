@@ -274,11 +274,4 @@ void main() {
     });
   });
 
-  group('StringExtensions.scientific display', () {
-    test('conversion into scientific display', () {
-      expect('1234.000010000'.scientificDisplay, '1234.00001');
-      expect('1234000010000'.scientificDisplay, '1.234000010e+12');
-      expect('1234.000100005'.scientificDisplay, '1234.0001');
-    });
-  });
 }

@@ -251,7 +251,7 @@ extension StringExtensions on String {
     try {
       if (isNotANumber) return this;
       final value = Rational.parse(this).toDecimal(scaleOnInfinitePrecision: 10);
-      return DecimalFormatting(value).toPreciseFormattedString;
+      return DecimalFormatting(value).toSciPreciseFormattedString();
     } catch (e) {
       return this;
     }
@@ -319,16 +319,6 @@ extension StringExtensions on String {
 
     // Applies localized format only if the new character is added to a non-decimal number
     return contains(decimalSep) ? this + char : (toCleanMathString + char).format;
-  }
-
-  /// Scientific display for big numbers only
-  /// Warning : returns a toCleanMathString number
-  /// Warning : only use it for result display because of lose of precision
-  String get scientificDisplay {
-    final int maxNumbers = 10;
-    final String n = toCleanMathString;
-    if (n.length <= maxNumbers) return this;
-    return double.parse(n).toStringAsPrecision(maxNumbers).removeTrailingZeros(isCleanMathString: true);
   }
 
   /// Removes non significant 0 in decimal numbers
