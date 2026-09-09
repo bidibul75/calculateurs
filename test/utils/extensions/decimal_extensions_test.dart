@@ -19,10 +19,36 @@ void main() {
 
   group('DecimalExtensions.formatResult', () {
     test('formats result in scientific format if necessary', () {
-      expect(Decimal.parse('12345678901234').formatResult(Decimal.parse('12345678901234'), n: 10), equals('1.23456789E+13'));
-      expect(Decimal.parse('0.0000000012345678901234').formatResult(Decimal.parse('0.0000000012345678901234'), n: 9), equals('1.23456789E-9'));
-      expect(Decimal.parse('1.2345678901234').formatResult(Decimal.parse('1.2345678901234'), n: 10), equals('1.23456789'));
+      expect(
+        Decimal.parse('12345678901234').formatResult(Decimal.parse('12345678901234'), n: 10),
+        equals('1.23456789E+13'),
+      );
+      expect(
+        Decimal.parse('0.0000000012345678901234').formatResult(Decimal.parse('0.0000000012345678901234'), n: 9),
+        equals('1.23456789E-9'),
+      );
+      expect(
+        Decimal.parse('1.2345678901234').formatResult(Decimal.parse('1.2345678901234'), n: 10),
+        equals('1.23456789'),
+      );
       expect(Decimal.parse('12345678').formatResult(Decimal.parse('12345678'), n: 10), equals('12345678'));
+    });
+  });
+
+  group('DecimalExtensions.toSciPreciseFormattedString', () {
+    test('converts scientific notation to localized format', () {
+      expect(
+        Decimal.parse('1.23456789E+13').toSciPreciseFormattedString(Decimal.parse('1.23456789E+13'), n: 10),
+        equals('1.23456789E+13'),
+      );
+      expect(
+        Decimal.parse('1.23456789E-9').toSciPreciseFormattedString(Decimal.parse('1.23456789E-9'), n: 9),
+        equals('1.23456789E-9'),
+      );
+      expect(
+        Decimal.parse('123456789').toSciPreciseFormattedString(Decimal.parse('123456789'), n: 9),
+        equals('123,456,789'),
+      );
     });
   });
 }
