@@ -147,9 +147,7 @@ extension StringExtensions on String {
 
   /// Determines if a String represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool get isANumber {
-    return !(double.tryParse(this) == null);
-  }
+  bool get isANumber => !(double.tryParse(this) == null);
 
   /// Determines if a string represents a double (.0 excluded)
   /// Beware ! works fine only with unformatted numbers
@@ -160,9 +158,7 @@ extension StringExtensions on String {
 
   /// Determines if a String does NOT represents a number
   /// Beware ! works fine only with unformatted numbers
-  bool get isNotANumber {
-    return !isANumber;
-  }
+  bool get isNotANumber => !isANumber;
 
   /// Determines if the string represents a number or a single expression with a single operator ( for instance 3² or √(1+2) ).
   bool get hasAGlobalOperator {
@@ -255,7 +251,7 @@ extension StringExtensions on String {
     try {
       if (isNotANumber) return this;
       final value = Rational.parse(this).toDecimal(scaleOnInfinitePrecision: 10);
-      return DecimalFormatting(value).toPreciseFormattedString;
+      return DecimalFormatting(value).toSciPreciseFormattedString();
     } catch (e) {
       return this;
     }
@@ -315,7 +311,7 @@ extension StringExtensions on String {
     // Prevents from entering too long inputs
     if (length > 16) return this;
 
-    // Takes into account special beahavior to have with "0" numbers
+    // Takes into account special behavior to have with "0" numbers
     if (this == '0') return char == decimalSep ? '0$char' : char;
 
     // Avoids double decimal separators else returns non formatted number + decimal separator
@@ -323,5 +319,18 @@ extension StringExtensions on String {
 
     // Applies localized format only if the new character is added to a non-decimal number
     return contains(decimalSep) ? this + char : (toCleanMathString + char).format;
+  }
+
+  /// Removes non significant 0 in decimal numbers
+  /// Warning : returns a toCleanMathString number
+  String removeTrailingZeros ({bool isCleanMathString = false}){
+    if (isEmpty) return this;
+    String n=isCleanMathString? this:toCleanMathString;
+    if (!n.contains('.')) return n;
+    for (int i = (n.length - 1); i >= 0; i--) {
+      if (!(n[i] == "0" || n[i] == ".")) return n;
+      n = n.substring(0, i);
+    }
+    return n;
   }
 }

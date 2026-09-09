@@ -389,7 +389,7 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
       '${l10n.ipv6InfoExpandedAddress}: ${address.address6WithoutSuffixListString.join(":")}',
       '${l10n.ipv6InfoSimplifiedNetwork}: $simplifiedNetwork',
       '${l10n.ipv6InfoNetwork}: ${address.networkAdress6.join(":")}',
-      '${l10n.ipv6InfoTotalAddresses}: ${Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString}',
+      '${l10n.ipv6InfoTotalAddresses}: ${Decimal.parse(address.numberOfAddresses.toString()).toSciPreciseFormattedString()}',
       '${l10n.ipv6InfoNetworkBinary}: ${AddressIPV6.hexListToBinaryString(address.networkAdress6)}',
     ];
 
@@ -462,7 +462,7 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
             const Divider(),
             _buildInfoRow(l10n.ipv6InfoSimplifiedNetwork, simplifiedNetwork),
             _buildInfoRow(l10n.ipv6InfoNetwork, address.networkAdress6.join(':')),
-            _buildInfoRow(l10n.ipv6InfoTotalAddresses, Decimal.parse(address.numberOfAddresses.toString()).toPreciseFormattedString),
+            _buildInfoRow(l10n.ipv6InfoTotalAddresses, Decimal.parse(address.numberOfAddresses.toString()).toSciPreciseFormattedString()),
             _buildInfoRow(l10n.ipv6InfoNetworkBinary, AddressIPV6.hexListToBinaryString(address.networkAdress6)),
             const Divider(),
             _buildResultActions(
@@ -548,7 +548,7 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                             return FadeTransition(
                               opacity: animation,
                               child: SizeTransition(
-                                axisAlignment: -1,
+                                alignment: Alignment.topCenter,
                                 sizeFactor: animation,
                                 child: child,
                               ),

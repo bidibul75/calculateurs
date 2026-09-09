@@ -18,12 +18,7 @@ void main() {
 
   group('StringExtensions.isValidIPv4', () {
     test('returns true for valid IPv4 addresses', () {
-      const valid = <String>[
-        '0.0.0.0',
-        '255.255.255.255',
-        '192.168.1.1',
-        ' 10.0.0.1 ',
-      ];
+      const valid = <String>['0.0.0.0', '255.255.255.255', '192.168.1.1', ' 10.0.0.1 '];
 
       for (final address in valid) {
         expect(address.isValidIPv4, isTrue, reason: 'Should be valid: $address');
@@ -31,14 +26,7 @@ void main() {
     });
 
     test('returns false for invalid IPv4 addresses', () {
-      const invalid = <String>[
-        '256.0.0.1',
-        '192.168.1',
-        '192.168.1.1.1',
-        '192.168.01.1',
-        'a.b.c.d',
-        '',
-      ];
+      const invalid = <String>['256.0.0.1', '192.168.1', '192.168.1.1.1', '192.168.01.1', 'a.b.c.d', ''];
 
       for (final address in invalid) {
         expect(address.isValidIPv4, isFalse, reason: 'Should be invalid: $address');
@@ -168,10 +156,7 @@ void main() {
     });
 
     test('detects valid IPv4-mapped form', () {
-      expect(
-        '0000:0000:0000:0000:0000:FFFF:192.168.10.20'.isValidMappedIPv4,
-        isTrue,
-      );
+      expect('0000:0000:0000:0000:0000:FFFF:192.168.10.20'.isValidMappedIPv4, isTrue);
     });
 
     test('returns false for obsolete or malformed mapped forms', () {
@@ -190,12 +175,7 @@ void main() {
 
   group('StringExtensions.isValidMACAddress', () {
     test('returns true for valid classic MAC formats (Windows/Linux)', () {
-      const validClassic = <String>[
-        'AA:BB:CC:DD:EE:FF',
-        'aa:bb:cc:dd:ee:ff',
-        'AA-BB-CC-DD-EE-FF',
-        'aa-bb-cc-dd-ee-ff',
-      ];
+      const validClassic = <String>['AA:BB:CC:DD:EE:FF', 'aa:bb:cc:dd:ee:ff', 'AA-BB-CC-DD-EE-FF', 'aa-bb-cc-dd-ee-ff'];
 
       for (final mac in validClassic) {
         expect(mac.isValidMACAddress, isTrue, reason: 'Should be valid classic MAC: $mac');
@@ -243,16 +223,16 @@ void main() {
       expect('123456'.removeLastChar, "12345");
       expect('abc'.removeLastChar, "ab");
       expect('a'.removeLastChar, "");
-      });
+    });
   });
 
   group('StringExtensions.roundString', () {
     test('rounds a String reprensenting a number', () {
-      expect('123456'.roundString(limit:5), "123,456");
-      expect('123.456'.roundString(limit:2), "≈ 123.46");
-      expect('1234.499999'.roundString(limit:0), "≈ 1,234");
-      expect('1234.54'.roundString(limit:1), "≈ 1,234.5");
-      expect('1234.56'.roundString(limit:5), "1,234.56");
+      expect('123456'.roundString(limit: 5), "123,456");
+      expect('123.456'.roundString(limit: 2), "≈ 123.46");
+      expect('1234.499999'.roundString(limit: 0), "≈ 1,234");
+      expect('1234.54'.roundString(limit: 1), "≈ 1,234.5");
+      expect('1234.56'.roundString(limit: 5), "1,234.56");
     });
   });
 
@@ -266,8 +246,8 @@ void main() {
 
   group('StringExtensions.formatRound', () {
     test('rounds a String reprensenting a number', () {
-      expect('123456'.formatRound(limit:5), "123,456");
-      expect('10,123.456'.formatRound(limit:2), "≈ 10,123.46");
+      expect('123456'.formatRound(limit: 5), "123,456");
+      expect('10,123.456'.formatRound(limit: 2), "≈ 10,123.46");
     });
   });
 
@@ -293,4 +273,5 @@ void main() {
       expect('10,123.456'.toCleanMathString.isADouble, true);
     });
   });
+
 }

@@ -1,5 +1,6 @@
 // lib/utils/extensions/decimal_extensions.dart
 
+import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
@@ -41,4 +42,45 @@ extension DecimalFormatting on Decimal {
 
     return integerPart;
   }
+
+  /// Tests if a Decimal is negative
+  /// Returns boolean
+  bool get isNegative => this < Decimal.zero;
+
+  /// Exact round at [n] significative figures.
+  /// Turns at 1.23456789E+10 only of the numbers "overflows" n figures.
+  String formatResult({int n = 10}) {
+    if (this == Decimal.zero) return '0';
+
+    final bool negative = isNegative;
+    final Decimal absVal = abs();
+
+    final String sci = absVal.toStringAsExponential(n - 1);
+
+    final int eIndex = sci.indexOf('e');
+    final String mantissa = sci.substring(0, eIndex);   // "1.23456789"
+    final String expPart = sci.substring(eIndex + 1);   // "+10" ou "-5"
+    final int exponent = int.parse(expPart);
+
+    // If too many numbers on the left or too many zeros on yhe right
+    final useScientific = exponent >= n || exponent <= -n;
+
+    final String result = useScientific
+        ? '${mantissa.removeTrailingZeros(isCleanMathString: true)}E$expPart'
+        : absVal.toStringAsPrecision(n).removeTrailingZeros(isCleanMathString: true);
+
+    return negative ? '-$result' : result;
+  }
+
+  /// Converts scientific notation AND non-scientific notation numbers into l10n numbers
+  String toSciPreciseFormattedString ({int n = 15}) {
+    String sciValue = formatResult(n: n);
+    if (!sciValue.contains('E')) return Decimal.parse(sciValue).toPreciseFormattedString;
+    Decimal part1 = Decimal.parse(sciValue.split('E')[0]);
+    Decimal part2 = Decimal.parse(sciValue.split('E')[1]);
+    bool posExp = sciValue.split('E')[1].trim().startsWith('+');
+    // Concatenates localized mantissa and exponent with eventual + sign
+    return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toPreciseFormattedString}';
+  }
+
 }

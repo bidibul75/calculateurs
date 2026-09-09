@@ -421,8 +421,8 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       '${l10n.ipv4InfoBroadcast}: ${address.addressBroadcast}',
       '${l10n.ipv4InfoFirstHost}: ${_hostDisplay(address.addressAvailableFirstOne)}',
       '${l10n.ipv4InfoLastHost}: ${_hostDisplay(address.addressAvailableLastOne)}',
-      '${l10n.ipv4InfoTotalAddresses}: ${Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString}',
-      '${l10n.ipv4InfoUsableHosts}: ${Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString}',
+      '${l10n.ipv4InfoTotalAddresses}: ${Decimal.parse(address.numberAvailableAddresses.toString()).toSciPreciseFormattedString()}',
+      '${l10n.ipv4InfoUsableHosts}: ${Decimal.parse(address.numberUsableAddresses.toString()).toSciPreciseFormattedString()}',
       '${l10n.ipv4InfoNetworkBinary}: ${address.addressNetworkStringBinary}',
       '${l10n.ipv4InfoBroadcastBinary}: ${address.addressBroadcastStringBinary}',
     ];
@@ -499,11 +499,11 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
             const Divider(),
             _buildInfoRow(
               l10n.ipv4InfoTotalAddresses,
-              Decimal.parse(address.numberAvailableAddresses.toString()).toPreciseFormattedString,
+              Decimal.parse(address.numberAvailableAddresses.toString()).toSciPreciseFormattedString(),
             ),
             _buildInfoRow(
               l10n.ipv4InfoUsableHosts,
-              Decimal.parse(address.numberUsableAddresses.toString()).toPreciseFormattedString,
+              Decimal.parse(address.numberUsableAddresses.toString()).toSciPreciseFormattedString(),
             ),
             const Divider(),
             _buildInfoRow(l10n.ipv4InfoNetworkBinary, address.addressNetworkStringBinary),
@@ -592,7 +592,7 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           transitionBuilder: (child, animation) {
                             return FadeTransition(
                               opacity: animation,
-                              child: SizeTransition(axisAlignment: -1, sizeFactor: animation, child: child),
+                              child: SizeTransition(alignment: Alignment.topCenter, sizeFactor: animation, child: child),
                             );
                           },
                           child: showMobileKeypad

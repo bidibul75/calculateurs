@@ -186,6 +186,7 @@ class MenuDrawer extends StatelessWidget {
             for (final module in healthModules)
               ListTile(
                 contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
                 title: Text(module.label),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
@@ -202,6 +203,7 @@ class MenuDrawer extends StatelessWidget {
             for (final module in conversionModules)
               ListTile(
                 contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
                 title: Text(module.label),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
@@ -218,6 +220,7 @@ class MenuDrawer extends StatelessWidget {
             for (final module in ipToolsModules)
               ListTile(
                 contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
                 title: Text(module.label),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
