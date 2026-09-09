@@ -49,11 +49,11 @@ extension DecimalFormatting on Decimal {
 
   /// Exact round at [n] significative figures.
   /// Turns at 1.23456789E+10 only of the numbers "overflows" n figures.
-  String formatResult(Decimal value, {int n = 10}) {
-    if (value == Decimal.zero) return '0';
+  String formatResult({int n = 10}) {
+    if (this == Decimal.zero) return '0';
 
-    final bool negative = value.isNegative;
-    final Decimal absVal = value.abs();
+    final bool negative = isNegative;
+    final Decimal absVal = abs();
 
     final String sci = absVal.toStringAsExponential(n - 1);
 
@@ -73,8 +73,8 @@ extension DecimalFormatting on Decimal {
   }
 
   /// Converts scientific notation AND non-scientific notation numbers into l10n numbers
-  String toSciPreciseFormattedString (Decimal value, {int n = 10}) {
-    String sciValue = formatResult(value, n: n);
+  String toSciPreciseFormattedString ({int n = 10}) {
+    String sciValue = formatResult(n: n);
     if (!sciValue.contains('E')) return Decimal.parse(sciValue).toPreciseFormattedString;
     Decimal part1 = Decimal.parse(sciValue.split('E')[0]);
     Decimal part2 = Decimal.parse(sciValue.split('E')[1]);
