@@ -12,7 +12,7 @@ L’objectif est de faire de l’application et du site web une plateforme vivan
 
 Côté technique, le projet est développé avec Flutter afin d’offrir une expérience moderne, performante et multiplateforme. Il sert aussi de vitrine de mes compétences : architecture propre, internationalisation, tests et souci du détail.
 
-## fonctionnalités
+## Fonctionnalités
 Détection automatique de la langue du navigateur / du smartphone (français, anglais, espagnol, italien, portugais, roumain, allemand, polonais, néerlandais, turc).
 
 Thèmes configurables.
@@ -48,7 +48,7 @@ Indication de la catégorie d’IMC.
 
 ## Technologies
 
-Dart/Flutter.
+Dart/Flutter, tests.
 
 ## Qui suis-je ?
 
