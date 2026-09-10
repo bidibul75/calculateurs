@@ -259,14 +259,14 @@ extension StringExtensions on String {
 
   /// Rounds a String representing a decimal number
   /// Beware ! Not for localized numbers !
-  /// But : returns a localized number !
+  /// But : returns a clean math String number !
   String roundString({int limit = 10}) {
-    if (double.tryParse(this) == null) return format;
-    if (!contains('.')) return format;
+    if (double.tryParse(this) == null) return this;
+    if (!contains('.')) return this;
     final d = double.parse(this);
     final l = split('.');
     String r = l[1].length > limit ? "≈ " : "";
-    r += d.roundTo(limit).toString().trim().format;
+    r += d.roundTo(limit).toString().trim();
     return r.endsWith('.0') ? r.replaceLast('.0') : r;
   }
 
@@ -275,7 +275,7 @@ extension StringExtensions on String {
   String formatRound({int limit = 10}) {
     String s = toCleanMathString;
     s = s.roundString(limit: limit);
-    return s;
+    return s.format;
   }
 
   /// Inserts one or several characters each n character in a string
