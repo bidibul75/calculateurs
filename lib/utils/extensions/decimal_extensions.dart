@@ -15,13 +15,8 @@ extension DecimalFormatting on Decimal {
     String val = toString();
 
     // 3. Remove ".0" if it's an integer (e.g., "10.0" -> "10")
-    if (val.contains('.') && double.tryParse(val) != null) {
-      // Check if the fractional part is only zeros
-      // Decimal handles this well, but a safeguard doesn't hurt
-      if (RegExp(r'\.0+$').hasMatch(val)) {
-        val = val.split('.')[0];
-      }
-    }
+    // Decimal handles this well, but a safeguard doesn't hurt
+    val = val.removeTrailingZeros(isCleanMathString: true);
 
     // 4. Split integer and decimal parts
     List<String> parts = val.split('.');
@@ -79,6 +74,6 @@ extension DecimalFormatting on Decimal {
     Decimal part2 = Decimal.parse(sciValue.split('E')[1]);
     bool posExp = sciValue.split('E')[1].trim().startsWith('+');
     // Concatenates localized mantissa and exponent with eventual + sign
-    return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toPreciseFormattedString}';
+    return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toString().roundString()}';
   }
 }

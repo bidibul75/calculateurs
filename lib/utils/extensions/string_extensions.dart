@@ -327,7 +327,7 @@ extension StringExtensions on String {
     if (isEmpty) return this;
     String n = isCleanMathString ? this : toCleanMathString;
 
-    final sciIndex = n.toUpperCase().indexOf('E');
+    final int sciIndex = n.toUpperCase().indexOf('E');
     String mantissa = n;
     String exponent = '';
     if (sciIndex != -1) {
@@ -337,8 +337,8 @@ extension StringExtensions on String {
 
     if (!mantissa.contains('.')) return n;
 
-    final dotIndex = mantissa.indexOf('.');
-    final integerPart = mantissa.substring(0, dotIndex);
+    final int dotIndex = mantissa.indexOf('.');
+    final String integerPart = mantissa.substring(0, dotIndex);
     String fractionalPart = mantissa.substring(dotIndex + 1);
 
     while (fractionalPart.isNotEmpty && fractionalPart.endsWith('0')) {
