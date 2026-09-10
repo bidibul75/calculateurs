@@ -56,10 +56,9 @@ extension DecimalFormatting on Decimal {
     final Decimal absVal = abs();
 
     final String sci = absVal.toStringAsExponential(n - 1);
-
     final int eIndex = sci.indexOf('e');
-    final String mantissa = sci.substring(0, eIndex);   // "1.23456789"
-    final String expPart = sci.substring(eIndex + 1);   // "+10" ou "-5"
+    final String mantissa = sci.substring(0, eIndex); // "1.23456789"
+    final String expPart = sci.substring(eIndex + 1); // "+10" ou "-5"
     final int exponent = int.parse(expPart);
 
     // If too many numbers on the left or too many zeros on yhe right
@@ -73,7 +72,7 @@ extension DecimalFormatting on Decimal {
   }
 
   /// Converts scientific notation AND non-scientific notation numbers into l10n numbers
-  String toSciPreciseFormattedString ({int n = 15}) {
+  String toSciPreciseFormattedString({int n = 15}) {
     String sciValue = formatResult(n: n);
     if (!sciValue.contains('E')) return Decimal.parse(sciValue).toPreciseFormattedString;
     Decimal part1 = Decimal.parse(sciValue.split('E')[0]);
@@ -82,5 +81,4 @@ extension DecimalFormatting on Decimal {
     // Concatenates localized mantissa and exponent with eventual + sign
     return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toPreciseFormattedString}';
   }
-
 }

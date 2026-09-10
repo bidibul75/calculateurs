@@ -32,6 +32,7 @@ void main() {
         equals('1.23456789'),
       );
       expect(Decimal.parse('12345678').formatResult(n: 10), equals('12345678'));
+      expect(Decimal.parse('100000000').formatResult(n: 15), equals('100000000'));
     });
   });
 

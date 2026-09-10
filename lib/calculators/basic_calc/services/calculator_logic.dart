@@ -172,7 +172,6 @@ class CalculatorLogic {
       }
 
       // Keep extra internal precision, then let formatRound decide if an approximation marker is needed.
-      print(result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString());
       return result.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString();
     } catch (e) {
       return "Error end";

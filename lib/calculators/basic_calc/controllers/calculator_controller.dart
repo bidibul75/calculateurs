@@ -432,8 +432,7 @@ class CalculatorController extends ChangeNotifier {
       String currentHist = _state.history.trim();
       if (currentHist.isNotEmpty) {
         String base = _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1;
-        print ("base : $base");
-        String formattedBase = Decimal.tryParse(base) == null? base: Decimal.parse(base).toSciPreciseFormattedString();
+        String formattedBase = Decimal.tryParse(base) == null ? base : Decimal.parse(base).toSciPreciseFormattedString();
         String newHistory = "${formattedBase.formatRound()} $canonicalOperator ";
         _state = _state.copyWith(operation: canonicalOperator, history: newHistory);
       }

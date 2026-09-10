@@ -274,4 +274,14 @@ void main() {
     });
   });
 
+  group('StringExtensions.removeTrailingZeros', () {
+    test('removes trailing zeros from a String', () {
+      expect('123456.000'.removeTrailingZeros(), '123456');
+      expect('123456.100'.removeTrailingZeros(), '123456.1');
+      expect('123456.120'.removeTrailingZeros(), '123456.12');
+      expect('123456.1201'.removeTrailingZeros(), '123456.1201');
+      expect('10000000000'.removeTrailingZeros(), '10000000000');
+    });
+  });
+
 }

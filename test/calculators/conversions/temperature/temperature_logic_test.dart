@@ -25,7 +25,7 @@ void main() {
     final values = TemperatureLogic.convert('0', TemperatureScale.celsius);
 
     expect(values.celsius, '0');
-    expect(values.fahrenheit, '32.00');
+    expect(values.fahrenheit, '32');
     expect(values.kelvin, '273.15');
     expect(values.rankine, '491.67');
   });
@@ -39,7 +39,7 @@ void main() {
     expect(controller.state.activeScale, TemperatureScale.celsius);
     expect(controller.state.currentInput, '25');
     expect(controller.state.celsius, '25');
-    expect(controller.state.fahrenheit, '77.00');
+    expect(controller.state.fahrenheit, '77');
     expect(controller.state.kelvin, '298.15');
     expect(controller.state.rankine, '536.67');
   });

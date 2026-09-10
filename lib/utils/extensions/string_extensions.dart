@@ -321,16 +321,34 @@ extension StringExtensions on String {
     return contains(decimalSep) ? this + char : (toCleanMathString + char).format;
   }
 
-  /// Removes non significant 0 in decimal numbers
+  /// Removes non significant 0 in decimal numbers while preserving integer zeros.
   /// Warning : returns a toCleanMathString number
-  String removeTrailingZeros ({bool isCleanMathString = false}){
+  String removeTrailingZeros({bool isCleanMathString = false}) {
     if (isEmpty) return this;
-    String n=isCleanMathString? this:toCleanMathString;
-    if (!n.contains('.')) return n;
-    for (int i = (n.length - 1); i >= 0; i--) {
-      if (!(n[i] == "0" || n[i] == ".")) return n;
-      n = n.substring(0, i);
+    String n = isCleanMathString ? this : toCleanMathString;
+
+    final sciIndex = n.toUpperCase().indexOf('E');
+    String mantissa = n;
+    String exponent = '';
+    if (sciIndex != -1) {
+      mantissa = n.substring(0, sciIndex);
+      exponent = n.substring(sciIndex);
     }
-    return n;
+
+    if (!mantissa.contains('.')) return n;
+
+    final dotIndex = mantissa.indexOf('.');
+    final integerPart = mantissa.substring(0, dotIndex);
+    String fractionalPart = mantissa.substring(dotIndex + 1);
+
+    while (fractionalPart.isNotEmpty && fractionalPart.endsWith('0')) {
+      fractionalPart = fractionalPart.substring(0, fractionalPart.length - 1);
+    }
+
+    if (fractionalPart.isEmpty) {
+      return '$integerPart$exponent';
+    }
+
+    return '$integerPart.$fractionalPart$exponent';
   }
 }
