@@ -259,15 +259,32 @@ extension StringExtensions on String {
 
   /// Rounds a String representing a decimal number
   /// Beware ! Not for localized numbers !
-  /// But : returns a clean math String number !
+  /// Returns a clean math String number
   String roundString({int limit = 10}) {
     if (double.tryParse(this) == null) return this;
     if (!contains('.')) return this;
-    final d = double.parse(this);
-    final l = split('.');
-    String r = l[1].length > limit ? "≈ " : "";
-    r += d.roundTo(limit).toString().trim();
-    return r.endsWith('.0') ? r.replaceLast('.0') : r;
+
+    String s = removeTrailingZeros(isCleanMathString: true);
+
+    final List<String> l = s.split('.');
+    if (l[1].length <= limit) return s;
+
+    if (limit == 0) {
+      if (int.parse(l[1][0]) >= 5) {
+        if (s.startsWith("-")) {
+          return "≈ ${(BigInt.parse(l[0]) - BigInt.one).toString()}";
+        } else {
+          return "≈ ${(BigInt.parse(l[0]) + BigInt.one).toString()}";
+        }
+      }
+      return "≈ ${l[0]}";
+    }
+
+    if (int.parse(l[1][limit]) >= 5) {
+      return "≈ ${l[0]}.${l[1].substring(0, limit - 1)}${(int.parse(l[1].substring(limit - 1, limit)) + 1).toString()}";
+    } else {
+      return "≈ ${l[0]}.${l[1].substring(0, limit)}";
+    }
   }
 
   /// Function to format a raw number (e.g: "1000.5" -> "1 000,5")
