@@ -2,14 +2,27 @@
 
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
+import 'package:calculators/utils/number_format_utils.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
+
+LocalNumberSymbols _safeLocalNumberSymbols() {
+  try {
+    if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+      return GetIt.I<LocalNumberSymbols>();
+    }
+  } catch (_) {
+    // Fall back to default locale when the app initialisation is not complete yet.
+  }
+
+  return LocalNumberSymbols();
+}
 
 extension DecimalFormatting on Decimal {
   /// Converts a number into a local formatted number
   String get toPreciseFormattedString {
     // 1. Get the locale (e.g., "fr_FR" or "en_US")
-    final symbols = GetIt.I<LocalNumberSymbols>();
+    final symbols = _safeLocalNumberSymbols();
 
     // 2. Convert the Decimal to a raw String (e.g., "1234.5000")
     String val = toString();
@@ -66,14 +79,40 @@ extension DecimalFormatting on Decimal {
     return negative ? '-$result' : result;
   }
 
+  /// Localizes a clean scientific math string via LocalNumberSymbols
+  /// (mantissa through [toPreciseFormattedString]).
+  static String localizeCleanScientific(String sciValue) {
+    final normalized = sciValue.replaceAll('e', 'E');
+    final parts = normalized.split('E');
+    if (parts.length != 2) {
+      return Decimal.parse(normalized).toPreciseFormattedString;
+    }
+    final part1 = Decimal.parse(parts[0]);
+    final part2 = Decimal.parse(parts[1]);
+    final posExp = parts[1].trim().startsWith('+');
+    return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toString().trim()}';
+  }
+
   /// Converts scientific notation AND non-scientific notation numbers into l10n numbers
   String toSciPreciseFormattedString({int n = 15}) {
+    final raw = toString();
+    final negative = raw.startsWith('-');
+    final absRaw = negative ? raw.substring(1) : raw;
+    final hasDecimal = absRaw.contains('.');
+
+    // Avoid Decimal.toStringAsExponential only for huge integers (slow on web).
+    // Moderate sizes still use formatResult for trailing-zero trimming.
+    if (!hasDecimal && absRaw.length > 40) {
+      final sci = formatIntegerDigitsSci(
+        absRaw,
+        significantDigits: n,
+        negative: negative,
+      );
+      return DecimalFormatting.localizeCleanScientific(sci);
+    }
+
     String sciValue = formatResult(n: n);
     if (!sciValue.contains('E')) return Decimal.parse(sciValue).toPreciseFormattedString;
-    Decimal part1 = Decimal.parse(sciValue.split('E')[0]);
-    Decimal part2 = Decimal.parse(sciValue.split('E')[1]);
-    bool posExp = sciValue.split('E')[1].trim().startsWith('+');
-    // Concatenates localized mantissa and exponent with eventual + sign
-    return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toString().roundString()}';
+    return DecimalFormatting.localizeCleanScientific(sciValue);
   }
 }

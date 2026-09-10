@@ -1,4 +1,5 @@
 import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
+import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -107,6 +108,46 @@ void main() {
       expect(result, '4');
     });
 
+    test('supports huge exact powers without locale registration', () {
+      if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+        GetIt.I.unregister<LocalNumberSymbols>();
+      }
+
+      final result = CalculatorLogic.calculateResult(
+        num1: '2',
+        num2: '1000',
+        operation: '^',
+      );
+
+      // Internal/clean math form (dot separator); UI localizes via formatRound.
+            expect(result, '1.07150860718627E+301');
+          });
+
+          test('formats very large integers in compact scientific notation for display', () {
+            const raw =
+                '10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376';
+
+            // en_US locale in this suite: same as clean math (dot decimal sep).
+            expect(raw.formatRound(), '1.07150860718627E+301');
+            expect('1.07150860718627E+301'.formatRound(), '1.07150860718627E+301');
+          });
+
+          test('localizes scientific mantissa with LocalNumberSymbols decimal separator', () {
+            if (!GetIt.I.isRegistered<LocalNumberSymbols>()) {
+              final symbols = LocalNumberSymbols();
+              symbols.updateFromLocale('en_US');
+              GetIt.I.registerSingleton<LocalNumberSymbols>(symbols);
+            }
+            final symbols = GetIt.I<LocalNumberSymbols>();
+            symbols.updateFromLocale('fr_FR');
+            addTearDown(() => symbols.updateFromLocale('en_US'));
+
+            expect(
+              '1.07150860718627E+301'.formatRound(),
+              '1,07150860718627E+301',
+            );
+          });
+
     test('supports exact square root for rational numbers', () {
       final result = CalculatorLogic.calculateUnary(
         input: '0.5625',
@@ -134,4 +175,5 @@ void main() {
     });
   });
 }
+
 
