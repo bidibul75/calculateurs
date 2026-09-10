@@ -108,7 +108,10 @@ extension DecimalFormatting on Decimal {
         significantDigits: n,
         negative: negative,
       );
-      return DecimalFormatting.localizeCleanScientific(sci);
+      final approx = sci.startsWith('≈ ');
+      final cleanSci = approx ? sci.substring(2) : sci;
+      final localized = DecimalFormatting.localizeCleanScientific(cleanSci);
+      return approx ? '≈ $localized' : localized;
     }
 
     String sciValue = formatResult(n: n);

@@ -240,11 +240,17 @@ extension StringExtensions on String {
   }
 
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
+  /// Also strips a leading approximation marker (`≈`) used only for display.
   String get toCleanMathString {
     final symbols = _safeLocalNumberSymbols();
 
+    String s = trimLeft();
+    if (s.startsWith('≈')) {
+      s = s.substring(1).trimLeft();
+    }
+
     // 1. Remove thousand separators (spaces)
-    String s = replaceAll(symbols.thousandsSep, '');
+    s = s.replaceAll(symbols.thousandsSep, '');
     // Beware of non-breaking spaces sometimes used by Intl
     s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
 
@@ -277,7 +283,7 @@ extension StringExtensions on String {
           unsigned,
           negative: sign == '-',
         );
-        return DecimalFormatting.localizeCleanScientific(sci);
+        return _localizeMaybeApproximateScientific(sci);
       }
 
       final value = Rational.parse(clean).toDecimal(scaleOnInfinitePrecision: 10);
@@ -285,6 +291,13 @@ extension StringExtensions on String {
     } catch (e) {
       return this;
     }
+  }
+
+  String _localizeMaybeApproximateScientific(String value) {
+    final approx = value.startsWith('≈ ');
+    final sci = approx ? value.substring(2) : value;
+    final localized = DecimalFormatting.localizeCleanScientific(sci);
+    return approx ? '≈ $localized' : localized;
   }
 
   /// Rounds a String representing a decimal number
@@ -322,14 +335,17 @@ extension StringExtensions on String {
   /// Function to format a raw number (e.g: "1000.5" -> "1 000,5")
   /// and rounds it
   String formatRound({int limit = 10}) {
+    // Capture ≈ before toCleanMathString strips it for math parsing.
+    final hadApprox = trimLeft().startsWith('≈');
     String s = toCleanMathString;
     // Scientific results stay compact; localize via Decimal + LocalNumberSymbols.
     if (s.toUpperCase().contains('E')) {
-      return DecimalFormatting.localizeCleanScientific(s);
+      final localized = DecimalFormatting.localizeCleanScientific(s);
+      return hadApprox ? '≈ $localized' : localized;
     }
     s = s.roundString(limit: limit);
-    if (s.startsWith('≈ ')) {
-      final rounded = s.substring(2).format;
+    if (s.startsWith('≈ ') || hadApprox) {
+      final rounded = (s.startsWith('≈ ') ? s.substring(2) : s).format;
       return '≈ $rounded';
     }
     return s.format;

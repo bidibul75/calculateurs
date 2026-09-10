@@ -119,8 +119,8 @@ void main() {
         operation: '^',
       );
 
-      // Internal/clean math form (dot separator); UI localizes via formatRound.
-            expect(result, '1.07150860718627E+301');
+      // Truncated sci form keeps the ≈ marker (same pattern as roundString).
+            expect(result, '≈ 1.07150860718627E+301');
           });
 
           test('formats very large integers in compact scientific notation for display', () {
@@ -128,7 +128,9 @@ void main() {
                 '10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376';
 
             // en_US locale in this suite: same as clean math (dot decimal sep).
-            expect(raw.formatRound(), '1.07150860718627E+301');
+            expect(raw.formatRound(), '≈ 1.07150860718627E+301');
+            expect('≈ 1.07150860718627E+301'.formatRound(), '≈ 1.07150860718627E+301');
+            // formatRound also preserves ≈ already present on compact sci.
             expect('1.07150860718627E+301'.formatRound(), '1.07150860718627E+301');
           });
 
@@ -143,8 +145,8 @@ void main() {
             addTearDown(() => symbols.updateFromLocale('en_US'));
 
             expect(
-              '1.07150860718627E+301'.formatRound(),
-              '1,07150860718627E+301',
+              '≈ 1.07150860718627E+301'.formatRound(),
+              '≈ 1,07150860718627E+301',
             );
           });
 
