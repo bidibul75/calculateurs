@@ -4,10 +4,14 @@ import 'dart:math' as math;
 import 'package:rational/rational.dart';
 import 'package:decimal/decimal.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
+import 'package:calculators/utils/number_format_utils.dart';
 
 class CalculatorLogic {
   static const int _internalPrecision = 20;
+  static const int _maxIntegerExponent = 100000;
   static const int _maxExactRootDegree = 12;
+  static const int _maxResultBits = 100000;
+  static const int _displaySignificantDigits = 15;
 
   static final BigInt _bigIntZero = BigInt.zero;
   static final BigInt _bigIntOne = BigInt.one;
@@ -21,25 +25,23 @@ class CalculatorLogic {
   }
 
   static BigInt? _exactIntegerNthRoot(BigInt value, int n) {
-    if (n <= 0 || value < _bigIntZero) {
-      return null;
-    }
-    if (value == _bigIntZero || value == _bigIntOne || n == 1) {
-      return value;
-    }
+    if (value < BigInt.zero || n <= 0) return null;
+    if (n == 1) return value;
+    if (n > _maxExactRootDegree) return null;
+    if (value == BigInt.zero || value == _bigIntOne) return value;
 
-    BigInt low = _bigIntOne;
-    BigInt high = value;
+    var high = BigInt.one << ((value.bitLength + n - 1) ~/ n);
+    if (high > value) high = value;
+    var low = BigInt.one;
+
     while (low <= high) {
-      final mid = (low + high) ~/ _bigIntTwo;
-      final powered = mid.pow(n);
-      if (powered == value) {
-        return mid;
-      }
-      if (powered < value) {
-        low = mid + _bigIntOne;
+      final mid = (low + high) >> 1;
+      final cmp = mid.pow(n).compareTo(value);
+      if (cmp == 0) return mid;
+      if (cmp < 0) {
+        low = mid + BigInt.one;
       } else {
-        high = mid - _bigIntOne;
+        high = mid - BigInt.one;
       }
     }
     return null;
@@ -72,36 +74,76 @@ class CalculatorLogic {
 
   static Rational? tryExactPowerRational(Rational base, Rational exponent) {
     if (exponent == Rational.zero) {
-      return Rational.one;
+      return base == Rational.zero ? null : Rational.one;
+    }
+    if (base == Rational.one) return Rational.one;
+    if (base == Rational.zero) {
+      return exponent > Rational.zero ? Rational.zero : null;
     }
 
-    if (exponent.isInteger) {
-      return base.pow(exponent.toBigInt().toInt());
+    // 2^1000 : exposant entier → BigInt.pow uniquement
+    if (exponent.denominator == BigInt.one) {
+      return _powRationalInteger(base, exponent.numerator);
     }
 
-    final exponentNumerator = exponent.numerator;
-    final exponentDenominator = exponent.denominator;
-    if (exponentDenominator <= _bigIntZero) {
-      return null;
-    }
-    if (exponentDenominator > BigInt.from(_maxExactRootDegree)) {
-      return null;
-    }
+    final q = exponent.denominator;
+    final p = exponent.numerator;
+    if (q > BigInt.from(_maxExactRootDegree)) return null;
+    if (p.abs() > BigInt.from(_maxIntegerExponent)) return null;
 
-    final rationalRoot = _exactRationalNthRoot(base, exponentDenominator.toInt());
-    if (rationalRoot == null) {
-      return null;
-    }
+    final powered = _powRationalInteger(base, p);
+    if (powered == null) return null;
+    return _exactRationalNthRoot(powered, q.toInt());
+  }
 
-    final absPower = exponentNumerator.abs().toInt();
-    Rational powered = rationalRoot.pow(absPower);
-    if (exponentNumerator < _bigIntZero) {
-      if (powered == Rational.zero) {
-        return null;
+  static String formatIntegerDigitsScientific(
+    String digits, {
+    int significantDigits = _displaySignificantDigits,
+    bool negative = false,
+  }) {
+    return formatIntegerDigitsSci(
+      digits,
+      significantDigits: significantDigits,
+      negative: negative,
+    );
+  }
+
+  static String formatPowerResult(Rational r) {
+    if (r.denominator == BigInt.one) {
+      final negative = r.numerator.isNegative;
+      final digits = r.numerator.abs().toString();
+      if (digits.length > _displaySignificantDigits) {
+        return formatIntegerDigitsSci(
+          digits,
+          significantDigits: _displaySignificantDigits,
+          negative: negative,
+        );
       }
-      powered = Rational.one / powered;
+      return negative ? '-$digits' : digits;
     }
-    return powered;
+    return r
+        .toDecimal(scaleOnInfinitePrecision: _internalPrecision)
+        .toSciPreciseFormattedString();
+  }
+
+  static Rational? _powRationalInteger(Rational base, BigInt exp) {
+    if (exp == BigInt.zero) return Rational.one;
+
+    final negative = exp.isNegative;
+    final kAbs = exp.abs();
+    if (kAbs > BigInt.from(_maxIntegerExponent)) return null;
+
+    final k = kAbs.toInt();
+    final bits =
+        (base.numerator.bitLength + base.denominator.bitLength) * k;
+    if (bits > _maxResultBits) return null;
+
+    final n = base.numerator.pow(k);
+    final d = base.denominator.pow(k);
+    final r = Rational(n, d);
+    if (!negative) return r;
+    if (r == Rational.zero) return null;
+    return Rational.one / r;
   }
 
   static Rational? tryExactSqrtRational(Rational value) {
@@ -118,19 +160,19 @@ class CalculatorLogic {
   }) {
     try {
       // Convert clean Strings (1000.5) to Rational
-      final r1 = Rational.parse(num1);
+      final Rational r1 = Rational.parse(num1);
       Rational r2 = Rational.parse(num2);
       // Keep a single internal symbol for multiplication so every branch uses the canonical `x` operator.
       final normalizedOperator = _canonicalBinaryOperator(operation);
 
       // Handle case when num3 and operation2 are provided (x^y as second operand)
       if (num3 != "" && operation2 == "^") {
-        final r3 = Rational.parse(num3);
-        final exactSecondPow = tryExactPowerRational(r2, r3);
+        final Rational r3 = Rational.parse(num3);
+        final Rational? exactSecondPow = tryExactPowerRational(r2, r3);
         if (exactSecondPow != null) {
           r2 = exactSecondPow;
         } else {
-          final secondPow = math.pow(double.parse(num2), double.parse(num3)).toDouble();
+          final double secondPow = math.pow(double.parse(num2), double.parse(num3)).toDouble();
           if (!secondPow.isFinite || secondPow.isNaN) return "Error exp";
           r2 = Rational.parse(secondPow.toString());
         }
@@ -155,18 +197,18 @@ class CalculatorLogic {
         case "^":
         case "x^y":
           try {
-            final exactPow = tryExactPowerRational(r1, r2);
-            if (exactPow != null) {
-              result = exactPow;
-            } else {
-              final powValue = math.pow(double.parse(num1), double.parse(num2)).toDouble();
-              if (!powValue.isFinite || powValue.isNaN) return "Error exp";
-              return Decimal.parse(powValue.toString()).toSciPreciseFormattedString();
+            final a = Rational.parse(num1);
+            final b = Rational.parse(num2);
+            final exact = tryExactPowerRational(a, b);
+            if (exact != null) {
+              return formatPowerResult(exact);
             }
+            final approx = math.pow(a.toDouble(), b.toDouble());
+            if (approx.isNaN || approx.isInfinite) return 'Error exp';
+            return Decimal.parse(approx.toString()).toSciPreciseFormattedString();
           } catch (e) {
             return "Error exp";
           }
-          break;
         default:
           return "Error default";
       }

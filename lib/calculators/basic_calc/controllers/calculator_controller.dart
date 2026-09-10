@@ -81,8 +81,13 @@ class CalculatorController extends ChangeNotifier {
   /// in the UI. This ensures we get the precise decimal representation without
   /// the extra formatting that could interfere with history entry creation.
   String _formatExactRationalAsDisplay(Rational value) {
+    // Huge exact integers must stay in scientific form: full digit strings
+    // freeze the web UI (text layout + Decimal.toStringAsExponential).
+    if (value.denominator == BigInt.one) {
+      return CalculatorLogic.formatPowerResult(value);
+    }
     final decimal = value.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
-    return decimal.toString();
+    return decimal.toSciPreciseFormattedString();
   }
 
   Rational? _tryParseRational(String value) {
@@ -120,6 +125,15 @@ class CalculatorController extends ChangeNotifier {
   }
 
   String _toCleanFromRational(Rational value) {
+    if (value.denominator == BigInt.one) {
+      final digits = value.numerator.abs().toString();
+      // Prefer compact form for oversized integers so downstream formatters
+      // never see hundreds of digits on the UI path.
+      if (digits.length > 18) {
+        return CalculatorLogic.formatPowerResult(value);
+      }
+      return value.numerator.toString();
+    }
     return value.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toString();
   }
 
@@ -362,8 +376,18 @@ class CalculatorController extends ChangeNotifier {
             final num2Source = _state.num2Value != null
                 ? _toCleanFromRational(_state.num2Value!)
                 : _state.num2.toCleanMathString;
-            inputClean = CalculatorLogic.calculateResult(num1: num2Source, num2: inputClean, operation: "^");
-            inputValue = exactPow ?? _tryParseRational(inputClean);
+
+            if (exactPow != null) {
+              inputValue = exactPow;
+              inputClean = _toCleanFromRational(exactPow);
+            } else {
+              inputClean = CalculatorLogic.calculateResult(
+                num1: num2Source,
+                num2: inputClean,
+                operation: '^',
+              );
+              inputValue = _tryParseRational(inputClean);
+            }
           }
           // if the history contains a =, uses the result as the first number of the new calculation
           // else runs the calculation contained in the history

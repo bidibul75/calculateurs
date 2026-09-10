@@ -227,12 +227,17 @@ void main() {
   });
 
   group('StringExtensions.roundString', () {
-    test('rounds a String reprensenting a number', () {
-      expect('123456'.roundString(limit: 5), "123,456");
+    test('rounds a String representing a number', () {
+      expect('123456'.roundString(limit: 5), "123456");
       expect('123.456'.roundString(limit: 2), "≈ 123.46");
-      expect('1234.499999'.roundString(limit: 0), "≈ 1,234");
-      expect('1234.54'.roundString(limit: 1), "≈ 1,234.5");
-      expect('1234.56'.roundString(limit: 5), "1,234.56");
+      expect('1234.499999'.roundString(limit: 0), "≈ 1234");
+      expect('1234.54'.roundString(limit: 1), "≈ 1234.5");
+      expect('1234.56'.roundString(limit: 5), "1234.56");
+      expect('1234.5'.roundString(limit: 0), "≈ 1235");
+      expect('-1234.5'.roundString(limit: 0), "≈ -1235");
+      expect('-1234.4'.roundString(limit: 0), "≈ -1234");
+      expect('-1234.40000'.roundString(limit: 3), "-1234.4");
+
     });
   });
 

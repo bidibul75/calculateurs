@@ -3,10 +3,23 @@
 import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:calculators/utils/my_exception.dart';
+import 'package:calculators/utils/number_format_utils.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
 import 'double_extensions.dart';
+
+LocalNumberSymbols _safeLocalNumberSymbols() {
+  try {
+    if (GetIt.I.isRegistered<LocalNumberSymbols>()) {
+      return GetIt.I<LocalNumberSymbols>();
+    }
+  } catch (_) {
+    // Fall back to default locale when the app initialization is not complete yet.
+  }
+
+  return LocalNumberSymbols();
+}
 
 /// Utility extensions for the String class
 extension StringExtensions on String {
@@ -227,11 +240,17 @@ extension StringExtensions on String {
   }
 
   /// Cleans a formatted string (e.g: "1 000,50") to make it a standard mathematical string (e.g: "1000.50")
+  /// Also strips a leading approximation marker (`≈`) used only for display.
   String get toCleanMathString {
-    final symbols = GetIt.I<LocalNumberSymbols>();
+    final symbols = _safeLocalNumberSymbols();
+
+    String s = trimLeft();
+    if (s.startsWith('≈')) {
+      s = s.substring(1).trimLeft();
+    }
 
     // 1. Remove thousand separators (spaces)
-    String s = replaceAll(symbols.thousandsSep, '');
+    s = s.replaceAll(symbols.thousandsSep, '');
     // Beware of non-breaking spaces sometimes used by Intl
     s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
 
@@ -250,32 +269,86 @@ extension StringExtensions on String {
   String get format {
     try {
       if (isNotANumber) return this;
-      final value = Rational.parse(this).toDecimal(scaleOnInfinitePrecision: 10);
+
+      final clean = toCleanMathString;
+      final sign = clean.startsWith('-') ? '-' : '';
+      final unsigned = sign.isEmpty ? clean : clean.substring(1);
+
+      // Extremely large integer values: format from digit string only.
+      // Decimal.toStringAsExponential is too slow on web for 2^1000-sized values.
+      if (!unsigned.contains('.') &&
+          !unsigned.toUpperCase().contains('E') &&
+          unsigned.length > 18) {
+        final sci = formatIntegerDigitsSci(
+          unsigned,
+          negative: sign == '-',
+        );
+        return _localizeMaybeApproximateScientific(sci);
+      }
+
+      final value = Rational.parse(clean).toDecimal(scaleOnInfinitePrecision: 10);
       return DecimalFormatting(value).toSciPreciseFormattedString();
     } catch (e) {
       return this;
     }
   }
 
+  String _localizeMaybeApproximateScientific(String value) {
+    final approx = value.startsWith('≈ ');
+    final sci = approx ? value.substring(2) : value;
+    final localized = DecimalFormatting.localizeCleanScientific(sci);
+    return approx ? '≈ $localized' : localized;
+  }
+
   /// Rounds a String representing a decimal number
   /// Beware ! Not for localized numbers !
-  /// But : returns a localized number !
+  /// Returns a clean math String number
   String roundString({int limit = 10}) {
-    if (double.tryParse(this) == null) return format;
-    if (!contains('.')) return format;
-    final d = double.parse(this);
-    final l = split('.');
-    String r = l[1].length > limit ? "≈ " : "";
-    r += d.roundTo(limit).toString().trim().format;
-    return r.endsWith('.0') ? r.replaceLast('.0') : r;
+    if (double.tryParse(this) == null) return this;
+    // Already compact scientific form: do not truncate mantissa/exponent.
+    if (toUpperCase().contains('E')) return this;
+    if (!contains('.')) return this;
+
+    String s = removeTrailingZeros(isCleanMathString: true);
+
+    final List<String> l = s.split('.');
+    if (l[1].length <= limit) return s;
+
+    if (limit == 0) {
+      if (int.parse(l[1][0]) >= 5) {
+        if (s.startsWith("-")) {
+          return "≈ ${(BigInt.parse(l[0]) - BigInt.one).toString()}";
+        } else {
+          return "≈ ${(BigInt.parse(l[0]) + BigInt.one).toString()}";
+        }
+      }
+      return "≈ ${l[0]}";
+    }
+
+    if (int.parse(l[1][limit]) >= 5) {
+      return "≈ ${l[0]}.${l[1].substring(0, limit - 1)}${(int.parse(l[1].substring(limit - 1, limit)) + 1).toString()}";
+    } else {
+      return "≈ ${l[0]}.${l[1].substring(0, limit)}";
+    }
   }
 
   /// Function to format a raw number (e.g: "1000.5" -> "1 000,5")
   /// and rounds it
   String formatRound({int limit = 10}) {
+    // Capture ≈ before toCleanMathString strips it for math parsing.
+    final hadApprox = trimLeft().startsWith('≈');
     String s = toCleanMathString;
+    // Scientific results stay compact; localize via Decimal + LocalNumberSymbols.
+    if (s.toUpperCase().contains('E')) {
+      final localized = DecimalFormatting.localizeCleanScientific(s);
+      return hadApprox ? '≈ $localized' : localized;
+    }
     s = s.roundString(limit: limit);
-    return s;
+    if (s.startsWith('≈ ') || hadApprox) {
+      final rounded = (s.startsWith('≈ ') ? s.substring(2) : s).format;
+      return '≈ $rounded';
+    }
+    return s.format;
   }
 
   /// Inserts one or several characters each n character in a string
@@ -327,7 +400,7 @@ extension StringExtensions on String {
     if (isEmpty) return this;
     String n = isCleanMathString ? this : toCleanMathString;
 
-    final sciIndex = n.toUpperCase().indexOf('E');
+    final int sciIndex = n.toUpperCase().indexOf('E');
     String mantissa = n;
     String exponent = '';
     if (sciIndex != -1) {
@@ -337,8 +410,8 @@ extension StringExtensions on String {
 
     if (!mantissa.contains('.')) return n;
 
-    final dotIndex = mantissa.indexOf('.');
-    final integerPart = mantissa.substring(0, dotIndex);
+    final int dotIndex = mantissa.indexOf('.');
+    final String integerPart = mantissa.substring(0, dotIndex);
     String fractionalPart = mantissa.substring(dotIndex + 1);
 
     while (fractionalPart.isNotEmpty && fractionalPart.endsWith('0')) {
