@@ -384,4 +384,35 @@ void main() {
     // Should display "1 000,5"
     expect(controller.state.output, '1 000,5', reason: 'Decimal number should show with both separators');
   });
+
+  test('stores and displays huge exact power via M+/MR without full digit dump', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('x^y');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('=');
+
+    expect(controller.state.output.contains('E+'), isTrue);
+    expect(controller.state.output.length < 40, isTrue);
+
+    final sw = Stopwatch()..start();
+    controller.onButtonPressed('M+');
+    sw.stop();
+    expect(sw.elapsedMilliseconds < 200, isTrue, reason: 'M+ must stay interactive for 2^1000');
+    expect(controller.state.memory, Rational.parse(BigInt.two.pow(1000).toString()));
+    expect(controller.memoryDisplay().contains('E+'), isTrue);
+    expect(controller.memoryDisplay().startsWith('M ≈'), isTrue);
+
+    controller.onButtonPressed('MR');
+    expect(controller.state.output.contains('E+'), isTrue);
+    expect(controller.state.currentInputValue, controller.state.memory);
+
+    controller.onButtonPressed('M-');
+    expect(controller.state.memory, Rational.zero);
+    expect(controller.memoryDisplay(), isEmpty);
+  });
 }

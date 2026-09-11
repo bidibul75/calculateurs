@@ -62,6 +62,16 @@ extension DecimalFormatting on Decimal {
 
     final bool negative = isNegative;
     final Decimal absVal = abs();
+    final raw = absVal.toString();
+
+    // Huge integers: never call toStringAsExponential (very slow on web).
+    if (!raw.contains('.') && !raw.toUpperCase().contains('E') && raw.length > 40) {
+      return formatIntegerDigitsSci(
+        raw,
+        significantDigits: n,
+        negative: negative,
+      );
+    }
 
     final String sci = absVal.toStringAsExponential(n - 1);
     final int eIndex = sci.indexOf('e');
@@ -99,6 +109,14 @@ extension DecimalFormatting on Decimal {
     final negative = raw.startsWith('-');
     final absRaw = negative ? raw.substring(1) : raw;
     final hasDecimal = absRaw.contains('.');
+    final hasExp = absRaw.toUpperCase().contains('E');
+
+    // Web/JS Decimal may already stringify huge values as exponential.
+    // Never call toStringAsExponential again on those — it freezes the UI.
+    if (hasExp) {
+      final clean = negative ? '-$absRaw' : absRaw;
+      return DecimalFormatting.localizeCleanScientific(clean.replaceAll('e', 'E'));
+    }
 
     // Avoid Decimal.toStringAsExponential only for huge integers (slow on web).
     // Moderate sizes still use formatResult for trailing-zero trimming.

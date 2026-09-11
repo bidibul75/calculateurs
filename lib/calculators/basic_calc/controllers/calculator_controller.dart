@@ -238,8 +238,8 @@ class CalculatorController extends ChangeNotifier {
       case "MR":
         _setLastAction(_LastAction.equalOrMemory);
         if (_state.memory != Rational.zero) {
-          // Retrieve the formatted memory
-          String memVal = _state.memory.toDecimal(scaleOnInfinitePrecision: 10).toSciPreciseFormattedString();
+          // Keep huge integers compact (same path as exact powers).
+          final memVal = _formatExactRationalAsDisplay(_state.memory);
           _state = _state.copyWith(
             output: memVal,
             currentInput: memVal.toCleanMathString, // Clean for internal calculation
@@ -750,19 +750,16 @@ class CalculatorController extends ChangeNotifier {
 
   String memoryDisplay() {
     if (_state.memory == Rational.zero) return "";
-    // Convert the stored Rational to a Decimal using a defined scale so we
-    // don't hit the Rational.toDecimal assertion for non-finite rationals.
     try {
-      final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
-      return "M = ${dec.toSciPreciseFormattedString()}";
-    } catch (_) {
-      // Fallback to a smaller scale, then to the rational textual form.
-      try {
-        final dec = _state.memory.toDecimal(scaleOnInfinitePrecision: 10);
-        return "M = ${dec.toSciPreciseFormattedString()}";
-      } catch (_) {
-        return "M = ${_state.memory.toString()}";
+      // Huge exact integers must stay compact: Decimal.toStringAsExponential
+      // freezes the web UI for 2^1000-sized values.
+      final formatted = _formatExactRationalAsDisplay(_state.memory).formatRound();
+      if (formatted.startsWith('≈ ')) {
+        return 'M ≈ ${formatted.substring(2)}';
       }
+      return 'M = $formatted';
+    } catch (_) {
+      return 'M = ${_state.memory.toString()}';
     }
   }
 
