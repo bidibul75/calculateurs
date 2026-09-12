@@ -69,6 +69,12 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       routeName: AppRoutes.ipv6Supernet,
       label: l10n.menuIpv6Supernet,
     ),
+    ModuleMenuItem(
+      icon: const Icon(Icons.functions),
+      section: ModuleSection.conversions,
+      routeName: AppRoutes.average,
+      label: l10n.menuAverage,
+    ),
   ];
 }
 

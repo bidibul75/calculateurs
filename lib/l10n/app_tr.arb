@@ -26,6 +26,22 @@
   "donateIntro": "Bu hesap makinesini kullandığınız için teşekkür ederiz!\n\nBu uygulamayı yararlı buluyorsanız ve geliştirilmesine destek olmak istiyorsanız bağışta bulunabilirsiniz:",
   "donateViaPaypal": "PayPal aracılığıyla bağış yapın",
   "donateOutro": "Her katkı bu uygulamayı geliştirmeye yardımcı olur!",
+  "averageTitle": "Ortalama hesaplayıcısı",
+  "averageLabel": "Ortalama",
+  "averageCountLabel": "Adet",
+  "averageSumLabel": "Toplam",
+  "averageHistoryTitle": "Girilen sayılar",
+  "averageHistoryCount": "{count} değer",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Ekle",
+  "averageUndo": "Sonuncuyu geri al",
+  "averageClearAll": "Tümünü temizle",
+  "averageRemoveValue": "Bu sayıyı kaldır",
+  "averageInvalidNumber": "Önce geçerli bir sayı girin",
   "themeSettingsTitle": "Tema Ayarları",
   "themeBackgroundColor": "Arka Plan Rengi:",
   "themeBackgroundNeutral": "Yumuşak gri",

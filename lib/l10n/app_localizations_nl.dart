@@ -606,4 +606,45 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidMacFormat => 'Ongeldig MAC-adresformaat.';
+
+  @override
+  String get averageTitle => 'Gemiddelde rekenmachine';
+
+  @override
+  String get menuAverage => 'Average';
+
+  @override
+  String get averageLabel => 'Gemiddelde';
+
+  @override
+  String get averageCountLabel => 'Aantal';
+
+  @override
+  String get averageSumLabel => 'Som';
+
+  @override
+  String get averageHistoryTitle => 'Ingevoerde getallen';
+
+  @override
+  String get averageHistoryEmpty => 'No number entered yet';
+
+  @override
+  String averageHistoryCount(int count) {
+    return '$count waarden';
+  }
+
+  @override
+  String get averageAdd => 'Toevoegen';
+
+  @override
+  String get averageUndo => 'Laatste ongedaan maken';
+
+  @override
+  String get averageClearAll => 'Alles wissen';
+
+  @override
+  String get averageRemoveValue => 'Verwijder dit getal';
+
+  @override
+  String get averageInvalidNumber => 'Voer eerst een geldig getal in';
 }

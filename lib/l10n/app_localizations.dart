@@ -1259,6 +1259,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid MAC address format.'**
   String get ipv6ErrorInvalidMacFormat;
+
+  /// No description provided for @averageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Average calculator'**
+  String get averageTitle;
+
+  /// No description provided for @menuAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get menuAverage;
+
+  /// No description provided for @averageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get averageLabel;
+
+  /// No description provided for @averageCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get averageCountLabel;
+
+  /// No description provided for @averageSumLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sum'**
+  String get averageSumLabel;
+
+  /// No description provided for @averageHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered numbers'**
+  String get averageHistoryTitle;
+
+  /// No description provided for @averageHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No number entered yet'**
+  String get averageHistoryEmpty;
+
+  /// No description provided for @averageHistoryCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} values'**
+  String averageHistoryCount(int count);
+
+  /// No description provided for @averageAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get averageAdd;
+
+  /// No description provided for @averageUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo last'**
+  String get averageUndo;
+
+  /// No description provided for @averageClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get averageClearAll;
+
+  /// No description provided for @averageRemoveValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this number'**
+  String get averageRemoveValue;
+
+  /// No description provided for @averageInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number first'**
+  String get averageInvalidNumber;
 }
 
 class _AppLocalizationsDelegate

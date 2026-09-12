@@ -26,6 +26,22 @@
   "donateIntro": "Bedankt dat je deze rekenmachine gebruikt!\n\nAls je deze app nuttig vindt en de ontwikkeling ervan wilt ondersteunen, kun je doneren:\n",
   "donateViaPaypal": "Doneren via PayPal",
   "donateOutro": "Elke bijdrage helpt deze app te verbeteren!",
+  "averageTitle": "Gemiddelde rekenmachine",
+  "averageLabel": "Gemiddelde",
+  "averageCountLabel": "Aantal",
+  "averageSumLabel": "Som",
+  "averageHistoryTitle": "Ingevoerde getallen",
+  "averageHistoryCount": "{count} waarden",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Toevoegen",
+  "averageUndo": "Laatste ongedaan maken",
+  "averageClearAll": "Alles wissen",
+  "averageRemoveValue": "Verwijder dit getal",
+  "averageInvalidNumber": "Voer eerst een geldig getal in",
   "themeSettingsTitle": "Thema-instellingen",
   "themeBackgroundColor": "Achtergrondkleur:",
   "themeBackgroundNeutral": "Zachtgrijs",

@@ -26,6 +26,22 @@
   "donateIntro": "Danke, dass Sie diesen Rechner verwenden!\n\nWenn Sie diese App nützlich finden und ihre Entwicklung unterstützen möchten, können Sie spenden:\n",
   "donateViaPaypal": "Spenden über PayPal",
   "donateOutro": "Jeder Beitrag hilft, diese App zu verbessern!",
+  "averageTitle": "Durchschnittsrechner",
+  "averageLabel": "Durchschnitt",
+  "averageCountLabel": "Anzahl",
+  "averageSumLabel": "Summe",
+  "averageHistoryTitle": "Eingegebene Zahlen",
+  "averageHistoryCount": "{count} Werte",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Hinzufügen",
+  "averageUndo": "Letzte rückgängig",
+  "averageClearAll": "Alles löschen",
+  "averageRemoveValue": "Diese Zahl entfernen",
+  "averageInvalidNumber": "Bitte geben Sie zuerst eine gültige Zahl ein",
   "themeSettingsTitle": "Theme-Einstellungen",
   "themeBackgroundColor": "Hintergrundfarbe:",
   "themeBackgroundNeutral": "Weiches Grau",

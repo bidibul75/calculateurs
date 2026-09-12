@@ -26,6 +26,22 @@
   "donateIntro": "Obrigado por usar esta calculadora!\n\nSe você acha este aplicativo útil e deseja apoiar seu desenvolvimento, você pode fazer uma doação:",
   "donateViaPaypal": "Doe via PayPal",
   "donateOutro": "Cada contribuição ajuda a melhorar este app!",
+  "averageTitle": "Calculadora de média",
+  "averageLabel": "Média",
+  "averageCountLabel": "Quantidade",
+  "averageSumLabel": "Soma",
+  "averageHistoryTitle": "Números inseridos",
+  "averageHistoryCount": "{count} valores",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Adicionar",
+  "averageUndo": "Desfazer último",
+  "averageClearAll": "Limpar tudo",
+  "averageRemoveValue": "Remover este número",
+  "averageInvalidNumber": "Primeiro insira um número válido",
   "themeSettingsTitle": "Configurações de tema",
   "themeBackgroundColor": "Cor de fundo:",
   "themeBackgroundNeutral": "Cinza suave",

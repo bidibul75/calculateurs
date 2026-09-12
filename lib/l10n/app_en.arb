@@ -248,5 +248,24 @@
   "ipv6ErrorInvalidCidrFormat": "Invalid IPv6 CIDR format.",
   "ipv6ErrorInvalidSuffix": "Invalid IPv6 suffix.",
   "ipv6ErrorInvalidAddress": "Invalid IPv6 address.",
-  "ipv6ErrorInvalidMacFormat": "Invalid MAC address format."
+  "ipv6ErrorInvalidMacFormat": "Invalid MAC address format.",
+
+  "averageTitle": "Average calculator",
+  "menuAverage": "Average",
+  "averageLabel": "Average",
+  "averageCountLabel": "Count",
+  "averageSumLabel": "Sum",
+  "averageHistoryTitle": "Entered numbers",
+  "averageHistoryEmpty": "No number entered yet",
+  "averageHistoryCount": "{count} values",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "averageAdd": "Add",
+  "averageUndo": "Undo last",
+  "averageClearAll": "Clear all",
+  "averageRemoveValue": "Remove this number",
+  "averageInvalidNumber": "Enter a valid number first"
 }

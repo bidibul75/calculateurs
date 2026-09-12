@@ -26,6 +26,22 @@
   "donateIntro": "Vă mulțumim că ați folosit acest calculator!\n\nDacă vi se pare utilă această aplicație și doriți să susțineți dezvoltarea acesteia, puteți face o donație:",
   "donateViaPaypal": "Donează prin PayPal",
   "donateOutro": "Fiecare contribuție ajută la îmbunătățirea acestei aplicații!",
+  "averageTitle": "Calculator medie",
+  "averageLabel": "Medie",
+  "averageCountLabel": "Număr",
+  "averageSumLabel": "Sumă",
+  "averageHistoryTitle": "Numere introduse",
+  "averageHistoryCount": "{count} valori",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Adaugă",
+  "averageUndo": "Anulează ultimul",
+  "averageClearAll": "Șterge tot",
+  "averageRemoveValue": "Elimină acest număr",
+  "averageInvalidNumber": "Introduceți mai întâi un număr valid",
   "themeSettingsTitle": "Setări teme",
   "themeBackgroundColor": "Culoare de fundal:",
   "themeBackgroundNeutral": "Gri moale",

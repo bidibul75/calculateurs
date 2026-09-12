@@ -26,6 +26,22 @@
   "donateIntro": "Dziękujemy za skorzystanie z tego kalkulatora!\n\nJeśli uznasz tę aplikację za przydatną i chcesz wesprzeć jej rozwój, możesz przekazać darowiznę:",
   "donateViaPaypal": "Przekaż darowiznę za pośrednictwem PayPal",
   "donateOutro": "Każdy wkład pomaga ulepszyć tę aplikację!",
+  "averageTitle": "Kalkulator średniej",
+  "averageLabel": "Średnia",
+  "averageCountLabel": "Liczba",
+  "averageSumLabel": "Suma",
+  "averageHistoryTitle": "Wprowadzone liczby",
+  "averageHistoryCount": "{count} wartości",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "averageAdd": "Dodaj",
+  "averageUndo": "Cofnij ostatnie",
+  "averageClearAll": "Wyczyść wszystko",
+  "averageRemoveValue": "Usuń tę liczbę",
+  "averageInvalidNumber": "Najpierw wpisz prawidłową liczbę",
   "themeSettingsTitle": "Ustawienia motywu",
   "themeBackgroundColor": "Kolor tła:",
   "themeBackgroundNeutral": "Miękki szary",

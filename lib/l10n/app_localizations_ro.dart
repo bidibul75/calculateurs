@@ -608,4 +608,45 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidMacFormat => 'Format de adresă MAC nevalid.';
+
+  @override
+  String get averageTitle => 'Calculator medie';
+
+  @override
+  String get menuAverage => 'Average';
+
+  @override
+  String get averageLabel => 'Medie';
+
+  @override
+  String get averageCountLabel => 'Număr';
+
+  @override
+  String get averageSumLabel => 'Sumă';
+
+  @override
+  String get averageHistoryTitle => 'Numere introduse';
+
+  @override
+  String get averageHistoryEmpty => 'No number entered yet';
+
+  @override
+  String averageHistoryCount(int count) {
+    return '$count valori';
+  }
+
+  @override
+  String get averageAdd => 'Adaugă';
+
+  @override
+  String get averageUndo => 'Anulează ultimul';
+
+  @override
+  String get averageClearAll => 'Șterge tot';
+
+  @override
+  String get averageRemoveValue => 'Elimină acest număr';
+
+  @override
+  String get averageInvalidNumber => 'Introduceți mai întâi un număr valid';
 }

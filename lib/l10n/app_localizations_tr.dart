@@ -606,4 +606,45 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidMacFormat => 'Geçersiz MAC adresi biçimi.';
+
+  @override
+  String get averageTitle => 'Ortalama hesaplayıcısı';
+
+  @override
+  String get menuAverage => 'Average';
+
+  @override
+  String get averageLabel => 'Ortalama';
+
+  @override
+  String get averageCountLabel => 'Adet';
+
+  @override
+  String get averageSumLabel => 'Toplam';
+
+  @override
+  String get averageHistoryTitle => 'Girilen sayılar';
+
+  @override
+  String get averageHistoryEmpty => 'No number entered yet';
+
+  @override
+  String averageHistoryCount(int count) {
+    return '$count değer';
+  }
+
+  @override
+  String get averageAdd => 'Ekle';
+
+  @override
+  String get averageUndo => 'Sonuncuyu geri al';
+
+  @override
+  String get averageClearAll => 'Tümünü temizle';
+
+  @override
+  String get averageRemoveValue => 'Bu sayıyı kaldır';
+
+  @override
+  String get averageInvalidNumber => 'Önce geçerli bir sayı girin';
 }

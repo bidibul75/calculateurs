@@ -14,7 +14,7 @@ import '../controllers/calculator_controller.dart';
 import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../../../shared/widgets/menu_drawer.dart';
-import '../services/history_export_service.dart';
+import 'package:calculators/shared/services/history_export_service.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});

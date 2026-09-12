@@ -610,4 +610,45 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidMacFormat => 'Format d\'adresse MAC invalide.';
+
+  @override
+  String get averageTitle => 'Calculateur de moyenne';
+
+  @override
+  String get menuAverage => 'Moyenne';
+
+  @override
+  String get averageLabel => 'Moyenne';
+
+  @override
+  String get averageCountLabel => 'Nombre de valeurs';
+
+  @override
+  String get averageSumLabel => 'Somme';
+
+  @override
+  String get averageHistoryTitle => 'Nombres saisis';
+
+  @override
+  String get averageHistoryEmpty => 'Aucun nombre saisi';
+
+  @override
+  String averageHistoryCount(int count) {
+    return '$count valeurs';
+  }
+
+  @override
+  String get averageAdd => 'Ajouter';
+
+  @override
+  String get averageUndo => 'Annuler le dernier';
+
+  @override
+  String get averageClearAll => 'Tout effacer';
+
+  @override
+  String get averageRemoveValue => 'Retirer ce nombre';
+
+  @override
+  String get averageInvalidNumber => 'Saisissez d’abord un nombre valide';
 }

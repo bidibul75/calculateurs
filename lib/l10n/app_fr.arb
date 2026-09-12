@@ -248,5 +248,24 @@
   "ipv6ErrorInvalidCidrFormat": "Format CIDR IPv6 invalide.",
   "ipv6ErrorInvalidSuffix": "Suffixe IPv6 invalide.",
   "ipv6ErrorInvalidAddress": "Adresse IPv6 invalide.",
-  "ipv6ErrorInvalidMacFormat": "Format d'adresse MAC invalide."
+  "ipv6ErrorInvalidMacFormat": "Format d'adresse MAC invalide.",
+
+  "averageTitle": "Calculateur de moyenne",
+  "menuAverage": "Moyenne",
+  "averageLabel": "Moyenne",
+  "averageCountLabel": "Nombre de valeurs",
+  "averageSumLabel": "Somme",
+  "averageHistoryTitle": "Nombres saisis",
+  "averageHistoryEmpty": "Aucun nombre saisi",
+  "averageHistoryCount": "{count} valeurs",
+  "@averageHistoryCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "averageAdd": "Ajouter",
+  "averageUndo": "Annuler le dernier",
+  "averageClearAll": "Tout effacer",
+  "averageRemoveValue": "Retirer ce nombre",
+  "averageInvalidNumber": "Saisissez d’abord un nombre valide"
 }

@@ -605,4 +605,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ipv6ErrorInvalidMacFormat => 'Invalid MAC address format.';
+
+  @override
+  String get averageTitle => 'Average calculator';
+
+  @override
+  String get menuAverage => 'Average';
+
+  @override
+  String get averageLabel => 'Average';
+
+  @override
+  String get averageCountLabel => 'Count';
+
+  @override
+  String get averageSumLabel => 'Sum';
+
+  @override
+  String get averageHistoryTitle => 'Entered numbers';
+
+  @override
+  String get averageHistoryEmpty => 'No number entered yet';
+
+  @override
+  String averageHistoryCount(int count) {
+    return '$count values';
+  }
+
+  @override
+  String get averageAdd => 'Add';
+
+  @override
+  String get averageUndo => 'Undo last';
+
+  @override
+  String get averageClearAll => 'Clear all';
+
+  @override
+  String get averageRemoveValue => 'Remove this number';
+
+  @override
+  String get averageInvalidNumber => 'Enter a valid number first';
 }
