@@ -126,6 +126,7 @@ class _AverageScreenState extends State<AverageScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: MenuDrawer(themeManager: _themeManager),
         title: Text(l10n.averageTitle),
         actions: [
           IconButton(
@@ -140,7 +141,6 @@ class _AverageScreenState extends State<AverageScreen> {
           ),
         ],
       ),
-      drawer: MenuDrawer(themeManager: _themeManager),
       body: Container(
         decoration: _themeManager.backgroundDecoration,
         child: SafeArea(
