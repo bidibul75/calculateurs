@@ -21,7 +21,6 @@ class AverageScreen extends StatefulWidget {
 
 class _AverageScreenState extends State<AverageScreen> {
   final AverageController _controller = AverageController();
-  bool _historyExpanded = false;
 
   late final shared_theme.ThemeManager _themeManager;
   late final LocalNumberSymbols _numberSymbols;
@@ -30,9 +29,7 @@ class _AverageScreenState extends State<AverageScreen> {
   void initState() {
     super.initState();
     _themeManager = GetIt.I<shared_theme.ThemeManager>();
-    _numberSymbols = GetIt.I.isRegistered<LocalNumberSymbols>()
-        ? GetIt.I<LocalNumberSymbols>()
-        : LocalNumberSymbols();
+    _numberSymbols = GetIt.I.isRegistered<LocalNumberSymbols>() ? GetIt.I<LocalNumberSymbols>() : LocalNumberSymbols();
     _controller.addListener(_onControllerChanged);
     _themeManager.addListener(_onControllerChanged);
   }
@@ -123,14 +120,11 @@ class _AverageScreenState extends State<AverageScreen> {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final bool isDesktopLike = mediaSize.width >= 768;
     final bool isPhone = mediaSize.width < 600;
-    final double keyboardBottomPadding =
-        isPhone ? (bottomInset + 24.0).clamp(22.0, 52.0).toDouble() : 24.0;
+    final double keyboardBottomPadding = isPhone ? (bottomInset + 24.0).clamp(22.0, 52.0).toDouble() : 24.0;
     final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.34 : (isPhone ? 0.40 : 0.44)))
         .clamp(isDesktopLike ? 240.0 : (isPhone ? 230.0 : 280.0), isDesktopLike ? 360.0 : 520.0)
         .toDouble();
-    final averageText = _controller.average == null
-        ? '—'
-        : _formatRational(_controller.average!);
+    final averageText = _controller.average == null ? '—' : _formatRational(_controller.average!);
 
     return Container(
       decoration: _themeManager.backgroundDecoration,
@@ -197,11 +191,7 @@ class _AverageScreenState extends State<AverageScreen> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                width: 1,
-                                height: 46,
-                                color: _themeManager.displayTextColor.withAlpha(60),
-                              ),
+                              Container(width: 1, height: 46, color: _themeManager.displayTextColor.withAlpha(60)),
                               const SizedBox(width: 16),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -227,95 +217,90 @@ class _AverageScreenState extends State<AverageScreen> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          Card(
-                            elevation: 0,
-                            color: Colors.white.withAlpha(120),
-                            child: Theme(
-                              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                initiallyExpanded: _historyExpanded,
-                                onExpansionChanged: (expanded) =>
-                                    setState(() => _historyExpanded = expanded),
-                                iconColor: _themeManager.displayTextColor,
-                                collapsedIconColor: _themeManager.displayTextColor,
-                                leading: Icon(Icons.history, color: _themeManager.displayTextColor),
-                                title: Text(
-                                  l10n.averageHistoryTitle,
-                                  style: TextStyle(
-                                    color: _themeManager.displayTextColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  _controller.count == 0
-                                      ? l10n.averageHistoryEmpty
-                                      : l10n.averageHistoryCount(_controller.count),
-                                  style: TextStyle(
-                                    color: _themeManager.displayTextColor.withAlpha(170),
-                                  ),
-                                ),
-                                children: [
-                                  if (_controller.values.isEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          Text(
+                            l10n.averageHistoryTitle,
+                            style: TextStyle(
+                              color: _themeManager.displayTextColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withAlpha(150),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.grey[200]!, width: 1.2),
+                              ),
+                              child: _controller.values.isEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(12),
                                       child: Align(
-                                        alignment: Alignment.centerLeft,
+                                        alignment: Alignment.topLeft,
                                         child: Text(
                                           l10n.averageHistoryEmpty,
                                           style: TextStyle(
                                             color: _themeManager.displayTextColor.withAlpha(170),
+                                            fontSize: 12,
                                           ),
                                         ),
                                       ),
                                     )
-                                  else
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxHeight: isDesktopLike ? 220 : 160,
-                                      ),
+                                  : Scrollbar(
+                                      thumbVisibility: true,
                                       child: ListView.separated(
-                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.symmetric(vertical: 4),
                                         itemCount: _controller.values.length,
-                                        separatorBuilder: (_, _) => Divider(
-                                          height: 1,
-                                          color: _themeManager.displayTextColor.withAlpha(40),
-                                        ),
+                                        separatorBuilder: (_, _) =>
+                                            Divider(height: 1, color: _themeManager.displayTextColor.withAlpha(35)),
                                         itemBuilder: (context, index) {
                                           final value = _controller.values[index];
-                                          return ListTile(
-                                            dense: true,
-                                            leading: CircleAvatar(
-                                              radius: 14,
-                                              backgroundColor: _themeManager.buttonGroupColor,
-                                              foregroundColor: _themeManager.buttonTextColor,
-                                              child: Text(
-                                                '${index + 1}',
-                                                style: const TextStyle(fontSize: 12),
-                                              ),
-                                            ),
-                                            title: Text(
-                                              _formatRational(value),
-                                              style: TextStyle(
-                                                color: _themeManager.displayTextColor,
-                                              ),
-                                            ),
-                                            trailing: IconButton(
-                                              tooltip: l10n.averageRemoveValue,
-                                              icon: Icon(
-                                                Icons.close,
-                                                color: _themeManager.displayTextColor,
-                                              ),
-                                              onPressed: () => _controller.removeAt(index),
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 28,
+                                                  child: Text(
+                                                    '${index + 1} /',
+                                                    style: TextStyle(
+                                                      color: _themeManager.displayTextColor.withAlpha(160),
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    _formatRational(value),
+                                                    style: TextStyle(
+                                                      color: _themeManager.displayTextColor,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  tooltip: l10n.averageRemoveValue,
+                                                  visualDensity: VisualDensity.compact,
+                                                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                  padding: EdgeInsets.zero,
+                                                  iconSize: 16,
+                                                  icon: Icon(
+                                                    Icons.close,
+                                                    color: _themeManager.displayTextColor.withAlpha(180),
+                                                  ),
+                                                  onPressed: () => _controller.removeAt(index),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         },
                                       ),
                                     ),
-                                ],
-                              ),
                             ),
                           ),
-                          const Spacer(),
+                          const SizedBox(height: 10),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -358,9 +343,7 @@ class _AverageScreenState extends State<AverageScreen> {
                         onSign: _controller.toggleSign,
                         onAdd: () => _addValue(l10n),
                         onUndo: _controller.canUndo ? _controller.undoLast : null,
-                        onClearAll: _controller.count > 0 || _controller.hasInput
-                            ? _controller.clearAll
-                            : null,
+                        onClearAll: _controller.count > 0 || _controller.hasInput ? _controller.clearAll : null,
                         undoLabel: l10n.averageUndo,
                         clearAllLabel: l10n.averageClearAll,
                       ),
