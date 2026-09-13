@@ -140,6 +140,7 @@ class MenuDrawer extends StatelessWidget {
     AppLocalizations l10n,
     List<ModuleMenuItem> healthModules,
     List<ModuleMenuItem> conversionModules,
+    List<ModuleMenuItem> mathModules,
     List<ModuleMenuItem> ipToolsModules,
   ) {
     return [
@@ -193,6 +194,23 @@ class MenuDrawer extends StatelessWidget {
               ),
           ],
         ),
+      if (mathModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.functions_outlined),
+          title: Text(sectionTitle(ModuleSection.math, l10n)),
+          children: [
+            for (final module in mathModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
       if (conversionModules.isNotEmpty)
         ExpansionTile(
           leading: const Icon(Icons.swap_horiz_outlined),
@@ -235,6 +253,7 @@ class MenuDrawer extends StatelessWidget {
     final modules = buildModuleMenuCatalog(l10n);
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
     final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
+    final mathModules = modules.where((module) => module.section == ModuleSection.math).toList();
     final ipToolsModules = modules.where((module) => module.section == ModuleSection.ipTools).toList();
     final isMobileSheet = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
 
@@ -245,7 +264,15 @@ class MenuDrawer extends StatelessWidget {
       builder: (sheetContext) {
         final menuList = ListView(
           padding: EdgeInsets.only(top: isMobileSheet ? 8 : 0, bottom: isMobileSheet ? 16 : 0),
-          children: _buildMenuTiles(context, sheetContext, l10n, healthModules, conversionModules, ipToolsModules),
+          children: _buildMenuTiles(
+            context,
+            sheetContext,
+            l10n,
+            healthModules,
+            conversionModules,
+            mathModules,
+            ipToolsModules,
+          ),
         );
 
         return SafeArea(

@@ -147,6 +147,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get menuSectionConversions => 'Dönüşümler';
 
   @override
+  String get menuSectionMath => 'Matematik';
+
+  @override
   String get menuSectionIpTools => 'IP Araçları';
 
   @override

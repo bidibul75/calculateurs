@@ -148,6 +148,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuSectionConversions => 'Conversions';
 
   @override
+  String get menuSectionMath => 'Mathématiques';
+
+  @override
   String get menuSectionIpTools => 'Outils IP';
 
   @override

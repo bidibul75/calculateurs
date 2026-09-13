@@ -147,6 +147,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get menuSectionConversions => 'Conversões';
 
   @override
+  String get menuSectionMath => 'Matemática';
+
+  @override
   String get menuSectionIpTools => 'Ferramentas IP';
 
   @override

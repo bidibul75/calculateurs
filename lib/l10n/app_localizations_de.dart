@@ -147,6 +147,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuSectionConversions => 'Konvertierungen';
 
   @override
+  String get menuSectionMath => 'Mathematik';
+
+  @override
   String get menuSectionIpTools => 'IP-Tools';
 
   @override

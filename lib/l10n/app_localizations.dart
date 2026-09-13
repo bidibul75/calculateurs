@@ -378,6 +378,12 @@ abstract class AppLocalizations {
   /// **'Conversions'**
   String get menuSectionConversions;
 
+  /// No description provided for @menuSectionMath.
+  ///
+  /// In en, this message translates to:
+  /// **'Mathematics'**
+  String get menuSectionMath;
+
   /// No description provided for @menuSectionIpTools.
   ///
   /// In en, this message translates to:

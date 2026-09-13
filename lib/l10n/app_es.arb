@@ -69,6 +69,8 @@
   },
   "menuSectionHealth": "Salud",
   "menuSectionConversions": "Conversiones",
+  
+  "menuSectionMath": "Matemáticas",
   "menuSectionIpTools": "Herramientas IP",
   "menuSectionFinance": "Finanzas",
   "menuSectionRealEstate": "Inmobiliario",
