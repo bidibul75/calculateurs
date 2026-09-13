@@ -264,7 +264,7 @@
     }
   },
   "averageAdd": "Ajouter",
-  "averageUndo": "Annuler le dernier",
+  "averageUndo": "Annuler dernier",
   "averageClearAll": "Tout effacer",
   "averageRemoveValue": "Retirer ce nombre",
   "averageInvalidNumber": "Saisissez d’abord un nombre valide"

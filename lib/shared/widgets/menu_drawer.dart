@@ -262,15 +262,14 @@ class MenuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = themeManager.displayTextColor;
     return IconButton(
       tooltip: AppLocalizations.of(context).menuThemes,
       style: IconButton.styleFrom(
-        foregroundColor: foreground,
+        foregroundColor: Colors.black,
         backgroundColor: themeManager.buttonGroupColor.withAlpha(38),
         shape: const CircleBorder(),
       ),
-      icon: Icon(Icons.menu, color: foreground),
+      icon: const Icon(Icons.menu, color: Colors.black),
       onPressed: () => _showMenuSheet(context),
     );
   }

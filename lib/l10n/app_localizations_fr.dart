@@ -641,7 +641,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get averageAdd => 'Ajouter';
 
   @override
-  String get averageUndo => 'Annuler le dernier';
+  String get averageUndo => 'Annuler dernier';
 
   @override
   String get averageClearAll => 'Tout effacer';
