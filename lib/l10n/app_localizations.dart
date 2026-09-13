@@ -684,6 +684,48 @@ abstract class AppLocalizations {
   /// **'m³'**
   String get volumeUnitM3;
 
+  /// No description provided for @menuSurface.
+  ///
+  /// In en, this message translates to:
+  /// **'Surface Converter'**
+  String get menuSurface;
+
+  /// No description provided for @surfaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surface Converter'**
+  String get surfaceTitle;
+
+  /// No description provided for @surfaceUnitM2.
+  ///
+  /// In en, this message translates to:
+  /// **'m²'**
+  String get surfaceUnitM2;
+
+  /// No description provided for @surfaceUnitCm2.
+  ///
+  /// In en, this message translates to:
+  /// **'cm²'**
+  String get surfaceUnitCm2;
+
+  /// No description provided for @surfaceUnitHa.
+  ///
+  /// In en, this message translates to:
+  /// **'ha'**
+  String get surfaceUnitHa;
+
+  /// No description provided for @surfaceUnitAcre.
+  ///
+  /// In en, this message translates to:
+  /// **'acre (int.)'**
+  String get surfaceUnitAcre;
+
+  /// No description provided for @surfaceUnitFt2.
+  ///
+  /// In en, this message translates to:
+  /// **'ft²'**
+  String get surfaceUnitFt2;
+
   /// No description provided for @menuIpv4Address.
   ///
   /// In en, this message translates to:

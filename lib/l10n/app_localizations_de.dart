@@ -300,6 +300,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get volumeUnitM3 => 'm³';
 
   @override
+  String get menuSurface => 'Flächenumrechner';
+
+  @override
+  String get surfaceTitle => 'Flächenumrechner';
+
+  @override
+  String get surfaceUnitM2 => 'm²';
+
+  @override
+  String get surfaceUnitCm2 => 'cm²';
+
+  @override
+  String get surfaceUnitHa => 'ha';
+
+  @override
+  String get surfaceUnitAcre => 'acre (int.)';
+
+  @override
+  String get surfaceUnitFt2 => 'ft²';
+
+  @override
   String get menuIpv4Address => 'IPv4-Adresse';
 
   @override

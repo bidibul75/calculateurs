@@ -142,6 +142,16 @@
   "volumeUnitFlOz": "fl oz (US)",
   "volumeUnitM3": "m³",
 
+  "@_module.conversions.surface": {
+    "description": "Vocabolario modulo: Conversioni > Superficie"
+  },
+  "menuSurface": "Convertitore di superficie",
+  "surfaceTitle": "Convertitore di superficie",
+  "surfaceUnitM2": "m²",
+  "surfaceUnitCm2": "cm²",
+  "surfaceUnitHa": "ha",
+  "surfaceUnitAcre": "acre (int.)",
+  "surfaceUnitFt2": "ft²",
   "@_module.ip.ipv4": {
     "description": "Vocabolario modulo: IP > Indirizzo IPv4"
   },

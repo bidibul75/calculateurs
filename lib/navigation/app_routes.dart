@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:calculators/calculators/conversions/distance/screens/distance_screen.dart';
 import 'package:calculators/calculators/conversions/weight/screens/weight_screen.dart';
 import 'package:calculators/calculators/conversions/volume/screens/volume_screen.dart';
+import 'package:calculators/calculators/conversions/surface/screens/surface_screen.dart';
 import 'package:calculators/calculators/math/average/screens/average_screen.dart';
 
 abstract final class AppRoutes {
@@ -24,6 +25,7 @@ abstract final class AppRoutes {
   static const String distance = '/distance';
   static const String weight = '/weight';
   static const String volume = '/volume';
+  static const String surface = '/surface';
   static const String average = '/average';
 
   static const String initialRoute = home;
@@ -40,6 +42,7 @@ abstract final class AppRoutes {
     distance: (context) => const DistanceScreen(),
     weight: (context) => const WeightScreen(),
     volume: (context) => const VolumeScreen(),
+    surface: (context) => const SurfaceScreen(),
     average: (context) => const AverageScreen(),
   };
 
