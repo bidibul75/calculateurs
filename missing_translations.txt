@@ -1,1 +1,41 @@
-{}
+{
+  "de": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "es": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "it": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "nl": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "pl": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "pt": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "ro": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ],
+
+  "tr": [
+    "menuAverage",
+    "averageHistoryEmpty"
+  ]
+}

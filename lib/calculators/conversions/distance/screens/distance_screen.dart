@@ -3,7 +3,7 @@
 import 'dart:async';
 
 import 'package:calculators/l10n/app_localizations.dart';
-import 'package:calculators/calculators/basic_calc/services/history_export_service.dart';
+import 'package:calculators/shared/services/history_export_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';

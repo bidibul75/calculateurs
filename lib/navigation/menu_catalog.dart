@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 enum ModuleSection {
   health,
   conversions,
+  math,
   ipTools,
   finance,
   realEstate,
@@ -69,6 +70,12 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       routeName: AppRoutes.ipv6Supernet,
       label: l10n.menuIpv6Supernet,
     ),
+    ModuleMenuItem(
+      icon: const Icon(Icons.functions),
+      section: ModuleSection.math,
+      routeName: AppRoutes.average,
+      label: l10n.menuAverage,
+    ),
   ];
 }
 
@@ -78,6 +85,8 @@ String sectionTitle(ModuleSection section, AppLocalizations l10n) {
       return l10n.menuSectionHealth;
     case ModuleSection.conversions:
       return l10n.menuSectionConversions;
+    case ModuleSection.math:
+      return l10n.menuSectionMath;
     case ModuleSection.ipTools:
       return l10n.menuSectionIpTools;
     case ModuleSection.finance:

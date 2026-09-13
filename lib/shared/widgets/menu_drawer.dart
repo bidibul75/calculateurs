@@ -1,6 +1,4 @@
 // lib/shared/widgets/menu_drawer.dart
-// lib/calculators/basic_calc/sreens/menu_drawer.dart
-
 import 'dart:async';
 
 import 'package:calculators/l10n/app_localizations.dart';
@@ -142,6 +140,7 @@ class MenuDrawer extends StatelessWidget {
     AppLocalizations l10n,
     List<ModuleMenuItem> healthModules,
     List<ModuleMenuItem> conversionModules,
+    List<ModuleMenuItem> mathModules,
     List<ModuleMenuItem> ipToolsModules,
   ) {
     return [
@@ -195,6 +194,23 @@ class MenuDrawer extends StatelessWidget {
               ),
           ],
         ),
+      if (mathModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.functions_outlined),
+          title: Text(sectionTitle(ModuleSection.math, l10n)),
+          children: [
+            for (final module in mathModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
       if (conversionModules.isNotEmpty)
         ExpansionTile(
           leading: const Icon(Icons.swap_horiz_outlined),
@@ -237,6 +253,7 @@ class MenuDrawer extends StatelessWidget {
     final modules = buildModuleMenuCatalog(l10n);
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
     final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
+    final mathModules = modules.where((module) => module.section == ModuleSection.math).toList();
     final ipToolsModules = modules.where((module) => module.section == ModuleSection.ipTools).toList();
     final isMobileSheet = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
 
@@ -247,7 +264,15 @@ class MenuDrawer extends StatelessWidget {
       builder: (sheetContext) {
         final menuList = ListView(
           padding: EdgeInsets.only(top: isMobileSheet ? 8 : 0, bottom: isMobileSheet ? 16 : 0),
-          children: _buildMenuTiles(context, sheetContext, l10n, healthModules, conversionModules, ipToolsModules),
+          children: _buildMenuTiles(
+            context,
+            sheetContext,
+            l10n,
+            healthModules,
+            conversionModules,
+            mathModules,
+            ipToolsModules,
+          ),
         );
 
         return SafeArea(
@@ -264,6 +289,15 @@ class MenuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(icon: const Icon(Icons.menu), onPressed: () => _showMenuSheet(context));
+    return IconButton(
+      tooltip: AppLocalizations.of(context).menuThemes,
+      style: IconButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: themeManager.buttonGroupColor.withAlpha(38),
+        shape: const CircleBorder(),
+      ),
+      icon: const Icon(Icons.menu, color: Colors.black),
+      onPressed: () => _showMenuSheet(context),
+    );
   }
 }
