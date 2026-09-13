@@ -742,4 +742,64 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get averageInvalidNumber =>
       'Bitte geben Sie zuerst eine gültige Zahl ein';
+
+  @override
+  String get percentageTitle => 'Prozentrechner';
+
+  @override
+  String get menuPercentage => 'Prozent';
+
+  @override
+  String get percentageModeTax => 'MwSt. (netto/brutto)';
+
+  @override
+  String get percentageModeDiscount => 'Rabatt';
+
+  @override
+  String get percentageModeIncrease => 'Erhöhung';
+
+  @override
+  String get percentageModeTip => 'Trinkgeld';
+
+  @override
+  String get percentageTaxNet => 'Nettopreis';
+
+  @override
+  String get percentageTaxGross => 'Bruttopreis';
+
+  @override
+  String get percentageTaxRate => 'MwSt.-Satz';
+
+  @override
+  String get percentageTaxAmount => 'MwSt.-Betrag';
+
+  @override
+  String get percentageOriginal => 'Ursprünglicher Preis';
+
+  @override
+  String get percentageFinal => 'Endpreis';
+
+  @override
+  String get percentageDiscountRate => 'Rabattsatz';
+
+  @override
+  String get percentageDiscountAmount => 'Rabattbetrag';
+
+  @override
+  String get percentageIncreaseRate => 'Erhöhungssatz';
+
+  @override
+  String get percentageIncreaseAmount => 'Erhöhungsbetrag';
+
+  @override
+  String get percentageBill => 'Rechnungsbetrag';
+
+  @override
+  String get percentageTipRate => 'Trinkgeldsatz';
+
+  @override
+  String get percentageTipAmount => 'Trinkgeldbetrag';
+
+  @override
+  String get percentageTotal => 'Gesamt mit Trinkgeld';
 }

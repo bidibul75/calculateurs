@@ -734,4 +734,64 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Inserisci prima un numero valido';
+
+  @override
+  String get percentageTitle => 'Calcolatore percentuali';
+
+  @override
+  String get menuPercentage => 'Percentuale';
+
+  @override
+  String get percentageModeTax => 'IVA (imponibile/lordo)';
+
+  @override
+  String get percentageModeDiscount => 'Sconto';
+
+  @override
+  String get percentageModeIncrease => 'Aumento';
+
+  @override
+  String get percentageModeTip => 'Mancia';
+
+  @override
+  String get percentageTaxNet => 'Prezzo IVA esclusa';
+
+  @override
+  String get percentageTaxGross => 'Prezzo IVA inclusa';
+
+  @override
+  String get percentageTaxRate => 'Aliquota IVA';
+
+  @override
+  String get percentageTaxAmount => 'Importo IVA';
+
+  @override
+  String get percentageOriginal => 'Prezzo originale';
+
+  @override
+  String get percentageFinal => 'Prezzo finale';
+
+  @override
+  String get percentageDiscountRate => 'Percentuale di sconto';
+
+  @override
+  String get percentageDiscountAmount => 'Importo dello sconto';
+
+  @override
+  String get percentageIncreaseRate => 'Percentuale di aumento';
+
+  @override
+  String get percentageIncreaseAmount => 'Importo dell\'aumento';
+
+  @override
+  String get percentageBill => 'Importo del conto';
+
+  @override
+  String get percentageTipRate => 'Percentuale di mancia';
+
+  @override
+  String get percentageTipAmount => 'Importo della mancia';
+
+  @override
+  String get percentageTotal => 'Totale con mancia';
 }

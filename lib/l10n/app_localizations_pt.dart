@@ -737,4 +737,64 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Primeiro insira um número válido';
+
+  @override
+  String get percentageTitle => 'Calculadora de percentagens';
+
+  @override
+  String get menuPercentage => 'Percentagem';
+
+  @override
+  String get percentageModeTax => 'IVA (s/IVA / c/IVA)';
+
+  @override
+  String get percentageModeDiscount => 'Desconto';
+
+  @override
+  String get percentageModeIncrease => 'Aumento';
+
+  @override
+  String get percentageModeTip => 'Gorjeta';
+
+  @override
+  String get percentageTaxNet => 'Preço sem IVA';
+
+  @override
+  String get percentageTaxGross => 'Preço com IVA';
+
+  @override
+  String get percentageTaxRate => 'Taxa de IVA';
+
+  @override
+  String get percentageTaxAmount => 'Valor do IVA';
+
+  @override
+  String get percentageOriginal => 'Preço original';
+
+  @override
+  String get percentageFinal => 'Preço final';
+
+  @override
+  String get percentageDiscountRate => 'Taxa de desconto';
+
+  @override
+  String get percentageDiscountAmount => 'Valor do desconto';
+
+  @override
+  String get percentageIncreaseRate => 'Taxa de aumento';
+
+  @override
+  String get percentageIncreaseAmount => 'Valor do aumento';
+
+  @override
+  String get percentageBill => 'Valor da conta';
+
+  @override
+  String get percentageTipRate => 'Taxa de gorjeta';
+
+  @override
+  String get percentageTipAmount => 'Valor da gorjeta';
+
+  @override
+  String get percentageTotal => 'Total com gorjeta';
 }

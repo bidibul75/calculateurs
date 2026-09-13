@@ -733,4 +733,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Enter a valid number first';
+
+  @override
+  String get percentageTitle => 'Percentage calculator';
+
+  @override
+  String get menuPercentage => 'Percentage';
+
+  @override
+  String get percentageModeTax => 'Tax (ex/incl.)';
+
+  @override
+  String get percentageModeDiscount => 'Discount';
+
+  @override
+  String get percentageModeIncrease => 'Increase';
+
+  @override
+  String get percentageModeTip => 'Tip';
+
+  @override
+  String get percentageTaxNet => 'Price excl. tax';
+
+  @override
+  String get percentageTaxGross => 'Price incl. tax';
+
+  @override
+  String get percentageTaxRate => 'Tax rate';
+
+  @override
+  String get percentageTaxAmount => 'Tax amount';
+
+  @override
+  String get percentageOriginal => 'Original price';
+
+  @override
+  String get percentageFinal => 'Final price';
+
+  @override
+  String get percentageDiscountRate => 'Discount rate';
+
+  @override
+  String get percentageDiscountAmount => 'Discount amount';
+
+  @override
+  String get percentageIncreaseRate => 'Increase rate';
+
+  @override
+  String get percentageIncreaseAmount => 'Increase amount';
+
+  @override
+  String get percentageBill => 'Bill amount';
+
+  @override
+  String get percentageTipRate => 'Tip rate';
+
+  @override
+  String get percentageTipAmount => 'Tip amount';
+
+  @override
+  String get percentageTotal => 'Total with tip';
 }

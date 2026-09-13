@@ -732,4 +732,64 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Najpierw wpisz prawidłową liczbę';
+
+  @override
+  String get percentageTitle => 'Kalkulator procentów';
+
+  @override
+  String get menuPercentage => 'Procent';
+
+  @override
+  String get percentageModeTax => 'VAT (netto/brutto)';
+
+  @override
+  String get percentageModeDiscount => 'Rabat';
+
+  @override
+  String get percentageModeIncrease => 'Podwyżka';
+
+  @override
+  String get percentageModeTip => 'Napiwek';
+
+  @override
+  String get percentageTaxNet => 'Cena netto';
+
+  @override
+  String get percentageTaxGross => 'Cena brutto';
+
+  @override
+  String get percentageTaxRate => 'Stawka VAT';
+
+  @override
+  String get percentageTaxAmount => 'Kwota VAT';
+
+  @override
+  String get percentageOriginal => 'Cena początkowa';
+
+  @override
+  String get percentageFinal => 'Cena końcowa';
+
+  @override
+  String get percentageDiscountRate => 'Procent rabatu';
+
+  @override
+  String get percentageDiscountAmount => 'Kwota rabatu';
+
+  @override
+  String get percentageIncreaseRate => 'Procent podwyżki';
+
+  @override
+  String get percentageIncreaseAmount => 'Kwota podwyżki';
+
+  @override
+  String get percentageBill => 'Kwota rachunku';
+
+  @override
+  String get percentageTipRate => 'Procent napiwku';
+
+  @override
+  String get percentageTipAmount => 'Kwota napiwku';
+
+  @override
+  String get percentageTotal => 'Suma z napiwkiem';
 }

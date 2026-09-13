@@ -736,4 +736,64 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Introduceți mai întâi un număr valid';
+
+  @override
+  String get percentageTitle => 'Calculator de procente';
+
+  @override
+  String get menuPercentage => 'Procent';
+
+  @override
+  String get percentageModeTax => 'TVA (fără/cu)';
+
+  @override
+  String get percentageModeDiscount => 'Reducere';
+
+  @override
+  String get percentageModeIncrease => 'Creștere';
+
+  @override
+  String get percentageModeTip => 'Bacșiș';
+
+  @override
+  String get percentageTaxNet => 'Preț fără TVA';
+
+  @override
+  String get percentageTaxGross => 'Preț cu TVA';
+
+  @override
+  String get percentageTaxRate => 'Cota de TVA';
+
+  @override
+  String get percentageTaxAmount => 'Suma TVA';
+
+  @override
+  String get percentageOriginal => 'Preț original';
+
+  @override
+  String get percentageFinal => 'Preț final';
+
+  @override
+  String get percentageDiscountRate => 'Procent de reducere';
+
+  @override
+  String get percentageDiscountAmount => 'Suma reducerii';
+
+  @override
+  String get percentageIncreaseRate => 'Procent de creștere';
+
+  @override
+  String get percentageIncreaseAmount => 'Suma creșterii';
+
+  @override
+  String get percentageBill => 'Suma notei';
+
+  @override
+  String get percentageTipRate => 'Procent de bacșiș';
+
+  @override
+  String get percentageTipAmount => 'Suma bacșișului';
+
+  @override
+  String get percentageTotal => 'Total cu bacșiș';
 }

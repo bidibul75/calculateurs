@@ -738,4 +738,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Saisissez d’abord un nombre valide';
+
+  @override
+  String get percentageTitle => 'Calculateur de pourcentage';
+
+  @override
+  String get menuPercentage => 'Pourcentage';
+
+  @override
+  String get percentageModeTax => 'TVA (HT/TTC)';
+
+  @override
+  String get percentageModeDiscount => 'Réduction';
+
+  @override
+  String get percentageModeIncrease => 'Augmentation';
+
+  @override
+  String get percentageModeTip => 'Pourboire';
+
+  @override
+  String get percentageTaxNet => 'Prix HT';
+
+  @override
+  String get percentageTaxGross => 'Prix TTC';
+
+  @override
+  String get percentageTaxRate => 'Taux de TVA';
+
+  @override
+  String get percentageTaxAmount => 'Montant de TVA';
+
+  @override
+  String get percentageOriginal => 'Prix d\'origine';
+
+  @override
+  String get percentageFinal => 'Prix final';
+
+  @override
+  String get percentageDiscountRate => 'Taux de réduction';
+
+  @override
+  String get percentageDiscountAmount => 'Montant de la réduction';
+
+  @override
+  String get percentageIncreaseRate => 'Taux d\'augmentation';
+
+  @override
+  String get percentageIncreaseAmount => 'Montant de l\'augmentation';
+
+  @override
+  String get percentageBill => 'Montant de l\'addition';
+
+  @override
+  String get percentageTipRate => 'Taux de pourboire';
+
+  @override
+  String get percentageTipAmount => 'Montant du pourboire';
+
+  @override
+  String get percentageTotal => 'Total avec pourboire';
 }

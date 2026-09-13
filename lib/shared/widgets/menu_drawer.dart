@@ -141,6 +141,7 @@ class MenuDrawer extends StatelessWidget {
     List<ModuleMenuItem> healthModules,
     List<ModuleMenuItem> conversionModules,
     List<ModuleMenuItem> mathModules,
+    List<ModuleMenuItem> financeModules,
     List<ModuleMenuItem> ipToolsModules,
   ) {
     return [
@@ -211,6 +212,23 @@ class MenuDrawer extends StatelessWidget {
               ),
           ],
         ),
+      if (financeModules.isNotEmpty)
+        ExpansionTile(
+          leading: const Icon(Icons.account_balance_wallet_outlined),
+          title: Text(sectionTitle(ModuleSection.finance, l10n)),
+          children: [
+            for (final module in financeModules)
+              ListTile(
+                contentPadding: const EdgeInsets.only(left: 56, right: 16),
+                leading: module.icon,
+                title: Text(module.label),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  _navigateToRoute(context, module.routeName);
+                },
+              ),
+          ],
+        ),
       if (conversionModules.isNotEmpty)
         ExpansionTile(
           leading: const Icon(Icons.swap_horiz_outlined),
@@ -254,6 +272,7 @@ class MenuDrawer extends StatelessWidget {
     final healthModules = modules.where((module) => module.section == ModuleSection.health).toList();
     final conversionModules = modules.where((module) => module.section == ModuleSection.conversions).toList();
     final mathModules = modules.where((module) => module.section == ModuleSection.math).toList();
+    final financeModules = modules.where((module) => module.section == ModuleSection.finance).toList();
     final ipToolsModules = modules.where((module) => module.section == ModuleSection.ipTools).toList();
     final isMobileSheet = !kIsWeb && _isMobilePlatform(Theme.of(context).platform);
 
@@ -271,6 +290,7 @@ class MenuDrawer extends StatelessWidget {
             healthModules,
             conversionModules,
             mathModules,
+            financeModules,
             ipToolsModules,
           ),
         );

@@ -1511,6 +1511,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid number first'**
   String get averageInvalidNumber;
+
+  /// No description provided for @percentageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage calculator'**
+  String get percentageTitle;
+
+  /// No description provided for @menuPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get menuPercentage;
+
+  /// No description provided for @percentageModeTax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax (ex/incl.)'**
+  String get percentageModeTax;
+
+  /// No description provided for @percentageModeDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get percentageModeDiscount;
+
+  /// No description provided for @percentageModeIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase'**
+  String get percentageModeIncrease;
+
+  /// No description provided for @percentageModeTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip'**
+  String get percentageModeTip;
+
+  /// No description provided for @percentageTaxNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Price excl. tax'**
+  String get percentageTaxNet;
+
+  /// No description provided for @percentageTaxGross.
+  ///
+  /// In en, this message translates to:
+  /// **'Price incl. tax'**
+  String get percentageTaxGross;
+
+  /// No description provided for @percentageTaxRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax rate'**
+  String get percentageTaxRate;
+
+  /// No description provided for @percentageTaxAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax amount'**
+  String get percentageTaxAmount;
+
+  /// No description provided for @percentageOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Original price'**
+  String get percentageOriginal;
+
+  /// No description provided for @percentageFinal.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price'**
+  String get percentageFinal;
+
+  /// No description provided for @percentageDiscountRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount rate'**
+  String get percentageDiscountRate;
+
+  /// No description provided for @percentageDiscountAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount amount'**
+  String get percentageDiscountAmount;
+
+  /// No description provided for @percentageIncreaseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase rate'**
+  String get percentageIncreaseRate;
+
+  /// No description provided for @percentageIncreaseAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase amount'**
+  String get percentageIncreaseAmount;
+
+  /// No description provided for @percentageBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill amount'**
+  String get percentageBill;
+
+  /// No description provided for @percentageTipRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip rate'**
+  String get percentageTipRate;
+
+  /// No description provided for @percentageTipAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip amount'**
+  String get percentageTipAmount;
+
+  /// No description provided for @percentageTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total with tip'**
+  String get percentageTotal;
 }
 
 class _AppLocalizationsDelegate

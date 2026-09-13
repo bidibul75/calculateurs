@@ -739,4 +739,64 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Primero introduce un número válido';
+
+  @override
+  String get percentageTitle => 'Calculadora de porcentajes';
+
+  @override
+  String get menuPercentage => 'Porcentaje';
+
+  @override
+  String get percentageModeTax => 'IVA (sin/con)';
+
+  @override
+  String get percentageModeDiscount => 'Descuento';
+
+  @override
+  String get percentageModeIncrease => 'Aumento';
+
+  @override
+  String get percentageModeTip => 'Propina';
+
+  @override
+  String get percentageTaxNet => 'Precio sin IVA';
+
+  @override
+  String get percentageTaxGross => 'Precio con IVA';
+
+  @override
+  String get percentageTaxRate => 'Tipo de IVA';
+
+  @override
+  String get percentageTaxAmount => 'Importe del IVA';
+
+  @override
+  String get percentageOriginal => 'Precio original';
+
+  @override
+  String get percentageFinal => 'Precio final';
+
+  @override
+  String get percentageDiscountRate => 'Porcentaje de descuento';
+
+  @override
+  String get percentageDiscountAmount => 'Importe del descuento';
+
+  @override
+  String get percentageIncreaseRate => 'Porcentaje de aumento';
+
+  @override
+  String get percentageIncreaseAmount => 'Importe del aumento';
+
+  @override
+  String get percentageBill => 'Importe de la cuenta';
+
+  @override
+  String get percentageTipRate => 'Porcentaje de propina';
+
+  @override
+  String get percentageTipAmount => 'Importe de la propina';
+
+  @override
+  String get percentageTotal => 'Total con propina';
 }

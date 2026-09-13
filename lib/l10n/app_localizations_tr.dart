@@ -734,4 +734,64 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Önce geçerli bir sayı girin';
+
+  @override
+  String get percentageTitle => 'Yüzde hesaplayıcı';
+
+  @override
+  String get menuPercentage => 'Yüzde';
+
+  @override
+  String get percentageModeTax => 'KDV (hariç/dahil)';
+
+  @override
+  String get percentageModeDiscount => 'İndirim';
+
+  @override
+  String get percentageModeIncrease => 'Artış';
+
+  @override
+  String get percentageModeTip => 'Bahşiş';
+
+  @override
+  String get percentageTaxNet => 'KDV hariç fiyat';
+
+  @override
+  String get percentageTaxGross => 'KDV dahil fiyat';
+
+  @override
+  String get percentageTaxRate => 'KDV oranı';
+
+  @override
+  String get percentageTaxAmount => 'KDV tutarı';
+
+  @override
+  String get percentageOriginal => 'Orijinal fiyat';
+
+  @override
+  String get percentageFinal => 'Son fiyat';
+
+  @override
+  String get percentageDiscountRate => 'İndirim oranı';
+
+  @override
+  String get percentageDiscountAmount => 'İndirim tutarı';
+
+  @override
+  String get percentageIncreaseRate => 'Artış oranı';
+
+  @override
+  String get percentageIncreaseAmount => 'Artış tutarı';
+
+  @override
+  String get percentageBill => 'Hesap tutarı';
+
+  @override
+  String get percentageTipRate => 'Bahşiş oranı';
+
+  @override
+  String get percentageTipAmount => 'Bahşiş tutarı';
+
+  @override
+  String get percentageTotal => 'Bahşişli toplam';
 }

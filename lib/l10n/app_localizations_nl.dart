@@ -734,4 +734,64 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get averageInvalidNumber => 'Voer eerst een geldig getal in';
+
+  @override
+  String get percentageTitle => 'Percentagecalculator';
+
+  @override
+  String get menuPercentage => 'Percentage';
+
+  @override
+  String get percentageModeTax => 'btw (excl./incl.)';
+
+  @override
+  String get percentageModeDiscount => 'Korting';
+
+  @override
+  String get percentageModeIncrease => 'Verhoging';
+
+  @override
+  String get percentageModeTip => 'Fooi';
+
+  @override
+  String get percentageTaxNet => 'Prijs excl. btw';
+
+  @override
+  String get percentageTaxGross => 'Prijs incl. btw';
+
+  @override
+  String get percentageTaxRate => 'btw-tarief';
+
+  @override
+  String get percentageTaxAmount => 'btw-bedrag';
+
+  @override
+  String get percentageOriginal => 'Oorspronkelijke prijs';
+
+  @override
+  String get percentageFinal => 'Eindprijs';
+
+  @override
+  String get percentageDiscountRate => 'Kortingspercentage';
+
+  @override
+  String get percentageDiscountAmount => 'Kortingsbedrag';
+
+  @override
+  String get percentageIncreaseRate => 'Verhogingspercentage';
+
+  @override
+  String get percentageIncreaseAmount => 'Verhogingsbedrag';
+
+  @override
+  String get percentageBill => 'Rekeningbedrag';
+
+  @override
+  String get percentageTipRate => 'Fooipercentage';
+
+  @override
+  String get percentageTipAmount => 'Fooibedrag';
+
+  @override
+  String get percentageTotal => 'Totaal met fooi';
 }

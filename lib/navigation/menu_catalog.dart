@@ -100,6 +100,12 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       routeName: AppRoutes.average,
       label: l10n.menuAverage,
     ),
+    ModuleMenuItem(
+      icon: const Icon(Icons.percent),
+      section: ModuleSection.finance,
+      routeName: AppRoutes.percentage,
+      label: l10n.menuPercentage,
+    ),
   ];
 }
 

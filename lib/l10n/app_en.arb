@@ -311,5 +311,29 @@
   "averageUndo": "Undo last",
   "averageClearAll": "Clear all",
   "averageRemoveValue": "Remove this number",
-  "averageInvalidNumber": "Enter a valid number first"
+  "averageInvalidNumber": "Enter a valid number first",
+
+  "@_module.finance.percentage": {
+    "description": "Module vocabulary: Finance > Percentage / tax / tip"
+  },
+  "percentageTitle": "Percentage calculator",
+  "menuPercentage": "Percentage",
+  "percentageModeTax": "Tax (ex/incl.)",
+  "percentageModeDiscount": "Discount",
+  "percentageModeIncrease": "Increase",
+  "percentageModeTip": "Tip",
+  "percentageTaxNet": "Price excl. tax",
+  "percentageTaxGross": "Price incl. tax",
+  "percentageTaxRate": "Tax rate",
+  "percentageTaxAmount": "Tax amount",
+  "percentageOriginal": "Original price",
+  "percentageFinal": "Final price",
+  "percentageDiscountRate": "Discount rate",
+  "percentageDiscountAmount": "Discount amount",
+  "percentageIncreaseRate": "Increase rate",
+  "percentageIncreaseAmount": "Increase amount",
+  "percentageBill": "Bill amount",
+  "percentageTipRate": "Tip rate",
+  "percentageTipAmount": "Tip amount",
+  "percentageTotal": "Total with tip"
 }

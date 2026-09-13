@@ -14,6 +14,7 @@ import 'package:calculators/calculators/conversions/volume/screens/volume_screen
 import 'package:calculators/calculators/conversions/surface/screens/surface_screen.dart';
 import 'package:calculators/calculators/conversions/speed/screens/speed_screen.dart';
 import 'package:calculators/calculators/math/average/screens/average_screen.dart';
+import 'package:calculators/calculators/finance/percentage/screens/percentage_screen.dart';
 
 abstract final class AppRoutes {
   static const String home = '/';
@@ -29,6 +30,7 @@ abstract final class AppRoutes {
   static const String surface = '/surface';
   static const String speed = '/speed';
   static const String average = '/average';
+  static const String percentage = '/percentage';
 
   static const String initialRoute = home;
   static const String _lastRoutePreferenceKey = 'navigation.lastRoute';
@@ -47,6 +49,7 @@ abstract final class AppRoutes {
     surface: (context) => const SurfaceScreen(),
     speed: (context) => const SpeedScreen(),
     average: (context) => const AverageScreen(),
+    percentage: (context) => const PercentageScreen(),
   };
 
   static Future<String> resolveInitialRoute() async {

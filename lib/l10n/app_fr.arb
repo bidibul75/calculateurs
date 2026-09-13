@@ -311,5 +311,29 @@
   "averageUndo": "Annuler dernier",
   "averageClearAll": "Tout effacer",
   "averageRemoveValue": "Retirer ce nombre",
-  "averageInvalidNumber": "Saisissez d’abord un nombre valide"
+  "averageInvalidNumber": "Saisissez d’abord un nombre valide",
+
+  "@_module.finance.percentage": {
+    "description": "Vocabulaire module : Finances > Pourcentage / TVA / pourboire"
+  },
+  "percentageTitle": "Calculateur de pourcentage",
+  "menuPercentage": "Pourcentage",
+  "percentageModeTax": "TVA (HT/TTC)",
+  "percentageModeDiscount": "Réduction",
+  "percentageModeIncrease": "Augmentation",
+  "percentageModeTip": "Pourboire",
+  "percentageTaxNet": "Prix HT",
+  "percentageTaxGross": "Prix TTC",
+  "percentageTaxRate": "Taux de TVA",
+  "percentageTaxAmount": "Montant de TVA",
+  "percentageOriginal": "Prix d'origine",
+  "percentageFinal": "Prix final",
+  "percentageDiscountRate": "Taux de réduction",
+  "percentageDiscountAmount": "Montant de la réduction",
+  "percentageIncreaseRate": "Taux d'augmentation",
+  "percentageIncreaseAmount": "Montant de l'augmentation",
+  "percentageBill": "Montant de l'addition",
+  "percentageTipRate": "Taux de pourboire",
+  "percentageTipAmount": "Montant du pourboire",
+  "percentageTotal": "Total avec pourboire"
 }
