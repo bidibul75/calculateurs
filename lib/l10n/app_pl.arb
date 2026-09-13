@@ -118,6 +118,17 @@
   "distanceUnitInch": "inch",
   "distanceUnitNmi": "nmi",
 
+  "@_module.conversions.weight": {
+    "description": "Słownictwo modułu: Konwersje > Waga"
+  },
+  "menuWeight": "Przelicznik masy",
+  "weightTitle": "Przelicznik masy",
+  "weightUnitKg": "kg",
+  "weightUnitG": "g",
+  "weightUnitLb": "lb",
+  "weightUnitOz": "oz",
+  "weightUnitSt": "st",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

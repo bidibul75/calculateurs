@@ -118,6 +118,17 @@
   "distanceUnitInch": "inch",
   "distanceUnitNmi": "nmi",
 
+  "@_module.conversions.weight": {
+    "description": "Modül sözlüğü: Dönüşümler > Ağırlık"
+  },
+  "menuWeight": "Ağırlık dönüştürücü",
+  "weightTitle": "Ağırlık dönüştürücü",
+  "weightUnitKg": "kg",
+  "weightUnitG": "g",
+  "weightUnitLb": "lb",
+  "weightUnitOz": "oz",
+  "weightUnitSt": "st",
+
   "@_module.ip.ipv4": {
     "description": "Module vocabulary: IP > IPv4 Address"
   },

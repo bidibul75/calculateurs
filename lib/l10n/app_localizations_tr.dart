@@ -258,6 +258,27 @@ class AppLocalizationsTr extends AppLocalizations {
   String get distanceUnitNmi => 'nmi';
 
   @override
+  String get menuWeight => 'Ağırlık dönüştürücü';
+
+  @override
+  String get weightTitle => 'Ağırlık dönüştürücü';
+
+  @override
+  String get weightUnitKg => 'kg';
+
+  @override
+  String get weightUnitG => 'g';
+
+  @override
+  String get weightUnitLb => 'lb';
+
+  @override
+  String get weightUnitOz => 'oz';
+
+  @override
+  String get weightUnitSt => 'st';
+
+  @override
   String get menuIpv4Address => 'IPv4 Adresi';
 
   @override

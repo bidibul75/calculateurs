@@ -9,6 +9,7 @@ import 'package:calculators/calculators/ip/IPv6/screens/ipv6_supernet_screen.dar
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:calculators/calculators/conversions/distance/screens/distance_screen.dart';
+import 'package:calculators/calculators/conversions/weight/screens/weight_screen.dart';
 import 'package:calculators/calculators/math/average/screens/average_screen.dart';
 
 abstract final class AppRoutes {
@@ -20,6 +21,7 @@ abstract final class AppRoutes {
   static const String ipv6Address = '/ip/ipv6/address';
   static const String ipv6Supernet = '/ip/ipv6/supernet';
   static const String distance = '/distance';
+  static const String weight = '/weight';
   static const String average = '/average';
 
   static const String initialRoute = home;
@@ -34,6 +36,7 @@ abstract final class AppRoutes {
     ipv6Address: (context) => const Ipv6AddressScreen(),
     ipv6Supernet: (context) => const Ipv6SupernetScreen(),
     distance: (context) => const DistanceScreen(),
+    weight: (context) => const WeightScreen(),
     average: (context) => const AverageScreen(),
   };
 

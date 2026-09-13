@@ -257,6 +257,27 @@ class AppLocalizationsIt extends AppLocalizations {
   String get distanceUnitNmi => 'nmi';
 
   @override
+  String get menuWeight => 'Convertitore di peso';
+
+  @override
+  String get weightTitle => 'Convertitore di peso';
+
+  @override
+  String get weightUnitKg => 'kg';
+
+  @override
+  String get weightUnitG => 'g';
+
+  @override
+  String get weightUnitLb => 'lb';
+
+  @override
+  String get weightUnitOz => 'oz';
+
+  @override
+  String get weightUnitSt => 'st';
+
+  @override
   String get menuIpv4Address => 'Indirizzo IPv4';
 
   @override

@@ -600,6 +600,48 @@ abstract class AppLocalizations {
   /// **'nmi'**
   String get distanceUnitNmi;
 
+  /// No description provided for @menuWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Converter'**
+  String get menuWeight;
+
+  /// No description provided for @weightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Converter'**
+  String get weightTitle;
+
+  /// No description provided for @weightUnitKg.
+  ///
+  /// In en, this message translates to:
+  /// **'kg'**
+  String get weightUnitKg;
+
+  /// No description provided for @weightUnitG.
+  ///
+  /// In en, this message translates to:
+  /// **'g'**
+  String get weightUnitG;
+
+  /// No description provided for @weightUnitLb.
+  ///
+  /// In en, this message translates to:
+  /// **'lb'**
+  String get weightUnitLb;
+
+  /// No description provided for @weightUnitOz.
+  ///
+  /// In en, this message translates to:
+  /// **'oz'**
+  String get weightUnitOz;
+
+  /// No description provided for @weightUnitSt.
+  ///
+  /// In en, this message translates to:
+  /// **'st'**
+  String get weightUnitSt;
+
   /// No description provided for @menuIpv4Address.
   ///
   /// In en, this message translates to:

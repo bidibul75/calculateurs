@@ -1,4 +1,4 @@
-// lib/screens/distance_screen.dart
+// lib/calculators/conversions/weight/screens/weight_screen.dart
 
 import 'dart:async';
 
@@ -12,24 +12,24 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../utils/i18n/local_number_symbols.dart';
-import '../controllers/distance_controller.dart';
-import '../models/distance_state.dart';
+import '../controllers/weight_controller.dart';
+import '../models/weight_state.dart';
 
-class DistanceScreen extends StatefulWidget {
-  const DistanceScreen({super.key});
+class WeightScreen extends StatefulWidget {
+  const WeightScreen({super.key});
 
   @override
-  State<DistanceScreen> createState() => _DistanceScreenState();
+  State<WeightScreen> createState() => _WeightScreenState();
 }
 
-class _DistanceScreenState extends State<DistanceScreen> {
-  static const Key _copyButtonKey = ValueKey<String>('distance.copy');
-  static const Key _saveButtonKey = ValueKey<String>('distance.save');
+class _WeightScreenState extends State<WeightScreen> {
+  static const Key _copyButtonKey = ValueKey<String>('weight.copy');
+  static const Key _saveButtonKey = ValueKey<String>('weight.save');
 
-  final DistanceController _controller = DistanceController();
+  final WeightController _controller = WeightController();
   final shared_theme.ThemeManager _themeManager = GetIt.I<shared_theme.ThemeManager>();
   final symbols = GetIt.I<LocalNumberSymbols>();
-  final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'distance_keyboard_focus');
+  final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'weight_keyboard_focus');
 
   @override
   void initState() {
@@ -67,18 +67,18 @@ class _DistanceScreenState extends State<DistanceScreen> {
     return _themeManager.buttonGroupColor;
   }
 
-  String _buildDistanceReport() {
+  String _buildWeightReport() {
     final state = _controller.state;
     return [
-      '${AppLocalizations.of(context).distanceUnitM}: ${state.meter}',
-      '${AppLocalizations.of(context).distanceUnitKm}: ${state.kilometer}',
-      '${AppLocalizations.of(context).distanceUnitMi}: ${state.mile}',
-      '${AppLocalizations.of(context).distanceUnitFt}: ${state.foot}',
-      '${AppLocalizations.of(context).distanceUnitInch}: ${state.inch}',
+      '${AppLocalizations.of(context).weightUnitKg}: ${state.kilogram}',
+      '${AppLocalizations.of(context).weightUnitG}: ${state.gram}',
+      '${AppLocalizations.of(context).weightUnitLb}: ${state.pound}',
+      '${AppLocalizations.of(context).weightUnitOz}: ${state.ounce}',
+      '${AppLocalizations.of(context).weightUnitSt}: ${state.stone}',
     ].join('\n');
   }
 
-  void _showDistanceSnackBar(String message) {
+  void _showWeightSnackBar(String message) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context)
@@ -86,32 +86,32 @@ class _DistanceScreenState extends State<DistanceScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _copyDistanceToClipboard(AppLocalizations l10n) async {
-    await Clipboard.setData(ClipboardData(text: _buildDistanceReport()));
-    _showDistanceSnackBar(l10n.basicHistoryCopied);
+  Future<void> _copyWeightToClipboard(AppLocalizations l10n) async {
+    await Clipboard.setData(ClipboardData(text: _buildWeightReport()));
+    _showWeightSnackBar(l10n.basicHistoryCopied);
   }
 
-  Future<void> _saveDistanceToFile(AppLocalizations l10n) async {
-    final content = _buildDistanceReport();
+  Future<void> _saveWeightToFile(AppLocalizations l10n) async {
+    final content = _buildWeightReport();
 
     if (!isHistoryFileExportSupported) {
-      _showDistanceSnackBar(l10n.basicHistoryExportUnsupported);
+      _showWeightSnackBar(l10n.basicHistoryExportUnsupported);
       return;
     }
 
     try {
       final filePath = await exportHistoryToTextFile(content);
       if (filePath == null || filePath.isEmpty) {
-        _showDistanceSnackBar(l10n.basicHistoryExportError);
+        _showWeightSnackBar(l10n.basicHistoryExportError);
         return;
       }
-      _showDistanceSnackBar(l10n.basicHistoryExported(filePath));
+      _showWeightSnackBar(l10n.basicHistoryExported(filePath));
     } catch (_) {
-      _showDistanceSnackBar(l10n.basicHistoryExportError);
+      _showWeightSnackBar(l10n.basicHistoryExportError);
     }
   }
 
-  Widget _buildFieldCard(String label, String value, DistanceScale scale) {
+  Widget _buildFieldCard(String label, String value, WeightScale scale) {
     final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final bool isActive = _controller.state.activeUnit == scale;
     final Color borderColor = isActive ? _themeManager.buttonGroupColor : Colors.grey.withAlpha(100);
@@ -273,10 +273,10 @@ class _DistanceScreenState extends State<DistanceScreen> {
     final bool isDesktopLike = mediaSize.width >= 768;
     final bool isPhone = mediaSize.width < 600;
     final double keyboardBottomPadding =
-        isPhone ? (bottomInset + 28.0).clamp(28.0, 56.0).toDouble() : 50.0;
-    final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.34 : (isPhone ? 0.34 : 0.48)))
-        .clamp(isDesktopLike ? 240.0 : (isPhone ? 200.0 : 280.0), isDesktopLike ? 400.0 : 520.0)
-        .toDouble();
+            isPhone ? (bottomInset + 28.0).clamp(28.0, 56.0).toDouble() : 50.0;
+        final double keyboardHeight = (mediaSize.height * (isDesktopLike ? 0.34 : (isPhone ? 0.34 : 0.48)))
+            .clamp(isDesktopLike ? 240.0 : (isPhone ? 200.0 : 280.0), isDesktopLike ? 400.0 : 520.0)
+            .toDouble();
 
     return Focus(
       focusNode: _keyboardFocusNode,
@@ -287,7 +287,7 @@ class _DistanceScreenState extends State<DistanceScreen> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            title: Text(l10n.distanceTitle),
+            title: Text(l10n.weightTitle),
             backgroundColor: Colors.white.withAlpha(150),
             foregroundColor: Colors.grey[150],
             iconTheme: IconThemeData(color: Colors.grey[150]),
@@ -304,84 +304,84 @@ class _DistanceScreenState extends State<DistanceScreen> {
                       children: [
                         Expanded(
                           child: Container(
-                            color: Colors.white.withAlpha(150),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SingleChildScrollView(
-                                  padding: EdgeInsets.fromLTRB(
-                                    isPhone ? 16 : 24,
-                                    isPhone ? 16 : 28,
-                                    isPhone ? 16 : 24,
-                                    isPhone ? 8 : 12,
-                                  ),
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(minHeight: constraints.maxHeight - 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                key: _copyButtonKey,
-                                                onPressed: () => unawaited(_copyDistanceToClipboard(l10n)),
-                                                tooltip: l10n.basicHistoryCopy,
-                                                icon: const Icon(Icons.content_copy_outlined),
-                                                color: _themeManager.displayTextColor,
-                                              ),
-                                              IconButton(
-                                                key: _saveButtonKey,
-                                                onPressed: () => unawaited(_saveDistanceToFile(l10n)),
-                                                tooltip: l10n.basicHistorySave,
-                                                icon: const Icon(Icons.save_alt_outlined),
-                                                color: _themeManager.displayTextColor,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        _buildFieldCard(
-                                          l10n.distanceUnitM,
-                                          _controller.state.meter,
-                                          DistanceScale.meter,
-                                        ),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(
-                                          l10n.distanceUnitKm,
-                                          _controller.state.kilometer,
-                                          DistanceScale.kilometer,
-                                        ),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(
-                                          l10n.distanceUnitMi,
-                                          _controller.state.mile,
-                                          DistanceScale.mile,
-                                        ),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(
-                                          l10n.distanceUnitFt,
-                                          _controller.state.foot,
-                                          DistanceScale.foot,
-                                        ),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(
-                                          l10n.distanceUnitInch,
-                                          _controller.state.inch,
-                                          DistanceScale.inch,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(8, isPhone ? 2 : 5, 8, keyboardBottomPadding),
-                          child: SizedBox(
-                            height: keyboardHeight,
+                                                    color: Colors.white.withAlpha(150),
+                                                    child: LayoutBuilder(
+                                                      builder: (context, constraints) {
+                                                        return SingleChildScrollView(
+                                                          padding: EdgeInsets.fromLTRB(
+                                                            isPhone ? 16 : 24,
+                                                            isPhone ? 16 : 28,
+                                                            isPhone ? 16 : 24,
+                                                            isPhone ? 8 : 12,
+                                                          ),
+                                                          child: ConstrainedBox(
+                                                            constraints: BoxConstraints(minHeight: constraints.maxHeight - 20),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                              children: [
+                                                                Align(
+                                                                  alignment: Alignment.centerRight,
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    children: [
+                                                                      IconButton(
+                                                                        key: _copyButtonKey,
+                                                                        onPressed: () => unawaited(_copyWeightToClipboard(l10n)),
+                                                                        tooltip: l10n.basicHistoryCopy,
+                                                                        icon: const Icon(Icons.content_copy_outlined),
+                                                                        color: _themeManager.displayTextColor,
+                                                                      ),
+                                                                      IconButton(
+                                                                        key: _saveButtonKey,
+                                                                        onPressed: () => unawaited(_saveWeightToFile(l10n)),
+                                                                        tooltip: l10n.basicHistorySave,
+                                                                        icon: const Icon(Icons.save_alt_outlined),
+                                                                        color: _themeManager.displayTextColor,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                _buildFieldCard(
+                                                                  l10n.weightUnitKg,
+                                                                  _controller.state.kilogram,
+                                                                  WeightScale.kilogram,
+                                                                ),
+                                                                SizedBox(height: isPhone ? 8 : 12),
+                                                                _buildFieldCard(
+                                                                  l10n.weightUnitG,
+                                                                  _controller.state.gram,
+                                                                  WeightScale.gram,
+                                                                ),
+                                                                SizedBox(height: isPhone ? 8 : 12),
+                                                                _buildFieldCard(
+                                                                  l10n.weightUnitLb,
+                                                                  _controller.state.pound,
+                                                                  WeightScale.pound,
+                                                                ),
+                                                                SizedBox(height: isPhone ? 8 : 12),
+                                                                _buildFieldCard(
+                                                                  l10n.weightUnitOz,
+                                                                  _controller.state.ounce,
+                                                                  WeightScale.ounce,
+                                                                ),
+                                                                SizedBox(height: isPhone ? 8 : 12),
+                                                                _buildFieldCard(
+                                                                  l10n.weightUnitSt,
+                                                                  _controller.state.stone,
+                                                                  WeightScale.stone,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.fromLTRB(8, isPhone ? 2 : 5, 8, keyboardBottomPadding),
+                                                  child: SizedBox(
+                                                    height: keyboardHeight,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [

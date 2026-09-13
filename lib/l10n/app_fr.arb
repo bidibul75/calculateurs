@@ -104,6 +104,17 @@
   "distanceUnitInch": "po",
   "distanceUnitNmi": "nmi",
 
+  "@_module.conversions.weight": {
+    "description": "Vocabulaire module : Conversions > Poids"
+  },
+  "menuWeight": "Convertisseur de poids",
+  "weightTitle": "Convertisseur de poids",
+  "weightUnitKg": "kg",
+  "weightUnitG": "g",
+  "weightUnitLb": "lb",
+  "weightUnitOz": "oz",
+  "weightUnitSt": "st",
+
   "@_module.ip.ipv4": {
     "description": "Vocabulaire module : IP > Adresse IPv4"
   },

@@ -120,6 +120,17 @@
   "distanceUnitInch": "inch",
   "distanceUnitNmi": "nmi",
 
+  "@_module.conversions.weight": {
+    "description": "Vocabulario del módulo: Conversiones > Peso"
+  },
+  "menuWeight": "Conversor de peso",
+  "weightTitle": "Conversor de peso",
+  "weightUnitKg": "kg",
+  "weightUnitG": "g",
+  "weightUnitLb": "lb",
+  "weightUnitOz": "oz",
+  "weightUnitSt": "st",
+
   "@_module.ip.ipv4": {
     "description": "Vocabulario del módulo: IP > Dirección IPv4"
   },
