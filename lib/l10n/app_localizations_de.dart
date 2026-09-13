@@ -279,6 +279,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get weightUnitSt => 'st';
 
   @override
+  String get menuVolume => 'Volumenumrechner';
+
+  @override
+  String get volumeTitle => 'Volumenumrechner';
+
+  @override
+  String get volumeUnitL => 'L';
+
+  @override
+  String get volumeUnitMl => 'mL';
+
+  @override
+  String get volumeUnitGal => 'gal (US)';
+
+  @override
+  String get volumeUnitFlOz => 'fl oz (US)';
+
+  @override
+  String get volumeUnitM3 => 'm³';
+
+  @override
   String get menuIpv4Address => 'IPv4-Adresse';
 
   @override

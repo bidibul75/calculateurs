@@ -53,6 +53,12 @@ List<ModuleMenuItem> buildModuleMenuCatalog(AppLocalizations l10n) {
       label: l10n.menuWeight,
     ),
     ModuleMenuItem(
+      icon: Icon(Icons.water_drop_outlined),
+      section: ModuleSection.conversions,
+      routeName: AppRoutes.volume,
+      label: l10n.menuVolume,
+    ),
+    ModuleMenuItem(
       icon: Icon(Icons.settings_ethernet),
       section: ModuleSection.ipTools,
       routeName: AppRoutes.ipv4Address,

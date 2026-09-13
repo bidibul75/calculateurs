@@ -280,6 +280,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get weightUnitSt => 'st';
 
   @override
+  String get menuVolume => 'Convertisseur de volume';
+
+  @override
+  String get volumeTitle => 'Convertisseur de volume';
+
+  @override
+  String get volumeUnitL => 'L';
+
+  @override
+  String get volumeUnitMl => 'mL';
+
+  @override
+  String get volumeUnitGal => 'gal (US)';
+
+  @override
+  String get volumeUnitFlOz => 'fl oz (US)';
+
+  @override
+  String get volumeUnitM3 => 'm³';
+
+  @override
   String get menuIpv4Address => 'Adresse IPv4';
 
   @override

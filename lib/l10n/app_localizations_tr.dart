@@ -279,6 +279,27 @@ class AppLocalizationsTr extends AppLocalizations {
   String get weightUnitSt => 'st';
 
   @override
+  String get menuVolume => 'Hacim dönüştürücü';
+
+  @override
+  String get volumeTitle => 'Hacim dönüştürücü';
+
+  @override
+  String get volumeUnitL => 'L';
+
+  @override
+  String get volumeUnitMl => 'mL';
+
+  @override
+  String get volumeUnitGal => 'gal (US)';
+
+  @override
+  String get volumeUnitFlOz => 'fl oz (US)';
+
+  @override
+  String get volumeUnitM3 => 'm³';
+
+  @override
   String get menuIpv4Address => 'IPv4 Adresi';
 
   @override

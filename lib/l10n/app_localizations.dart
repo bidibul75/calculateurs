@@ -642,6 +642,48 @@ abstract class AppLocalizations {
   /// **'st'**
   String get weightUnitSt;
 
+  /// No description provided for @menuVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume Converter'**
+  String get menuVolume;
+
+  /// No description provided for @volumeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume Converter'**
+  String get volumeTitle;
+
+  /// No description provided for @volumeUnitL.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get volumeUnitL;
+
+  /// No description provided for @volumeUnitMl.
+  ///
+  /// In en, this message translates to:
+  /// **'mL'**
+  String get volumeUnitMl;
+
+  /// No description provided for @volumeUnitGal.
+  ///
+  /// In en, this message translates to:
+  /// **'gal (US)'**
+  String get volumeUnitGal;
+
+  /// No description provided for @volumeUnitFlOz.
+  ///
+  /// In en, this message translates to:
+  /// **'fl oz (US)'**
+  String get volumeUnitFlOz;
+
+  /// No description provided for @volumeUnitM3.
+  ///
+  /// In en, this message translates to:
+  /// **'m³'**
+  String get volumeUnitM3;
+
   /// No description provided for @menuIpv4Address.
   ///
   /// In en, this message translates to:

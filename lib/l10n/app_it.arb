@@ -131,6 +131,17 @@
   "weightUnitOz": "oz",
   "weightUnitSt": "st",
 
+  "@_module.conversions.volume": {
+    "description": "Vocabolario modulo: Conversioni > Volume"
+  },
+  "menuVolume": "Convertitore di volume",
+  "volumeTitle": "Convertitore di volume",
+  "volumeUnitL": "L",
+  "volumeUnitMl": "mL",
+  "volumeUnitGal": "gal (US)",
+  "volumeUnitFlOz": "fl oz (US)",
+  "volumeUnitM3": "m³",
+
   "@_module.ip.ipv4": {
     "description": "Vocabolario modulo: IP > Indirizzo IPv4"
   },
