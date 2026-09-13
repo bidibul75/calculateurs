@@ -322,6 +322,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get surfaceUnitFt2 => 'ft²';
 
   @override
+  String get menuSpeed => 'Convertisseur de vitesse';
+
+  @override
+  String get speedTitle => 'Convertisseur de vitesse';
+
+  @override
+  String get speedUnitKmh => 'km/h';
+
+  @override
+  String get speedUnitMs => 'm/s';
+
+  @override
+  String get speedUnitMph => 'mph (int.)';
+
+  @override
+  String get speedUnitKn => 'kn';
+
+  @override
+  String get speedUnitFts => 'ft/s';
+
+  @override
   String get menuIpv4Address => 'Adresse IPv4';
 
   @override

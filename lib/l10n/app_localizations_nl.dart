@@ -320,6 +320,27 @@ class AppLocalizationsNl extends AppLocalizations {
   String get surfaceUnitFt2 => 'ft²';
 
   @override
+  String get menuSpeed => 'Snelheidsomzetter';
+
+  @override
+  String get speedTitle => 'Snelheidsomzetter';
+
+  @override
+  String get speedUnitKmh => 'km/h';
+
+  @override
+  String get speedUnitMs => 'm/s';
+
+  @override
+  String get speedUnitMph => 'mph (int.)';
+
+  @override
+  String get speedUnitKn => 'kn';
+
+  @override
+  String get speedUnitFts => 'ft/s';
+
+  @override
   String get menuIpv4Address => 'IPv4-adres';
 
   @override

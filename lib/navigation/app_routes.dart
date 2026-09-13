@@ -12,6 +12,7 @@ import 'package:calculators/calculators/conversions/distance/screens/distance_sc
 import 'package:calculators/calculators/conversions/weight/screens/weight_screen.dart';
 import 'package:calculators/calculators/conversions/volume/screens/volume_screen.dart';
 import 'package:calculators/calculators/conversions/surface/screens/surface_screen.dart';
+import 'package:calculators/calculators/conversions/speed/screens/speed_screen.dart';
 import 'package:calculators/calculators/math/average/screens/average_screen.dart';
 
 abstract final class AppRoutes {
@@ -26,6 +27,7 @@ abstract final class AppRoutes {
   static const String weight = '/weight';
   static const String volume = '/volume';
   static const String surface = '/surface';
+  static const String speed = '/speed';
   static const String average = '/average';
 
   static const String initialRoute = home;
@@ -43,6 +45,7 @@ abstract final class AppRoutes {
     weight: (context) => const WeightScreen(),
     volume: (context) => const VolumeScreen(),
     surface: (context) => const SurfaceScreen(),
+    speed: (context) => const SpeedScreen(),
     average: (context) => const AverageScreen(),
   };
 

@@ -726,6 +726,48 @@ abstract class AppLocalizations {
   /// **'ft²'**
   String get surfaceUnitFt2;
 
+  /// No description provided for @menuSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Converter'**
+  String get menuSpeed;
+
+  /// No description provided for @speedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Converter'**
+  String get speedTitle;
+
+  /// No description provided for @speedUnitKmh.
+  ///
+  /// In en, this message translates to:
+  /// **'km/h'**
+  String get speedUnitKmh;
+
+  /// No description provided for @speedUnitMs.
+  ///
+  /// In en, this message translates to:
+  /// **'m/s'**
+  String get speedUnitMs;
+
+  /// No description provided for @speedUnitMph.
+  ///
+  /// In en, this message translates to:
+  /// **'mph (int.)'**
+  String get speedUnitMph;
+
+  /// No description provided for @speedUnitKn.
+  ///
+  /// In en, this message translates to:
+  /// **'kn'**
+  String get speedUnitKn;
+
+  /// No description provided for @speedUnitFts.
+  ///
+  /// In en, this message translates to:
+  /// **'ft/s'**
+  String get speedUnitFts;
+
   /// No description provided for @menuIpv4Address.
   ///
   /// In en, this message translates to:

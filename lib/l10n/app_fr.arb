@@ -136,7 +136,17 @@
   "surfaceUnitHa": "ha",
   "surfaceUnitAcre": "acre (int.)",
   "surfaceUnitFt2": "ft²",
-  "@_module.ip.ipv4": {
+
+  "@_module.conversions.speed": {
+    "description": "Vocabulaire module : Conversions > Vitesse"
+  },
+  "menuSpeed": "Convertisseur de vitesse",
+  "speedTitle": "Convertisseur de vitesse",
+  "speedUnitKmh": "km/h",
+  "speedUnitMs": "m/s",
+  "speedUnitMph": "mph (int.)",
+  "speedUnitKn": "kn",
+  "speedUnitFts": "ft/s",  "@_module.ip.ipv4": {
     "description": "Vocabulaire module : IP > Adresse IPv4"
   },
   "menuIpv4Address": "Adresse IPv4",
