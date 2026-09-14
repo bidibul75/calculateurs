@@ -370,48 +370,51 @@ class _PercentageScreenState extends State<PercentageScreen> {
                                   ),
                                   child: ConstrainedBox(
                                     constraints: BoxConstraints(minHeight: constraints.maxHeight - 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IconButton(
+                                                  key: _copyButtonKey,
+                                                  onPressed: () => unawaited(_copyToClipboard(l10n)),
+                                                  tooltip: l10n.basicHistoryCopy,
+                                                  icon: const Icon(Icons.content_copy_outlined),
+                                                  color: _themeManager.displayTextColor,
+                                                ),
+                                                IconButton(
+                                                  key: _saveButtonKey,
+                                                  onPressed: () => unawaited(_saveToFile(l10n)),
+                                                  tooltip: l10n.basicHistorySave,
+                                                  icon: const Icon(Icons.save_alt_outlined),
+                                                  color: _themeManager.displayTextColor,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 8,
                                             children: [
-                                              IconButton(
-                                                key: _copyButtonKey,
-                                                onPressed: () => unawaited(_copyToClipboard(l10n)),
-                                                tooltip: l10n.basicHistoryCopy,
-                                                icon: const Icon(Icons.content_copy_outlined),
-                                                color: _themeManager.displayTextColor,
-                                              ),
-                                              IconButton(
-                                                key: _saveButtonKey,
-                                                onPressed: () => unawaited(_saveToFile(l10n)),
-                                                tooltip: l10n.basicHistorySave,
-                                                icon: const Icon(Icons.save_alt_outlined),
-                                                color: _themeManager.displayTextColor,
-                                              ),
+                                              for (final mode in PercentageMode.values)
+                                                _buildModeChip(l10n, mode),
                                             ],
                                           ),
-                                        ),
-                                        Wrap(
-                                          spacing: 8,
-                                          runSpacing: 8,
-                                          children: [
-                                            for (final mode in PercentageMode.values)
-                                              _buildModeChip(l10n, mode),
-                                          ],
-                                        ),
-                                        SizedBox(height: isPhone ? 12 : 16),
-                                        _buildFieldCard(l10n, PercentageField.primary),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(l10n, PercentageField.rate),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(l10n, PercentageField.delta),
-                                        SizedBox(height: isPhone ? 8 : 12),
-                                        _buildFieldCard(l10n, PercentageField.result),
-                                      ],
+                                          SizedBox(height: isPhone ? 12 : 16),
+                                          _buildFieldCard(l10n, PercentageField.primary),
+                                          SizedBox(height: isPhone ? 8 : 12),
+                                          _buildFieldCard(l10n, PercentageField.rate),
+                                          SizedBox(height: isPhone ? 8 : 12),
+                                          _buildFieldCard(l10n, PercentageField.delta),
+                                          SizedBox(height: isPhone ? 8 : 12),
+                                          _buildFieldCard(l10n, PercentageField.result),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
