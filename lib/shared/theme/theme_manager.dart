@@ -117,20 +117,20 @@ class ThemeManager extends ChangeNotifier {
       colors: [baseColor, baseColor],
     );
 
-    final topColor = Color.alphaBlend(Colors.white.withAlpha(90), baseColor);
-    final midColor = Color.alphaBlend(Colors.black.withAlpha(12), baseColor);
-    final bottomColor = Color.alphaBlend(Colors.black.withAlpha(42), baseColor);
+    final topColor = Color.alphaBlend(Colors.white.withAlpha(120), baseColor);
+    final midColor = Color.alphaBlend(Colors.black.withAlpha(8), baseColor);
+    final bottomColor = Color.alphaBlend(Colors.black.withAlpha(60), baseColor);
 
     return LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [topColor, midColor, bottomColor],
-      stops: const [0.0, 0.52, 1.0],
+      stops: const [0.0, 0.45, 1.0],
     );
   }
 
   BoxDecoration buttonSurfaceDecoration(Color baseColor, {double borderRadius = 8, double borderWidth = 1.5}) {
-    final sideColor = isThreeDButtonStyle ? Colors.white.withAlpha(80) : Colors.grey[200]!;
+    final sideColor = isThreeDButtonStyle ? Colors.white.withAlpha(90) : Colors.grey[200]!;
     return BoxDecoration(
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(color: sideColor, width: borderWidth),
@@ -138,8 +138,8 @@ class ThemeManager extends ChangeNotifier {
       boxShadow: isThreeDButtonStyle
           ? [
               BoxShadow(
-                color: Colors.black.withAlpha(130),
-                offset: const Offset(0, 3),
+                color: Colors.black.withAlpha(180),
+                offset: const Offset(0, 4),
                 blurRadius: 0,
                 spreadRadius: 0,
               ),
