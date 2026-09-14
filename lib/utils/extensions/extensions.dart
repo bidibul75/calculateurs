@@ -5,3 +5,4 @@
 export 'string_extensions.dart';
 export 'decimal_extensions.dart';
 export 'double_extensions.dart';
+export 'list_extensions.dart';

@@ -2,17 +2,8 @@
 import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/utils/my_exception.dart';
-import 'package:flutter/cupertino.dart';
 
-enum IPv6AddressType {
-  loopback,
-  linkLocal,
-  globalUnicast,
-  uniqueLocal,
-  multicast,
-  unspecified,
-  unknown,
-}
+enum IPv6AddressType { loopback, linkLocal, globalUnicast, uniqueLocal, multicast, unspecified, unknown }
 
 class AddressIPV6 {
   static const String errorInvalidCidrFormat = 'ipv6ErrorInvalidCidrFormat';
@@ -84,8 +75,7 @@ class AddressIPV6 {
   static List<String> formatIPV6WithoutSuffix(String address) {
     if (address.contains("::")) {
       int count = 0;
-      List<String> addressPart0 = [],
-          addressPart1 = [];
+      List<String> addressPart0 = [], addressPart1 = [];
       List<String> addressParts = address.split("::");
       if (addressParts[0] != "") {
         addressPart0 = addressParts[0].split(":");
@@ -112,9 +102,9 @@ class AddressIPV6 {
     return s
         .split('')
         .map((c) {
-      int value = int.parse(c, radix: 16);
-      return value.toRadixString(2).padLeft(4, '0');
-    })
+          int value = int.parse(c, radix: 16);
+          return value.toRadixString(2).padLeft(4, '0');
+        })
         .join('');
   }
 
@@ -143,37 +133,31 @@ class AddressIPV6 {
     return s.split(":");
   }
 
-  /// Replaces multiple 0000 sequences in a String representing a CIDR address
+  /// Compresses the longest run of zero hextets in a CIDR address (RFC 5952).
+  ///
+  /// Works on whole hextets only, so values like `2000` are never partially
+  /// consumed by a zero-run search in the string representation.
   static String cidrSimplifier(String cidr) {
-    String suffix = cidrSuffixGetter(cidr);
-    String prefix = cidrSuffixRemover(cidr);
+    final String suffix = cidrSuffixGetter(cidr);
+    final String prefix = cidrSuffixRemover(cidr);
 
-    // if an address has ::, to be sure that the elements of the address
-    // don't begin by 0, we first replace the address by its 4 digits format
-    // before compressing the address
-    if (prefix.contains('::')) {
-      prefix = formatIPV6WithoutSuffix(prefix).join(':');
-    }
-    String formattedPrefix = simplifiesAddressIPV6(prefix.split(':')).join(':');
-    String s;
-    List<String> l = [];
-    for (int i = 7; i > 0; i--) {
-      s = "0${":0" * i}"; // format style 0:0:0
+    // Always expand first so compression works on a stable 8-hextet list.
+    final List<String> hextets = simplifiesAddressIPV6(formatIPV6WithoutSuffix(prefix));
 
-      if (formattedPrefix.contains(s)) {
-        l = formattedPrefix.split(s);
-        // If the left part of the address has elements we remove the last :
-        if (l[0].endsWith(":")) {
-          l[0] = l[0].characters.skipLast(1).toString();
+    for (int len = 8; len >=2; len--) {
+      final List<String> zeros = List.filled(len, '0');
+      final int positionInList = hextets.indexOfSublist(zeros);
+      if (positionInList != -1) {
+        final String left = hextets.sublist(0, positionInList).join(':');
+        if (positionInList + zeros.length < hextets.length) {
+          final String right = hextets.sublist(positionInList + zeros.length).join(':');
+          return '$left::$right/$suffix';
+        } else {
+          return '$left::/$suffix';
         }
-        // If the right part of the address has elements we remove the first :
-        if (l[1].startsWith(":")) {
-          l[1] = l[1].substring(1);
-        }
-        return "${l[0]}::${l[1]}/$suffix";
       }
     }
-    return "$formattedPrefix/$suffix";
+    return "${hextets.join(':')}/$suffix";
   }
 
   /// Converts a MAC address to the 64-bit interface identifier used in IPv6 (EUI-64 style).
@@ -275,4 +259,3 @@ class AddressIPV6 {
     }
   }
 }
-

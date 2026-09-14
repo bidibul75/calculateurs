@@ -7,7 +7,6 @@ import 'package:calculators/utils/number_format_utils.dart';
 import 'package:decimal/decimal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rational/rational.dart';
-import 'double_extensions.dart';
 
 LocalNumberSymbols _safeLocalNumberSymbols() {
   try {

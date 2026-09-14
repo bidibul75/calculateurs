@@ -108,20 +108,26 @@ void main() {
     });
 
     test('networkAddress6ListString throws StateError on invalid internal list shape', () {
-      expect(
-        () => AddressIPV6.networkAddress6ListString(['2001', '0DB8']),
-        throwsA(isA<StateError>()),
-      );
+      expect(() => AddressIPV6.networkAddress6ListString(['2001', '0DB8']), throwsA(isA<StateError>()));
     });
 
     test('address6BinaryStringToListString throws ArgumentError on invalid binary length', () {
-      expect(
-        () => AddressIPV6.address6BinaryStringToListString('1010'),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => AddressIPV6.address6BinaryStringToListString('1010'), throwsA(isA<ArgumentError>()));
     });
 
     group('cidrSimplifier', () {
+      test('does not eat trailing zeros inside a non-zero hextet like 2000', () {
+        final result = AddressIPV6.cidrSimplifier('2000:0000:0000:0000:0000:0000:0000:0000/14');
+
+        expect(result, '2000::/14');
+      });
+
+      test('compresses the longest leftmost zero run only on hextet boundaries', () {
+        final result = AddressIPV6.cidrSimplifier('2001:0db8:0000:0001:0000:0000:0000:0001/128');
+
+        expect(result, '2001:db8:0:1::1/128');
+      });
+
       test('Compressed address with an element beginning by 0', () {
         final result = AddressIPV6.cidrSimplifier('2001:0db8::ff00:42:8329/64');
 
@@ -150,6 +156,14 @@ void main() {
         final result = AddressIPV6.cidrSimplifier('0000:0000:0000:0000:0000:0000:0000:0000/0');
 
         expect(result, '::/0');
+      });
+
+      test('compresses leading zero runs such as loopback', () {
+        expect(AddressIPV6.cidrSimplifier('0000:0000:0000:0000:0000:0000:0000:0001/128'), '::1/128');
+      });
+
+      test('compresses zero run after a leading non-zero short hextet', () {
+        expect(AddressIPV6.cidrSimplifier('0000:0001:0000:0000:0000:0000:0000:0001/128'), '0:1::1/128');
       });
     });
 
@@ -327,6 +341,5 @@ void main() {
 
       expect(result, '021A:2BFF:FE3C:4D5E');
     });
-
   });
 }
