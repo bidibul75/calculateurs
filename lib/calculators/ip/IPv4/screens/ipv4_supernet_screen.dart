@@ -7,6 +7,7 @@ import 'package:calculators/calculators/ip/IPv4/supernet.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
@@ -111,19 +112,6 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
     unawaited(_persistState());
   }
 
-  ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
-      foregroundColor: foregroundColor ?? _themeManager.buttonTextColor,
-      elevation: 6,
-      shadowColor: Colors.black.withAlpha(120),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-      ),
-      padding: const EdgeInsets.all(12),
-    );
-  }
 
   Widget _actionButtonLabel(String text) {
     return FittedBox(
@@ -295,10 +283,14 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
         child: SizedBox(
           height: _mobileKeyHeight,
           width: double.infinity,
-          child: ElevatedButton(
-            style: _keyButtonStyle(),
+          child: RaisedCalculatorButton(
+            label: label,
+            themeManager: _themeManager,
+            backgroundColor: _themeManager.buttonGroupColor,
+            borderRadius: 10,
+            fontSize: fontSize,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             onPressed: () => _appendToInput(label),
-            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
           ),
         ),
       ),
@@ -338,8 +330,13 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
       child: SizedBox(
         height: _mobileKeyHeight,
         width: double.infinity,
-        child: ElevatedButton(
-          style: _keyButtonStyle(backgroundColor: backgroundColor),
+        child: RaisedCalculatorButton(
+          label: label ?? '',
+          themeManager: _themeManager,
+          backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           onPressed: onPressed,
           child: child,
         ),
@@ -544,8 +541,13 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                             Expanded(
                               child: SizedBox(
                                 height: _mobileKeyHeight,
-                                child: ElevatedButton(
-                                  style: _keyButtonStyle(),
+                                child: RaisedCalculatorButton(
+                                  label: l10n.ipv4SupernetActionAdd,
+                                  themeManager: _themeManager,
+                                  backgroundColor: _themeManager.buttonGroupColor,
+                                  borderRadius: 10,
+                                  fontSize: 16,
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                                   onPressed: _addAddress,
                                   child: _actionButtonLabel(l10n.ipv4SupernetActionAdd),
                                 ),
@@ -555,8 +557,14 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                             Expanded(
                               child: SizedBox(
                                 height: _mobileKeyHeight,
-                                child: ElevatedButton(
-                                  style: _keyButtonStyle(),
+                                child: RaisedCalculatorButton(
+                                  label: l10n.ipv4SupernetActionCalculate,
+                                  themeManager: _themeManager,
+                                  backgroundColor: _themeManager.buttonGroupColor,
+                                  borderRadius: 10,
+                                  fontSize: 16,
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                  enabled: _addresses.length >= 2,
                                   onPressed: _addresses.length >= 2
                                       ? () => _calculateSupernet(hideMobileKeypad: showMobileKeypad)
                                       : null,
@@ -568,8 +576,13 @@ class _Ipv4SupernetScreenState extends State<Ipv4SupernetScreen> {
                             Expanded(
                               child: SizedBox(
                                 height: _mobileKeyHeight,
-                                child: ElevatedButton(
-                                  style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                                child: RaisedCalculatorButton(
+                                  label: l10n.ipv4SupernetActionReset,
+                                  themeManager: _themeManager,
+                                  backgroundColor: Colors.redAccent,
+                                  borderRadius: 10,
+                                  fontSize: 16,
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                                   onPressed: _resetAll,
                                   child: _actionButtonLabel(l10n.ipv4SupernetActionReset),
                                 ),

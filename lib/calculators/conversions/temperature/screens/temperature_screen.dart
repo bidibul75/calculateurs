@@ -6,6 +6,7 @@ import 'package:calculators/shared/services/history_export_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -233,28 +234,22 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     final EdgeInsets contentPadding = isPhone
         ? const EdgeInsets.symmetric(horizontal: 6, vertical: 4)
         : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 16 : 20;
+    final double fontSize = isPhone ? 18 : 26;
 
     return Expanded(
       child: Padding(
         padding: buttonPadding,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getButtonColor(label),
-            foregroundColor: _themeManager.buttonTextColor,
-            elevation: 6,
-            shadowColor: Colors.black.withAlpha(120),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-            ),
-            padding: contentPadding,
-          ),
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: _themeManager,
+          backgroundColor: _getButtonColor(label),
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: contentPadding,
           onPressed: () {
             _controller.onButtonPressed(label);
             _requestKeyboardFocus();
           },
-          child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
         ),
       ),
     );

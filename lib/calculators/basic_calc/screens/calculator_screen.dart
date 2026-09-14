@@ -14,6 +14,7 @@ import '../controllers/calculator_controller.dart';
 import '../models/calculator_history_entry.dart';
 import '../models/calculator_state.dart';
 import '../../../shared/widgets/menu_drawer.dart';
+import '../../../shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/shared/services/history_export_service.dart';
 
 class CalculatorScreen extends StatefulWidget {
@@ -181,56 +182,26 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Widget _buildButton(String label, {required bool compact}) {
     final bool isPhone = MediaQuery.sizeOf(context).width < 600;
     final bool isLongLabel = label.length >= 3;
-    // Keep labels larger on phones; slightly reduce only long labels.
-    final double baseFontSize = isPhone ? (compact ? 18 : 24) : (compact ? 14 : 20);
-    final double fontSize = (isPhone && isLongLabel) ? (baseFontSize - 2) : baseFontSize;
-    final double verticalPadding = isPhone ? (compact ? 4 : 8) : (compact ? 6 : 12);
+    // Keep key labels readable on web/desktop as well as phones.
+    final double baseFontSize = isPhone ? (compact ? 18 : 24) : (compact ? 22 : 28);
+    final double fontSize = isLongLabel ? (baseFontSize - 2) : baseFontSize;
+    final double verticalPadding = isPhone ? (compact ? 4 : 8) : (compact ? 8 : 12);
     final Color buttonColor = _getButtonColor(label);
     return Expanded(
       child: Padding(
         padding: EdgeInsets.all(compact ? 3.0 : 6.0),
-        child: Container(
-          decoration: _themeManager.buttonSurfaceDecoration(
-            buttonColor,
-            borderRadius: 8,
-            borderWidth: compact ? 1.2 : 2.0,
-          ),
-          child: ElevatedButton(
-            style: _themeManager.calculatorButtonStyle(
-              backgroundColor: Colors.transparent,
-              foregroundColor: _themeManager.buttonTextColor,
-              padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: verticalPadding),
-              minimumSize: Size.fromHeight(compact ? 34 : 44),
-              borderRadius: 8,
-              borderWidth: 0,
-              isDangerAction: label == 'C' || label == '⌫',
-            ),
-            onPressed: () {
-              _controller.onButtonPressed(label);
-              _requestKeyboardFocus();
-            },
-            child: isPhone
-                ? Align(
-                    alignment: const Alignment(0, -0.08),
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.visible,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, height: 1.0),
-                    ),
-                  )
-                : FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-          ),
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: _themeManager,
+          backgroundColor: buttonColor,
+          compact: compact,
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: verticalPadding),
+          onPressed: () {
+            _controller.onButtonPressed(label);
+            _requestKeyboardFocus();
+          },
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:calculators/calculators/ip/IPv6/services/ipv6_result_export_serv
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/decimal_extensions.dart';
@@ -107,92 +108,91 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
     return platform == TargetPlatform.android || platform == TargetPlatform.iOS;
   }
 
-  ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
-      foregroundColor: foregroundColor ?? _themeManager.buttonTextColor,
-      elevation: 6,
-      shadowColor: Colors.black.withAlpha(120),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-      ),
-      padding: const EdgeInsets.all(12),
-    );
-  }
 
   Widget _buildKeyButton(
     String label, {
     required double fontSize,
     required EdgeInsets padding,
     Key? buttonKey,
-  }) {
-    return Expanded(
-      child: Padding(
+      int flex = 1,
+    }) {
+      return Expanded(
+        flex: flex,
+        child: Padding(
+          padding: padding,
+          child: SizedBox(
+            height: _mobileKeyHeight,
+            width: double.infinity,
+            child: RaisedCalculatorButton(
+              key: buttonKey,
+              label: label,
+              themeManager: _themeManager,
+              backgroundColor: _themeManager.buttonGroupColor,
+              borderRadius: 10,
+              fontSize: fontSize,
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              onPressed: () => _appendToInput(label),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget _buildActionKeyButton({
+      String? label,
+      IconData? icon,
+      required VoidCallback onPressed,
+      required double fontSize,
+      required EdgeInsets padding,
+      Key? buttonKey,
+      bool expanded = true,
+      int flex = 1,
+      Color? backgroundColor,
+    }) {
+      final bool hasLabel = label != null && label.isNotEmpty;
+      final bool hasIcon = icon != null;
+
+      Widget child;
+      if (hasIcon && hasLabel) {
+        child = Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon),
+            const SizedBox(width: 8),
+            Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+          ],
+        );
+      } else if (hasIcon) {
+        child = Icon(icon);
+      } else {
+        child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
+      }
+
+      final button = Padding(
         padding: padding,
         child: SizedBox(
           height: _mobileKeyHeight,
           width: double.infinity,
-          child: ElevatedButton(
+          child: RaisedCalculatorButton(
             key: buttonKey,
-            style: _keyButtonStyle(),
-            onPressed: () => _appendToInput(label),
-            child: Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+            label: label ?? '',
+            themeManager: _themeManager,
+            backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
+            borderRadius: 10,
+            fontSize: fontSize,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            onPressed: onPressed,
+            child: child,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildActionKeyButton({
-    String? label,
-    IconData? icon,
-    required VoidCallback onPressed,
-    required double fontSize,
-    required EdgeInsets padding,
-    Key? buttonKey,
-    bool expanded = true,
-    Color? backgroundColor,
-  }) {
-    final bool hasLabel = label != null && label.isNotEmpty;
-    final bool hasIcon = icon != null;
-
-    Widget child;
-    if (hasIcon && hasLabel) {
-      child = Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon),
-          const SizedBox(width: 8),
-          Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
-        ],
       );
-    } else if (hasIcon) {
-      child = Icon(icon);
-    } else {
-      child = Text(label ?? '', style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold));
+
+      if (!expanded) {
+        return button;
+      }
+
+      return Expanded(flex: flex, child: button);
     }
-
-    final button = Padding(
-      padding: padding,
-      child: SizedBox(
-        height: _mobileKeyHeight,
-        width: double.infinity,
-        child: ElevatedButton(
-          key: buttonKey,
-          style: _keyButtonStyle(backgroundColor: backgroundColor),
-          onPressed: onPressed,
-          child: child,
-        ),
-      ),
-    );
-
-    if (!expanded) {
-      return button;
-    }
-
-    return Expanded(child: button);
-  }
 
   Widget _buildMobileKeypad(AppLocalizations l10n) {
     return LayoutBuilder(
@@ -232,23 +232,45 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                   ),
                 ],
               ),
-              Row(children: [_buildKeyButton('1', fontSize: fontSize, padding: keyPadding), _buildKeyButton('2', fontSize: fontSize, padding: keyPadding), _buildKeyButton('3', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('4', fontSize: fontSize, padding: keyPadding), _buildKeyButton('5', fontSize: fontSize, padding: keyPadding), _buildKeyButton('6', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('7', fontSize: fontSize, padding: keyPadding), _buildKeyButton('8', fontSize: fontSize, padding: keyPadding), _buildKeyButton('9', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('A', fontSize: fontSize, padding: keyPadding), _buildKeyButton('B', fontSize: fontSize, padding: keyPadding), _buildKeyButton('C', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton('D', fontSize: fontSize, padding: keyPadding), _buildKeyButton('E', fontSize: fontSize, padding: keyPadding), _buildKeyButton('F', fontSize: fontSize, padding: keyPadding)]),
-              Row(children: [_buildKeyButton(':', fontSize: fontSize, padding: keyPadding), _buildKeyButton('0', fontSize: fontSize, padding: keyPadding), _buildKeyButton('/', fontSize: fontSize, padding: keyPadding)]),
-              const SizedBox(height: 8),
-              _buildActionKeyButton(
-                label: l10n.bmiActionEnter,
-                icon: Icons.keyboard_return,
-                onPressed: () => _calculate(hideMobileKeypad: true),
-                fontSize: fontSize,
-                padding: actionPadding,
-                buttonKey: _enterButtonKey,
-                expanded: false,
-                backgroundColor: Colors.green,
-              ),
+              // 4 columns: 123A / 456B / 789C / 0DEF / :/Enter(x2)
+                            Row(children: [
+                              _buildKeyButton('1', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('2', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('3', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('A', fontSize: fontSize, padding: keyPadding),
+                            ]),
+                            Row(children: [
+                              _buildKeyButton('4', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('5', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('6', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('B', fontSize: fontSize, padding: keyPadding),
+                            ]),
+                            Row(children: [
+                              _buildKeyButton('7', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('8', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('9', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('C', fontSize: fontSize, padding: keyPadding),
+                            ]),
+                            Row(children: [
+                              _buildKeyButton('0', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('D', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('E', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('F', fontSize: fontSize, padding: keyPadding),
+                            ]),
+                            Row(children: [
+                              _buildKeyButton(':', fontSize: fontSize, padding: keyPadding),
+                              _buildKeyButton('/', fontSize: fontSize, padding: keyPadding),
+                              _buildActionKeyButton(
+                                label: l10n.bmiActionEnter,
+                                icon: Icons.keyboard_return,
+                                onPressed: () => _calculate(hideMobileKeypad: true),
+                                fontSize: fontSize,
+                                padding: actionPadding,
+                                buttonKey: _enterButtonKey,
+                                flex: 2,
+                                backgroundColor: Colors.green,
+                              ),
+                            ]),
             ],
           ),
         );
@@ -563,10 +585,14 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                           if (!showMobileKeypad)
                             SizedBox(
                               height: _mobileKeyHeight,
-                              child: ElevatedButton(
-                                style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                              child: RaisedCalculatorButton(
+                                label: l10n.ipv6ActionClear,
+                                themeManager: _themeManager,
+                                backgroundColor: Colors.redAccent,
+                                borderRadius: 10,
+                                fontSize: 18,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                 onPressed: _clear,
-                                child: Text(l10n.ipv6ActionClear),
                               ),
                             )
                           else
@@ -577,10 +603,14 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                               Expanded(
                                 child: SizedBox(
                                   height: _mobileKeyHeight,
-                                  child: ElevatedButton(
-                                    style: _keyButtonStyle(),
+                                  child: RaisedCalculatorButton(
+                                    label: l10n.ipv6ActionCalculate,
+                                    themeManager: _themeManager,
+                                    backgroundColor: _themeManager.buttonGroupColor,
+                                    borderRadius: 10,
+                                    fontSize: 18,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     onPressed: () => _calculate(hideMobileKeypad: showMobileKeypad),
-                                    child: Text(l10n.ipv6ActionCalculate),
                                   ),
                                 ),
                               ),
@@ -588,10 +618,14 @@ class _Ipv6AddressScreenState extends State<Ipv6AddressScreen> {
                               Expanded(
                                 child: SizedBox(
                                   height: _mobileKeyHeight,
-                                  child: ElevatedButton(
-                                    style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                                  child: RaisedCalculatorButton(
+                                    label: l10n.ipv6ActionClear,
+                                    themeManager: _themeManager,
+                                    backgroundColor: Colors.redAccent,
+                                    borderRadius: 10,
+                                    fontSize: 18,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     onPressed: _clear,
-                                    child: Text(l10n.ipv6ActionClear),
                                   ),
                                 ),
                               ),

@@ -3,6 +3,7 @@ import 'package:calculators/shared/services/history_export_service.dart';
 import 'package:calculators/calculators/math/average/average_controller.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/utils/extensions/decimal_extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
@@ -411,36 +412,22 @@ class _AverageKeypad extends StatelessWidget {
     final EdgeInsets contentPadding = isPhone
         ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
         : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 18 : 20;
+    final double fontSize = isPhone ? 18 : 26;
     final Color background = _buttonColor(primary: primary, danger: danger);
 
     return Expanded(
       flex: flex,
       child: Padding(
         padding: buttonPadding,
-        child: Container(
-          decoration: themeManager.buttonSurfaceDecoration(
-            background,
-            borderRadius: 8,
-            borderWidth: 2.0,
-          ),
-          child: ElevatedButton(
-            style: themeManager.calculatorButtonStyle(
-              backgroundColor: Colors.transparent,
-              foregroundColor: themeManager.buttonTextColor,
-              padding: contentPadding,
-              borderRadius: 8,
-              borderWidth: 0,
-              isDangerAction: danger,
-            ),
-            onPressed: onPressed,
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
-          ),
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: themeManager,
+          backgroundColor: background,
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: contentPadding,
+          enabled: onPressed != null,
+          onPressed: onPressed,
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:calculators/calculators/ip/IPv4/address.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/services/result_feedback_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
 import 'package:calculators/utils/extensions/extensions.dart';
@@ -183,19 +184,6 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
     await prefs.setString(_lastValidInputPreferenceKey, _result?.addressToProcess ?? '');
   }
 
-  ButtonStyle _keyButtonStyle({Color? backgroundColor, Color? foregroundColor}) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
-      foregroundColor: foregroundColor ?? _themeManager.buttonTextColor,
-      elevation: 6,
-      shadowColor: Colors.black.withAlpha(120),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-      ),
-      padding: const EdgeInsets.all(12),
-    );
-  }
 
   Widget _buildKeyButton(String label, {required double fontSize, required EdgeInsets padding, Key? buttonKey}) {
     return Expanded(
@@ -204,14 +192,15 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
         child: SizedBox(
           height: _mobileKeyHeight,
           width: double.infinity,
-          child: ElevatedButton(
+          child: RaisedCalculatorButton(
             key: buttonKey,
-            style: _keyButtonStyle(),
+            label: label,
+            themeManager: _themeManager,
+            backgroundColor: _themeManager.buttonGroupColor,
+            borderRadius: 10,
+            fontSize: fontSize,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             onPressed: () => _appendToInput(label),
-            child: Text(
-              label,
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
           ),
         ),
       ),
@@ -258,9 +247,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
       child: SizedBox(
         height: _mobileKeyHeight,
         width: double.infinity,
-        child: ElevatedButton(
+        child: RaisedCalculatorButton(
           key: buttonKey,
-          style: _keyButtonStyle(backgroundColor: backgroundColor),
+          label: label ?? '',
+          themeManager: _themeManager,
+          backgroundColor: backgroundColor ?? _themeManager.buttonGroupColor,
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           onPressed: onPressed,
           child: child,
         ),
@@ -604,10 +598,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                           if (!showMobileKeypad)
                             SizedBox(
                               height: _mobileKeyHeight,
-                              child: ElevatedButton(
-                                style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                              child: RaisedCalculatorButton(
+                                label: l10n.ipv4ActionClear,
+                                themeManager: _themeManager,
+                                backgroundColor: Colors.redAccent,
+                                borderRadius: 10,
+                                fontSize: 18,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                 onPressed: _clear,
-                                child: Text(l10n.ipv4ActionClear),
                               ),
                             )
                           else
@@ -618,10 +616,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                               Expanded(
                                 child: SizedBox(
                                   height: _mobileKeyHeight,
-                                  child: ElevatedButton(
-                                    style: _keyButtonStyle(),
+                                  child: RaisedCalculatorButton(
+                                    label: l10n.ipv4ActionCalculate,
+                                    themeManager: _themeManager,
+                                    backgroundColor: _themeManager.buttonGroupColor,
+                                    borderRadius: 10,
+                                    fontSize: 18,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     onPressed: () => _calculate(hideMobileKeypad: showMobileKeypad),
-                                    child: Text(l10n.ipv4ActionCalculate),
                                   ),
                                 ),
                               ),
@@ -629,10 +631,14 @@ class _Ipv4AddressScreenState extends State<Ipv4AddressScreen> {
                               Expanded(
                                 child: SizedBox(
                                   height: _mobileKeyHeight,
-                                  child: ElevatedButton(
-                                    style: _keyButtonStyle(backgroundColor: Colors.redAccent),
+                                  child: RaisedCalculatorButton(
+                                    label: l10n.ipv4ActionClear,
+                                    themeManager: _themeManager,
+                                    backgroundColor: Colors.redAccent,
+                                    borderRadius: 10,
+                                    fontSize: 18,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     onPressed: _clear,
-                                    child: Text(l10n.ipv4ActionClear),
                                   ),
                                 ),
                               ),

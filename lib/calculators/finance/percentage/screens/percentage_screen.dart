@@ -7,6 +7,7 @@ import 'package:calculators/shared/services/history_export_service.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/menu_drawer.dart';
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -289,36 +290,23 @@ class _PercentageScreenState extends State<PercentageScreen> {
     final EdgeInsets contentPadding = isPhone
         ? const EdgeInsets.symmetric(horizontal: 6, vertical: 4)
         : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 16 : 20;
+    final double fontSize = isPhone ? 18 : 26;
 
     final Color buttonColor = _getButtonColor(label);
     return Expanded(
       child: Padding(
         padding: buttonPadding,
-        child: Container(
-          decoration: _themeManager.buttonSurfaceDecoration(
-            buttonColor,
-            borderRadius: 8,
-            borderWidth: 2.0,
-          ),
-          child: ElevatedButton(
-            style: _themeManager.calculatorButtonStyle(
-              backgroundColor: Colors.transparent,
-              foregroundColor: _themeManager.buttonTextColor,
-              padding: contentPadding,
-              borderRadius: 8,
-              borderWidth: 0,
-              isDangerAction: label == 'C' || label == '⌫',
-            ),
-            onPressed: () {
-              _controller.onButtonPressed(label);
-              _requestKeyboardFocus();
-            },
-            child: Text(
-              label,
-              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
-          ),
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: _themeManager,
+          backgroundColor: buttonColor,
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: contentPadding,
+          onPressed: () {
+            _controller.onButtonPressed(label);
+            _requestKeyboardFocus();
+          },
         ),
       ),
     );

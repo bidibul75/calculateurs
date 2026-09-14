@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:calculators/shared/widgets/photo_credit_link.dart';
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:get_it/get_it.dart';
 import '../controllers/bmi_controller.dart';
 import '../services/bmi_logic.dart';
@@ -134,65 +135,47 @@ class _BmiScreenState extends State<BmiScreen> {
     final EdgeInsets contentPadding = isPhone
         ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
         : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 18 : 20;
+    final double fontSize = isPhone ? 18 : 26;
     return Expanded(
       flex: flex,
       child: Padding(
         padding: buttonPadding,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getButtonColor(label),
-            foregroundColor: _themeManager.buttonTextColor,
-            elevation: 6,
-            shadowColor: Colors.black.withAlpha(120),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-            ),
-            padding: contentPadding,
-          ),
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: _themeManager,
+          backgroundColor: _getButtonColor(label),
+          borderRadius: 10,
+          fontSize: fontSize,
+          padding: contentPadding,
           onPressed: () => _controller.onButtonPressed(label),
-          child: Text(
-            label,
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-          ),
         ),
       ),
     );
   }
 
   /// Builds the large Enter button
-  Widget _buildEnterButton(String label) {
-    final bool isPhone = MediaQuery.sizeOf(context).width < 600;
-    final EdgeInsets buttonPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
-        : const EdgeInsets.all(6.0);
-    final EdgeInsets contentPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
-        : const EdgeInsets.all(12);
-    final double fontSize = isPhone ? 18 : 20;
-    return Padding(
-      padding: buttonPadding,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
+    Widget _buildEnterButton(String label) {
+      final bool isPhone = MediaQuery.sizeOf(context).width < 600;
+      final EdgeInsets buttonPadding = isPhone
+          ? const EdgeInsets.symmetric(horizontal: 3.0, vertical: 2.0)
+          : const EdgeInsets.all(6.0);
+      final EdgeInsets contentPadding = isPhone
+          ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
+          : const EdgeInsets.all(12);
+      final double fontSize = isPhone ? 18 : 26;
+      return Padding(
+        padding: buttonPadding,
+        child: RaisedCalculatorButton(
+          label: label,
+          themeManager: _themeManager,
           backgroundColor: Colors.green,
-          foregroundColor: _themeManager.buttonTextColor,
-          elevation: 6,
-          shadowColor: Colors.black.withAlpha(120),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-          ),
+          borderRadius: 10,
+          fontSize: fontSize,
           padding: contentPadding,
+          onPressed: () => _controller.onButtonPressed(BmiController.actionEnter),
         ),
-        onPressed: () => _controller.onButtonPressed(BmiController.actionEnter),
-        child: Text(
-          label,
-          style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
+      );
+    }
 
   String _localizedBmiCategory(AppLocalizations l10n, String bmiOutput) {
     final category = BmiLogic.getBmiCategory(bmiOutput);
