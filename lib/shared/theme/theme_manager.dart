@@ -13,9 +13,12 @@ class ThemeManager extends ChangeNotifier {
   static const String backgroundPresetSoftGrey = 'background.softGrey';
   static const String backgroundPresetWallpaper = 'background.wallpaper';
   static const String backgroundPresetBrushedMetal = 'background.brushedMetal';
+  static const String buttonStylePresetFlat = 'buttonStyle.flat';
+  static const String buttonStylePresetThreeD = 'buttonStyle.threeD';
   static const String wallpaperAssetPath = 'assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg';
   static const String brushedMetalAssetPath = 'assets/textures/brushed_metal.jpg';
   static const String _backgroundPreferenceKey = 'theme.backgroundPreset';
+  static const String _buttonStylePreferenceKey = 'theme.buttonStylePreset';
 
   static const Map<String, Color> _colorPresets = {
     backgroundPresetWhite: Colors.white,
@@ -31,6 +34,7 @@ class ThemeManager extends ChangeNotifier {
   Color _buttonGroupColor = Colors.grey[700]!;
   Color _displayTextColor = Colors.black;
   Color _buttonTextColor = Colors.grey[200]!;
+  String _buttonStylePresetId = buttonStylePresetThreeD;
 
   Color get backgroundColor => _backgroundColor;
   String? get backgroundImageAsset => _backgroundImageAsset;
@@ -38,6 +42,8 @@ class ThemeManager extends ChangeNotifier {
   Color get buttonGroupColor => _buttonGroupColor;
   Color get displayTextColor => _displayTextColor;
   Color get buttonTextColor => _buttonTextColor;
+  String get buttonStylePresetId => _buttonStylePresetId;
+  bool get isThreeDButtonStyle => _buttonStylePresetId == buttonStylePresetThreeD;
   bool get isUnsplashBackgroundActive => _backgroundPresetId == backgroundPresetWallpaper;
 
   BoxDecoration get backgroundDecoration {
@@ -57,6 +63,10 @@ class ThemeManager extends ChangeNotifier {
     final savedPresetId = prefs.getString(_backgroundPreferenceKey);
     if (savedPresetId != null) {
       _applyBackgroundPreset(savedPresetId, notifyListeners: false);
+    }
+    final savedButtonStyle = prefs.getString(_buttonStylePreferenceKey);
+    if (savedButtonStyle != null) {
+      setButtonStylePreset(savedButtonStyle, notifyListeners: false);
     }
   }
 
@@ -87,6 +97,77 @@ class ThemeManager extends ChangeNotifier {
   void setButtonTextColor(Color color) {
     _buttonTextColor = color;
     notifyListeners();
+  }
+
+  void setButtonStylePreset(String presetId, {bool notifyListeners = true}) {
+    final validPreset = presetId == buttonStylePresetFlat || presetId == buttonStylePresetThreeD
+        ? presetId
+        : buttonStylePresetThreeD;
+    _buttonStylePresetId = validPreset;
+    if (notifyListeners) {
+      this.notifyListeners();
+    }
+    unawaited(_persistButtonStylePreset());
+  }
+
+  LinearGradient buttonGradient(Color baseColor) {
+    final topColor = isThreeDButtonStyle ? Color.alphaBlend(Colors.white.withAlpha(54), baseColor) : baseColor;
+    final bottomColor = isThreeDButtonStyle ? Color.alphaBlend(Colors.black.withAlpha(35), baseColor) : baseColor;
+    return LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [topColor, bottomColor],
+      stops: const [0.0, 1.0],
+    );
+  }
+
+  BoxDecoration buttonSurfaceDecoration(Color baseColor, {double borderRadius = 8, double borderWidth = 1.5}) {
+    final sideColor = isThreeDButtonStyle ? Colors.white.withAlpha(80) : Colors.grey[200]!;
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(borderRadius),
+      border: Border.all(color: sideColor, width: borderWidth),
+      gradient: buttonGradient(baseColor),
+      boxShadow: isThreeDButtonStyle
+          ? [
+              BoxShadow(
+                color: Colors.black.withAlpha(110),
+                offset: const Offset(0, 2),
+                blurRadius: 0,
+              ),
+            ]
+          : null,
+    );
+  }
+
+  ButtonStyle calculatorButtonStyle({
+    required Color backgroundColor,
+    required Color foregroundColor,
+    EdgeInsetsGeometry? padding,
+    Size? minimumSize,
+    double borderRadius = 8,
+    double borderWidth = 1.5,
+    bool isDangerAction = false,
+  }) {
+    final bool isThreeD = _buttonStylePresetId == buttonStylePresetThreeD;
+    final Color effectiveBackground = isDangerAction ? Colors.redAccent : backgroundColor;
+    final Color sideColor = isThreeD ? Colors.white.withAlpha(80) : Colors.grey[200]!;
+    final Color pressedOverlay = isThreeD ? Colors.black.withAlpha(26) : Colors.white.withAlpha(30);
+
+    return ElevatedButton.styleFrom(
+      backgroundColor: effectiveBackground,
+      foregroundColor: foregroundColor,
+      disabledBackgroundColor: effectiveBackground.withAlpha(120),
+      disabledForegroundColor: foregroundColor.withAlpha(140),
+      elevation: isThreeD ? 0 : 1,
+      shadowColor: Colors.transparent,
+      overlayColor: pressedOverlay,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+        side: BorderSide(color: sideColor, width: borderWidth),
+      ),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      minimumSize: minimumSize ?? const Size(0, 42),
+    );
   }
 
   void _applyBackgroundPreset(String presetId, {bool notifyListeners = true}) {
@@ -146,6 +227,11 @@ class ThemeManager extends ChangeNotifier {
   Future<void> _persistBackgroundPreset() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_backgroundPreferenceKey, _backgroundPresetId);
+  }
+
+  Future<void> _persistButtonStylePreset() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_buttonStylePreferenceKey, _buttonStylePresetId);
   }
 }
 

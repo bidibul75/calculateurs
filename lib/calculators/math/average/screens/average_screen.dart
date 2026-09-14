@@ -418,26 +418,28 @@ class _AverageKeypad extends StatelessWidget {
       flex: flex,
       child: Padding(
         padding: buttonPadding,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: background,
-            foregroundColor: themeManager.buttonTextColor,
-            disabledBackgroundColor: background.withAlpha(120),
-            disabledForegroundColor: themeManager.buttonTextColor.withAlpha(140),
-            elevation: 6,
-            shadowColor: Colors.black.withAlpha(120),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-            ),
-            padding: contentPadding,
+        child: Container(
+          decoration: themeManager.buttonSurfaceDecoration(
+            background,
+            borderRadius: 8,
+            borderWidth: 2.0,
           ),
-          onPressed: onPressed,
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+          child: ElevatedButton(
+            style: themeManager.calculatorButtonStyle(
+              backgroundColor: Colors.transparent,
+              foregroundColor: themeManager.buttonTextColor,
+              padding: contentPadding,
+              borderRadius: 8,
+              borderWidth: 0,
+              isDangerAction: danger,
+            ),
+            onPressed: onPressed,
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),

@@ -291,28 +291,33 @@ class _PercentageScreenState extends State<PercentageScreen> {
         : const EdgeInsets.all(12);
     final double fontSize = isPhone ? 16 : 20;
 
+    final Color buttonColor = _getButtonColor(label);
     return Expanded(
       child: Padding(
         padding: buttonPadding,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getButtonColor(label),
-            foregroundColor: _themeManager.buttonTextColor,
-            elevation: 6,
-            shadowColor: Colors.black.withAlpha(120),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(color: Colors.grey[200]!, width: 2.0),
-            ),
-            padding: contentPadding,
+        child: Container(
+          decoration: _themeManager.buttonSurfaceDecoration(
+            buttonColor,
+            borderRadius: 8,
+            borderWidth: 2.0,
           ),
-          onPressed: () {
-            _controller.onButtonPressed(label);
-            _requestKeyboardFocus();
-          },
-          child: Text(
-            label,
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+          child: ElevatedButton(
+            style: _themeManager.calculatorButtonStyle(
+              backgroundColor: Colors.transparent,
+              foregroundColor: _themeManager.buttonTextColor,
+              padding: contentPadding,
+              borderRadius: 8,
+              borderWidth: 0,
+              isDangerAction: label == 'C' || label == '⌫',
+            ),
+            onPressed: () {
+              _controller.onButtonPressed(label);
+              _requestKeyboardFocus();
+            },
+            child: Text(
+              label,
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),

@@ -165,6 +165,24 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  const Text('Touches', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _ButtonStyleOption(
+                        label: '3D',
+                        isSelected: themeManager.buttonStylePresetId == ThemeManager.buttonStylePresetThreeD,
+                        onTap: () => themeManager.setButtonStylePreset(ThemeManager.buttonStylePresetThreeD),
+                      ),
+                      _ButtonStyleOption(
+                        label: 'Flat',
+                        isSelected: themeManager.buttonStylePresetId == ThemeManager.buttonStylePresetFlat,
+                        onTap: () => themeManager.setButtonStylePreset(ThemeManager.buttonStylePresetFlat),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -232,6 +250,39 @@ class _ButtonGroupColorOption extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 10, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ButtonStyleOption extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ButtonStyleOption({required this.label, required this.isSelected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 72,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          border: Border.all(color: isSelected ? Colors.black : Colors.grey, width: isSelected ? 2 : 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: isSelected ? Colors.black : Colors.grey[700],
+            ),
           ),
         ),
       ),
