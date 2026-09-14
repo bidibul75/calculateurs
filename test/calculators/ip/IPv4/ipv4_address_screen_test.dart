@@ -1,6 +1,7 @@
 import 'package:calculators/calculators/ip/IPv4/screens/ipv4_address_screen.dart';
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:calculators/shared/theme/theme_manager.dart';
+import 'package:calculators/shared/widgets/raised_calculator_button.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -142,7 +143,7 @@ void main() {
   testWidgets('mobile keypad uses consistent key height', (tester) async {
     await pumpScreen(tester, platform: TargetPlatform.android, surfaceSize: const Size(375, 812));
 
-    final Size digitSize = tester.getSize(find.widgetWithText(ElevatedButton, '1'));
+    final Size digitSize = tester.getSize(find.widgetWithText(RaisedCalculatorButton, '1'));
     final Size clearSize = tester.getSize(find.byKey(clearButtonKey));
     final Size enterSize = tester.getSize(find.byKey(enterButtonKey));
 
