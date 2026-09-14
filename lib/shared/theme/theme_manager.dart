@@ -111,13 +111,21 @@ class ThemeManager extends ChangeNotifier {
   }
 
   LinearGradient buttonGradient(Color baseColor) {
-    final topColor = isThreeDButtonStyle ? Color.alphaBlend(Colors.white.withAlpha(54), baseColor) : baseColor;
-    final bottomColor = isThreeDButtonStyle ? Color.alphaBlend(Colors.black.withAlpha(35), baseColor) : baseColor;
+    if (!isThreeDButtonStyle) return LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [baseColor, baseColor],
+    );
+
+    final topColor = Color.alphaBlend(Colors.white.withAlpha(90), baseColor);
+    final midColor = Color.alphaBlend(Colors.black.withAlpha(12), baseColor);
+    final bottomColor = Color.alphaBlend(Colors.black.withAlpha(42), baseColor);
+
     return LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [topColor, bottomColor],
-      stops: const [0.0, 1.0],
+      colors: [topColor, midColor, bottomColor],
+      stops: const [0.0, 0.52, 1.0],
     );
   }
 
@@ -130,9 +138,10 @@ class ThemeManager extends ChangeNotifier {
       boxShadow: isThreeDButtonStyle
           ? [
               BoxShadow(
-                color: Colors.black.withAlpha(110),
-                offset: const Offset(0, 2),
+                color: Colors.black.withAlpha(130),
+                offset: const Offset(0, 3),
                 blurRadius: 0,
+                spreadRadius: 0,
               ),
             ]
           : null,
