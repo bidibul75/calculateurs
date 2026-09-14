@@ -185,11 +185,12 @@ class _PercentageScreenState extends State<PercentageScreen> {
     final bool isActive = _controller.state.activeField == field;
     final Color borderColor = isActive ? _themeManager.buttonGroupColor : Colors.grey.withAlpha(100);
     final Color backgroundColor = isActive ? Colors.white.withAlpha(210) : Colors.white.withAlpha(150);
-    final double titleFontSize = isPhone ? 16 : 20;
-    final double valueFontSize = isPhone ? (isActive ? 24 : 21) : (isActive ? 32 : 26);
+    final double titleFontSize = isPhone ? 12.5 : 14.5;
+    final double valueFontSize = isPhone ? (isActive ? 20 : 18) : (isActive ? 26 : 22);
     final EdgeInsets cardPadding = isPhone
-        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 10)
-        : const EdgeInsets.symmetric(horizontal: 16, vertical: 14);
+        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 8)
+        : const EdgeInsets.symmetric(horizontal: 12, vertical: 10);
+    final double cardMinHeight = isPhone ? 48 : 58;
     final String value = isActive ? _controller.state.currentInput : _fieldValue(field);
     final String suffix = field == PercentageField.rate ? ' %' : '';
 
@@ -199,38 +200,46 @@ class _PercentageScreenState extends State<PercentageScreen> {
         _requestKeyboardFocus();
       },
       borderRadius: BorderRadius.circular(10),
-      child: Container(
-        width: double.infinity,
-        padding: cardPadding,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: borderColor, width: isActive ? 2.4 : 1.4),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                _fieldLabel(l10n, field),
-                style: TextStyle(
-                  color: _themeManager.displayTextColor.withAlpha(190),
-                  fontSize: titleFontSize,
-                  fontWeight: FontWeight.w600,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: cardMinHeight),
+        child: Container(
+          width: double.infinity,
+          padding: cardPadding,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor, width: isActive ? 2.4 : 1.4),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  _fieldLabel(l10n, field),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: _themeManager.displayTextColor.withAlpha(190),
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-            Flexible(
-              child: Text(
-                '$value$suffix',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: isActive ? _themeManager.displayTextColor : _themeManager.displayTextColor.withAlpha(230),
-                  fontSize: valueFontSize,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  '$value$suffix',
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: isActive ? _themeManager.displayTextColor : _themeManager.displayTextColor.withAlpha(230),
+                    fontSize: valueFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

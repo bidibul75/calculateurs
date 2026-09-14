@@ -750,7 +750,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuPercentage => 'Prozent';
 
   @override
-  String get percentageModeTax => 'MwSt. (netto/brutto)';
+  String get percentageModeTax => 'MwSt.';
 
   @override
   String get percentageModeDiscount => 'Rabatt';

@@ -311,7 +311,7 @@
   "ipv6ErrorInvalidMacFormat": "Ungültiges MAC-Adressformat.",
   "percentageTitle": "Prozentrechner",
   "menuPercentage": "Prozent",
-  "percentageModeTax": "MwSt. (netto/brutto)",
+  "percentageModeTax": "MwSt.",
   "percentageModeDiscount": "Rabatt",
   "percentageModeIncrease": "Erhöhung",
   "percentageModeTip": "Trinkgeld",

@@ -742,7 +742,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get menuPercentage => 'Percentage';
 
   @override
-  String get percentageModeTax => 'btw (excl./incl.)';
+  String get percentageModeTax => 'BTW';
 
   @override
   String get percentageModeDiscount => 'Korting';

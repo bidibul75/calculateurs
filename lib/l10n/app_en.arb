@@ -318,7 +318,7 @@
   },
   "percentageTitle": "Percentage calculator",
   "menuPercentage": "Percentage",
-  "percentageModeTax": "Tax (ex/incl.)",
+  "percentageModeTax": "Tax",
   "percentageModeDiscount": "Discount",
   "percentageModeIncrease": "Increase",
   "percentageModeTip": "Tip",

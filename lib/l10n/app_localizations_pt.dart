@@ -745,7 +745,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get menuPercentage => 'Percentagem';
 
   @override
-  String get percentageModeTax => 'IVA (s/IVA / c/IVA)';
+  String get percentageModeTax => 'IVA';
 
   @override
   String get percentageModeDiscount => 'Desconto';

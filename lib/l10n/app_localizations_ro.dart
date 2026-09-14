@@ -744,7 +744,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get menuPercentage => 'Procent';
 
   @override
-  String get percentageModeTax => 'TVA (fără/cu)';
+  String get percentageModeTax => 'TVA';
 
   @override
   String get percentageModeDiscount => 'Reducere';

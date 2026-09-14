@@ -310,7 +310,7 @@
   "ipv6ErrorInvalidMacFormat": "Nieprawidłowy format adresu MAC.",
   "percentageTitle": "Kalkulator procentów",
   "menuPercentage": "Procent",
-  "percentageModeTax": "VAT (netto/brutto)",
+  "percentageModeTax": "VAT",
   "percentageModeDiscount": "Rabat",
   "percentageModeIncrease": "Podwyżka",
   "percentageModeTip": "Napiwek",

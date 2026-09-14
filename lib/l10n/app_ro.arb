@@ -310,7 +310,7 @@
   "ipv6ErrorInvalidMacFormat": "Format de adresă MAC nevalid.",
   "percentageTitle": "Calculator de procente",
   "menuPercentage": "Procent",
-  "percentageModeTax": "TVA (fără/cu)",
+  "percentageModeTax": "TVA",
   "percentageModeDiscount": "Reducere",
   "percentageModeIncrease": "Creștere",
   "percentageModeTip": "Bacșiș",

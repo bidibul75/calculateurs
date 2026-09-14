@@ -1527,7 +1527,7 @@ abstract class AppLocalizations {
   /// No description provided for @percentageModeTax.
   ///
   /// In en, this message translates to:
-  /// **'Tax (ex/incl.)'**
+  /// **'Tax'**
   String get percentageModeTax;
 
   /// No description provided for @percentageModeDiscount.

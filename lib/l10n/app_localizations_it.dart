@@ -742,7 +742,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get menuPercentage => 'Percentuale';
 
   @override
-  String get percentageModeTax => 'IVA (imponibile/lordo)';
+  String get percentageModeTax => 'IVA';
 
   @override
   String get percentageModeDiscount => 'Sconto';

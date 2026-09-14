@@ -310,7 +310,7 @@
   "ipv6ErrorInvalidMacFormat": "Geçersiz MAC adresi biçimi.",
   "percentageTitle": "Yüzde hesaplayıcı",
   "menuPercentage": "Yüzde",
-  "percentageModeTax": "KDV (hariç/dahil)",
+  "percentageModeTax": "KDV",
   "percentageModeDiscount": "İndirim",
   "percentageModeIncrease": "Artış",
   "percentageModeTip": "Bahşiş",

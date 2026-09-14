@@ -746,7 +746,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuPercentage => 'Pourcentage';
 
   @override
-  String get percentageModeTax => 'TVA (HT/TTC)';
+  String get percentageModeTax => 'TVA';
 
   @override
   String get percentageModeDiscount => 'Réduction';
@@ -764,10 +764,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get percentageTaxGross => 'Prix TTC';
 
   @override
-  String get percentageTaxRate => 'Taux de TVA';
+  String get percentageTaxRate => 'Taux TVA';
 
   @override
-  String get percentageTaxAmount => 'Montant de TVA';
+  String get percentageTaxAmount => 'Montant TVA';
 
   @override
   String get percentageOriginal => 'Prix d\'origine';
@@ -776,25 +776,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get percentageFinal => 'Prix final';
 
   @override
-  String get percentageDiscountRate => 'Taux de réduction';
+  String get percentageDiscountRate => 'Taux réduction';
 
   @override
-  String get percentageDiscountAmount => 'Montant de la réduction';
+  String get percentageDiscountAmount => 'Montant réduction';
 
   @override
   String get percentageIncreaseRate => 'Taux d\'augmentation';
 
   @override
-  String get percentageIncreaseAmount => 'Montant de l\'augmentation';
+  String get percentageIncreaseAmount => 'Montant augmentation';
 
   @override
   String get percentageBill => 'Montant de l\'addition';
 
   @override
-  String get percentageTipRate => 'Taux de pourboire';
+  String get percentageTipRate => 'Taux pourboire';
 
   @override
-  String get percentageTipAmount => 'Montant du pourboire';
+  String get percentageTipAmount => 'Montant pourboire';
 
   @override
   String get percentageTotal => 'Total avec pourboire';

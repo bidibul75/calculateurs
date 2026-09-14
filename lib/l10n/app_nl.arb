@@ -311,7 +311,7 @@
   "ipv6ErrorInvalidMacFormat": "Ongeldig MAC-adresformaat.",
   "percentageTitle": "Percentagecalculator",
   "menuPercentage": "Percentage",
-  "percentageModeTax": "btw (excl./incl.)",
+  "percentageModeTax": "BTW",
   "percentageModeDiscount": "Korting",
   "percentageModeIncrease": "Verhoging",
   "percentageModeTip": "Fooi",

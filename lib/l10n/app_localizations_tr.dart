@@ -742,7 +742,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get menuPercentage => 'Yüzde';
 
   @override
-  String get percentageModeTax => 'KDV (hariç/dahil)';
+  String get percentageModeTax => 'KDV';
 
   @override
   String get percentageModeDiscount => 'İndirim';

@@ -740,7 +740,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get menuPercentage => 'Procent';
 
   @override
-  String get percentageModeTax => 'VAT (netto/brutto)';
+  String get percentageModeTax => 'VAT';
 
   @override
   String get percentageModeDiscount => 'Rabat';

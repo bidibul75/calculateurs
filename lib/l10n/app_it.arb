@@ -315,7 +315,7 @@
   "ipv6ErrorInvalidMacFormat": "Formato dell'indirizzo MAC non valido.",
   "percentageTitle": "Calcolatore percentuali",
   "menuPercentage": "Percentuale",
-  "percentageModeTax": "IVA (imponibile/lordo)",
+  "percentageModeTax": "IVA",
   "percentageModeDiscount": "Sconto",
   "percentageModeIncrease": "Aumento",
   "percentageModeTip": "Mancia",
