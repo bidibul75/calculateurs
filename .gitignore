@@ -33,12 +33,11 @@ firebase_options.dart
 # Sensitive configuration files
 # ------------------------------
 # Android signing keys
-**/android/key.properties
+**/key.properties
 # Local paths (may contain sensitive info)
 **/android/local.properties
 **/ios/Runner/GoogleService-Info.plist
 # May contain private dependencies
-**/ios/Podfile.lock
 
 # Certificates and credentials
 # -----------------------------
@@ -73,12 +72,6 @@ unlinked_spec.ds
 .packages.generated
 .metadata
 
-/android/
-/ios/
-/linux/
-/macos/
-/web/
-/windows/
 # ========================================
 # Android related
 # ========================================
