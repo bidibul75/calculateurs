@@ -226,7 +226,12 @@ class CalculatorLogic {
       final r = Rational.parse(input);
       Rational result;
 
-      Decimal sqrtDecimal(Decimal value, {int scale = 30, int maxIterations = 50}) {
+      Decimal sqrtDecimal(
+        Decimal value, {
+        int scale = 30,
+        int maxIterations = 50,
+        Decimal? initial,
+      }) {
         if (value == Decimal.zero) return Decimal.zero;
         if (value < Decimal.zero) throw Exception("Negative sqrt");
 
@@ -234,8 +239,8 @@ class CalculatorLogic {
         Decimal divDecimal(Decimal a, Decimal b) => (a / b).toDecimal(scaleOnInfinitePrecision: scale);
 
         final two = Decimal.fromInt(2);
-        Decimal x = divDecimal(value, two);
-        if (x == Decimal.zero) {
+        Decimal x = initial ?? divDecimal(value, two);
+        if (x <= Decimal.zero) {
           x = Decimal.one;
         }
 
@@ -260,36 +265,47 @@ class CalculatorLogic {
           result = Rational.one / r;
           break;
         case "√":
+          if (r < Rational.zero) {
+            return 'Error SQRT Of A Negative Number';
+          }
           final exactSqrt = tryExactSqrtRational(r);
           if (exactSqrt != null) {
-            return exactSqrt.toDecimal(scaleOnInfinitePrecision: _internalPrecision).toSciPreciseFormattedString();
+            return formatPowerResult(exactSqrt);
           }
-          // Try to use built-in sqrt first for rational results.
-          // If input is irrational, fall back to Newton-Raphson for precision.
-          final Decimal inputDecimal = Decimal.parse(input);
-          final double inputDouble = double.parse(input);
+          // Prefer Decimal from the already-parsed Rational so scientific inputs
+          // keep all digits encoded in the mantissa (not a re-truncated double).
+          final Decimal inputDecimal = r.toDecimal(scaleOnInfinitePrecision: _internalPrecision);
+          final double inputDouble = r.toDouble();
 
-          if (inputDouble >= 0) {
+          if (inputDouble >= 0 && inputDouble.isFinite) {
             final double sqrtDouble = math.sqrt(inputDouble);
 
-            // Check if sqrt is finite and rational (perfect result)
+            // Small exact-looking double roots (e.g. √6.25 = 2.5).
             if (sqrtDouble.isFinite) {
-              // Test if sqrtDouble is exactly representable as a rational with limited denominator
-              // We test if (sqrt * 10^6) is close to an integer (rational with max 6 decimals)
               final scaled = sqrtDouble * 1e6;
               final roundedScaled = scaled.round();
-              if ((scaled - roundedScaled).abs() < 1e-9 && (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
-                // Rational result: use the double result converted to Decimal
-                // This handles both integers (âˆš9 = 3) and decimals (âˆš6.25 = 2.5)
+              if ((scaled - roundedScaled).abs() < 1e-9 &&
+                  (sqrtDouble * sqrtDouble - inputDouble).abs() < 1e-15) {
                 return Decimal.parse(sqrtDouble.toString()).toSciPreciseFormattedString();
               }
             }
-          } else {
-            return 'Error SQRT Of A Negative Number';
+
+            // Newton needs a close seed: x0 = value/2 is far too large for big
+            // magnitudes and may not converge within the iteration budget
+            // (observed: √(~1e42) → ~4e27 instead of ~3e21).
+            if (sqrtDouble.isFinite && sqrtDouble > 0) {
+              final Decimal seed = Decimal.parse(sqrtDouble.toString());
+              final Decimal sqrtResult = sqrtDecimal(
+                inputDecimal,
+                scale: 30,
+                maxIterations: 80,
+                initial: seed,
+              );
+              return sqrtResult.toSciPreciseFormattedString();
+            }
           }
 
-          // Fall back to Newton-Raphson for irrational/complex cases
-          final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30);
+          final Decimal sqrtResult = sqrtDecimal(inputDecimal, scale: 30, maxIterations: 80);
           return sqrtResult.toSciPreciseFormattedString();
         case "%":
           result = r / Rational.fromInt(100);

@@ -572,10 +572,17 @@ class CalculatorController extends ChangeNotifier {
   void _handleUnary(String op) {
     String history = "";
     if (_state.output.isNotEmpty) {
-      String inputClean = _state.output.toCleanMathString;
-      String result = CalculatorLogic.calculateUnary(input: inputClean, operation: op);
-      final inputValue = _state.currentInputValue ?? _tryParseRational(inputClean);
+      // Prefer the exact stored rational over the truncated display string.
+      // Re-parsing scientific output (15 sig digits) loses low-order digits and
+      // breaks square ↔ square-root round-trips on large integers.
+      final inputValue = _state.currentInputValue ?? _tryParseRational(_state.output.toCleanMathString);
+      final inputClean = inputValue != null
+          ? _toCleanFromRational(inputValue)
+          : _state.output.toCleanMathString;
       final unaryExactValue = inputValue == null ? null : _computeExactUnary(input: inputValue, operation: op);
+      String result = unaryExactValue != null
+          ? _formatExactRationalAsDisplay(unaryExactValue)
+          : CalculatorLogic.calculateUnary(input: inputClean, operation: op);
       Rational? finalExactValue = unaryExactValue;
 
       if (_state.history.containsOperator && !_state.history.contains("=")) {
@@ -591,11 +598,16 @@ class CalculatorController extends ChangeNotifier {
             finalExactValue = _computeExactBinary(left: leftValue, right: unaryExactValue, operation: _state.operation);
           }
         }
-        result = CalculatorLogic.calculateResult(
-          num1: _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1.toCleanMathString,
-          num2: result.toCleanMathString,
-          operation: _state.operation,
-        );
+        final unaryForBinary = unaryExactValue != null
+            ? _toCleanFromRational(unaryExactValue)
+            : result.toCleanMathString;
+        result = finalExactValue != null
+            ? _formatExactRationalAsDisplay(finalExactValue)
+            : CalculatorLogic.calculateResult(
+                num1: _state.num1Value != null ? _toCleanFromRational(_state.num1Value!) : _state.num1.toCleanMathString,
+                num2: unaryForBinary,
+                operation: _state.operation,
+              );
       }
 
       if (_state.history.contains("=")) {

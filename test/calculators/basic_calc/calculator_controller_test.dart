@@ -1,4 +1,5 @@
 import 'package:calculators/calculators/basic_calc/controllers/calculator_controller.dart';
+import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -414,5 +415,56 @@ void main() {
     controller.onButtonPressed('M-');
     expect(controller.state.memory, Rational.zero);
     expect(controller.memoryDisplay(), isEmpty);
+  });
+
+  test('square then square-root round-trip keeps exact 22^(2^n) chain', () {
+    final controller = CalculatorController();
+    Rational expected = Rational.fromInt(22);
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('2');
+    expect(controller.state.currentInputValue, expected);
+
+    // Four successive squares: 22 -> 484 -> 234256 -> 54875873536 -> 22^16
+    for (var i = 0; i < 4; i++) {
+      controller.onButtonPressed('x²');
+      expected = expected * expected;
+      expect(controller.state.currentInputValue, expected);
+    }
+
+    // Four successive square roots must recover 22.
+    for (var i = 0; i < 4; i++) {
+      controller.onButtonPressed('√');
+      expected = CalculatorLogic.tryExactSqrtRational(expected)!;
+      expect(controller.state.currentInputValue, expected);
+    }
+
+    expect(controller.state.currentInputValue, Rational.fromInt(22));
+    expect(controller.state.output, '22');
+  });
+
+  test('continued squares beyond double mantissa stay exact in memory', () {
+    final controller = CalculatorController();
+    Rational expected = Rational.fromInt(22);
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('2');
+
+    // Six squares reach 22^64 (~86 digits): display is scientific, exact stays Rational.
+    for (var i = 0; i < 6; i++) {
+      controller.onButtonPressed('x²');
+      expected = expected * expected;
+      expect(controller.state.currentInputValue, expected);
+    }
+
+    expect(controller.state.output.contains('E+'), isTrue);
+
+    for (var i = 0; i < 6; i++) {
+      controller.onButtonPressed('√');
+      expected = CalculatorLogic.tryExactSqrtRational(expected)!;
+      expect(controller.state.currentInputValue, expected);
+    }
+
+    expect(controller.state.output, '22');
   });
 }

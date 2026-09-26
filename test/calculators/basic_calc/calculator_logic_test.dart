@@ -175,6 +175,28 @@ void main() {
 
       expect(exact, Rational.fromInt(-2));
     });
+
+    test('exact square-root recovers perfect large integer squares', () {
+      final base = Rational.parse('3011361496339065143296');
+      final squared = base * base;
+      expect(CalculatorLogic.tryExactSqrtRational(squared), base);
+
+      final result = CalculatorLogic.calculateUnary(
+        input: squared.numerator.toString(),
+        operation: '√',
+      );
+      expect(result.toCleanMathString, contains('3.01136149633907E+21'));
+    });
+
+    test('newton sqrt stays near double seed for huge non-perfect squares', () {
+      // Truncated scientific form of 22^32; not a perfect square after rounding.
+      const input = '9.06829806163348E+42';
+      final result = CalculatorLogic.calculateUnary(input: input, operation: '√');
+      final value = double.parse(result.toCleanMathString);
+      // Must be ~3.011e21 — not the failed-Newton artifact ~4.027e27.
+      expect(value, greaterThan(3e21));
+      expect(value, lessThan(4e21));
+    });
   });
 }
 
