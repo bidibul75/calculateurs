@@ -15,7 +15,7 @@ class CalculatorLogic {
 
   static final BigInt _bigIntZero = BigInt.zero;
   static final BigInt _bigIntOne = BigInt.one;
-  static final BigInt _bigIntTwo = BigInt.from(2);
+  // static final BigInt _bigIntTwo = BigInt.from(2);
 
   static String _canonicalBinaryOperator(String operation) {
     if (operation == '*' || operation == '×') {

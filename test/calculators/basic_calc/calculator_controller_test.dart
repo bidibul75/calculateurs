@@ -1,5 +1,6 @@
 import 'package:calculators/calculators/basic_calc/controllers/calculator_controller.dart';
 import 'package:calculators/calculators/basic_calc/services/calculator_logic.dart';
+import 'package:calculators/utils/extensions/extensions.dart';
 import 'package:calculators/utils/i18n/local_number_symbols.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -466,5 +467,54 @@ void main() {
     }
 
     expect(controller.state.output, '22');
+  });
+
+  test('backspace after decimal digit keeps trailing separator without crashing display', () {
+    final controller = CalculatorController();
+    final symbols = GetIt.I<LocalNumberSymbols>();
+
+    controller.onButtonPressed('0');
+    controller.onButtonPressed(symbols.decimalSep);
+    controller.onButtonPressed('5');
+    controller.onButtonPressed('⌫');
+
+    expect(controller.state.currentInput, '0${symbols.decimalSep}');
+    expect(controller.state.output, '0${symbols.decimalSep}');
+    expect(controller.isLastClicNumber, isTrue);
+    // UI display path must remain safe even if formatRound is used.
+    expect(() => controller.state.output.formatRound(), returnsNormally);
+    expect(controller.state.output.formatRound(), '0${symbols.decimalSep}');
+  });
+
+  test('backspace removes digits from math value and restores thousand separators', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('3');
+    controller.onButtonPressed('4');
+    expect(controller.state.currentInput, '1,234');
+
+    controller.onButtonPressed('⌫');
+    expect(controller.state.currentInput, '123');
+    expect(controller.state.output, '123');
+    expect(controller.isLastClicNumber, isTrue);
+  });
+
+  test('backspace on scientific result clears entry instead of mangling it', () {
+    final controller = CalculatorController();
+
+    controller.onButtonPressed('2');
+    controller.onButtonPressed('x^y');
+    controller.onButtonPressed('1');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('0');
+    controller.onButtonPressed('=');
+    expect(controller.state.output.toUpperCase().contains('E'), isTrue);
+
+    controller.onButtonPressed('⌫');
+    expect(controller.state.currentInput, isEmpty);
+    expect(controller.state.output, '0');
+    expect(() => controller.state.output.formatRound(), returnsNormally);
   });
 }

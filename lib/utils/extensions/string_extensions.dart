@@ -308,10 +308,16 @@ extension StringExtensions on String {
     if (toUpperCase().contains('E')) return this;
     if (!contains('.')) return this;
 
+    // Preserve incomplete input like "0." / "12." (still typing decimals).
+    if (endsWith('.')) return this;
+
     String s = removeTrailingZeros(isCleanMathString: true);
 
+    // removeTrailingZeros may strip a trailing dot ("0." -> "0").
+    if (!s.contains('.')) return s;
+
     final List<String> l = s.split('.');
-    if (l[1].length <= limit) return s;
+    if (l.length < 2 || l[1].isEmpty || l[1].length <= limit) return s;
 
     if (limit == 0) {
       if (int.parse(l[1][0]) >= 5) {
@@ -337,9 +343,25 @@ extension StringExtensions on String {
     // Capture ≈ before toCleanMathString strips it for math parsing.
     final hadApprox = trimLeft().startsWith('≈');
     String s = toCleanMathString;
-    // Scientific results stay compact; localize via Decimal + LocalNumberSymbols.
+    // Incomplete scientific fragments (e.g. after backspace) must not crash UI.
     if (s.toUpperCase().contains('E')) {
-      final localized = DecimalFormatting.localizeCleanScientific(s);
+      try {
+        final localized = DecimalFormatting.localizeCleanScientific(s);
+        return hadApprox ? '≈ $localized' : localized;
+      } catch (_) {
+        return this;
+      }
+    }
+    // Incomplete decimals while typing ("0." / "12.") stay visible.
+    if (s.endsWith('.')) {
+      final symbols = _safeLocalNumberSymbols();
+      final head = s.substring(0, s.length - 1);
+      if (head.isEmpty || head == '-' || head == '+') {
+        final kept = head == '-' ? '-0${symbols.decimalSep}' : '0${symbols.decimalSep}';
+        return hadApprox ? '≈ $kept' : kept;
+      }
+      final formattedHead = head.format;
+      final localized = '$formattedHead${symbols.decimalSep}';
       return hadApprox ? '≈ $localized' : localized;
     }
     s = s.roundString(limit: limit);

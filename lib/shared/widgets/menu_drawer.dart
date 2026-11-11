@@ -8,6 +8,7 @@ import 'package:calculators/shared/theme/theme_dialog.dart' as shared_theme_dial
 import 'package:calculators/shared/theme/theme_manager.dart' as shared_theme;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Shows the "Who am I" dialog
@@ -283,16 +284,29 @@ class MenuDrawer extends StatelessWidget {
       builder: (sheetContext) {
         final menuList = ListView(
           padding: EdgeInsets.only(top: isMobileSheet ? 8 : 0, bottom: isMobileSheet ? 16 : 0),
-          children: _buildMenuTiles(
-            context,
-            sheetContext,
-            l10n,
-            healthModules,
-            conversionModules,
-            mathModules,
-            financeModules,
-            ipToolsModules,
-          ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/logos/logo.svg',
+                  height: 16,
+                  fit: BoxFit.contain,
+                  semanticsLabel: l10n.appTitle,
+                ),
+              ),
+            ),
+            ..._buildMenuTiles(
+              context,
+              sheetContext,
+              l10n,
+              healthModules,
+              conversionModules,
+              mathModules,
+              financeModules,
+              ipToolsModules,
+            ),
+          ],
         );
 
         return SafeArea(

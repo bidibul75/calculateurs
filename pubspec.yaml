@@ -34,6 +34,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   rational: ^2.2.3
   decimal: ^3.2.4
+  flutter_svg: ^2.3.0
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
@@ -86,6 +87,7 @@ flutter:
   assets:
     - assets/textures/brushed_metal.jpg
     - assets/textures/bady-abbas-5HI7Ea3yD-w-unsplash.jpg
+    - assets/logos/logo.svg
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

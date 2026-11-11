@@ -264,7 +264,7 @@ class _AverageScreenState extends State<AverageScreen> {
                                                 SizedBox(
                                                   width: 28,
                                                   child: Text(
-                                                    '${index + 1} /',
+                                                    '${index + 1} )',
                                                     style: TextStyle(
                                                       color: _themeManager.displayTextColor.withAlpha(160),
                                                       fontSize: 12,

@@ -274,8 +274,15 @@ class CalculatorController extends ChangeNotifier {
       case "⌫":
         // Avoids to use Error message
         if (_state.output.toCleanMathString.isNotANumber) break;
-        _setLastAction(_LastAction.none);
-        _handleBackspace();
+        final wasEditingNumber = isLastClicNumber;
+        _handleBackspace(wasEditingNumber: wasEditingNumber);
+        // Keep number mode so trailing decimals ("0.") stay visible while editing.
+        if (_state.currentInput.isNotEmpty &&
+            (wasEditingNumber || !_looksLikeCompactResult(_state.currentInput))) {
+          _setLastAction(_LastAction.number);
+        } else {
+          _setLastAction(_LastAction.none);
+        }
         break;
 
       default: // Digits and dot
@@ -649,16 +656,45 @@ class CalculatorController extends ChangeNotifier {
     }
   }
 
-  void _handleBackspace() {
-    if (_state.currentInput.isNotEmpty) {
-      String newVal = _state.currentInput.substring(0, _state.currentInput.length - 1);
-      if (newVal.isEmpty || newVal == "-") newVal = "";
+  bool _looksLikeCompactResult(String value) {
+    final raw = value.trimLeft();
+    if (raw.startsWith('≈')) return true;
+    final clean = raw.toCleanMathString.toUpperCase();
+    return clean.contains('E');
+  }
+
+  void _handleBackspace({required bool wasEditingNumber}) {
+    if (_state.currentInput.isEmpty) return;
+
+    // Scientific / approximate results are not digit buffers: clear instead of
+    // character-mangling (which produced invalid values and crashed the UI).
+    if (!wasEditingNumber && _looksLikeCompactResult(_state.currentInput)) {
       _state = _state.copyWith(
-        currentInput: newVal,
-        output: newVal.isEmpty ? "0" : newVal,
-        currentInputValue: _tryParseRational(newVal),
+        currentInput: "",
+        output: "0",
+        currentInputValue: null,
       );
+      return;
     }
+
+    // Delete on the math string, then re-format (keeps thousand separators correct).
+    String math = _state.currentInput.toCleanMathString;
+    if (math.isEmpty) {
+      _state = _state.copyWith(currentInput: "", output: "0", currentInputValue: null);
+      return;
+    }
+
+    String newMath = math.substring(0, math.length - 1);
+    if (newMath.isEmpty || newMath == "-" || newMath == "+" || newMath == ".") {
+      newMath = "";
+    }
+
+    final display = newMath.isEmpty ? "" : _formatInputForDisplay(newMath);
+    _state = _state.copyWith(
+      currentInput: display,
+      output: display.isEmpty ? "0" : display,
+      currentInputValue: _tryParseRational(newMath),
+    );
   }
 
   /// Convert a math string (e.g., "1000.5") to locale format (e.g., "1 000,5" in fr-FR)
