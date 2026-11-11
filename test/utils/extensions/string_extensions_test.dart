@@ -254,6 +254,18 @@ void main() {
       expect('123456'.formatRound(limit: 5), "123,456");
       expect('10,123.456'.formatRound(limit: 2), "≈ 10,123.46");
     });
+
+    test('preserves trailing decimal without RangeError', () {
+      expect('0.'.formatRound(), '0.');
+      expect('12.'.formatRound(), '12.');
+      expect(() => '0.'.roundString(), returnsNormally);
+    });
+
+    test('tolerates incomplete scientific notation', () {
+      expect(() => '1E'.formatRound(), returnsNormally);
+      expect(() => '1E+'.formatRound(), returnsNormally);
+      expect(() => '≈ 1.23E+'.formatRound(), returnsNormally);
+    });
   });
 
   group('StringExtensions.isANumber', () {

@@ -92,14 +92,21 @@ extension DecimalFormatting on Decimal {
   /// Localizes a clean scientific math string via LocalNumberSymbols
   /// (mantissa through [toPreciseFormattedString]).
   static String localizeCleanScientific(String sciValue) {
-    final normalized = sciValue.replaceAll('e', 'E');
+    final normalized = sciValue.replaceAll('e', 'E').trim();
     final parts = normalized.split('E');
     if (parts.length != 2) {
       return Decimal.parse(normalized).toPreciseFormattedString;
     }
-    final part1 = Decimal.parse(parts[0]);
-    final part2 = Decimal.parse(parts[1]);
-    final posExp = parts[1].trim().startsWith('+');
+    final mantissa = parts[0].trim();
+    final expRaw = parts[1].trim();
+    // Guard incomplete fragments from backspace ("1.2E", "1.2E+", "E+3").
+    if (mantissa.isEmpty || mantissa == '-' || mantissa == '+' ||
+        expRaw.isEmpty || expRaw == '+' || expRaw == '-') {
+      throw FormatException('Incomplete scientific notation', sciValue);
+    }
+    final part1 = Decimal.parse(mantissa);
+    final part2 = Decimal.parse(expRaw);
+    final posExp = expRaw.startsWith('+');
     return '${part1.toPreciseFormattedString}E${posExp ? '+' : ''}${part2.toString().trim()}';
   }
 
