@@ -2,6 +2,7 @@
 import 'package:calculators/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'theme_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// Shows a dialog to customize shared theme settings.
 void showThemeDialog(BuildContext context, ThemeManager themeManager) {
@@ -25,6 +26,10 @@ void showThemeDialog(BuildContext context, ThemeManager themeManager) {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
+                      SvgPicture.asset(
+                        'assets/logo.svg',
+                        height: 16,
+                      ),
                       _BackgroundImageOption(
                         assetPath: ThemeManager.wallpaperAssetPath,
                         label: l10n.themeBackgroundWallpaper,
