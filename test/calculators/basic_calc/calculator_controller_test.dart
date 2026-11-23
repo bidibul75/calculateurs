@@ -375,16 +375,17 @@ void main() {
     expect(controller.state.output, '100');
     
     controller.onButtonPressed('0');
-    // Should display with French thousand separator: "1 000"
-    expect(controller.state.output, '1 000', reason: 'Large number should have thousand separator in fr-FR');
+    final sep = symbols.thousandsSep; // fr: U+202F narrow NBSP
+    // Should display with French thousand separator (narrow space, same as M+/ops path)
+    expect(controller.state.output, '1${sep}000', reason: 'Large number should have thousand separator in fr-FR');
 
     // Add decimal
     controller.onButtonPressed(symbols.decimalSep);
-    expect(controller.state.output, '1 000,', reason: 'Decimal point should appear immediately');
+    expect(controller.state.output, '1${sep}000,', reason: 'Decimal point should appear immediately');
     
     controller.onButtonPressed('5');
-    // Should display "1 000,5"
-    expect(controller.state.output, '1 000,5', reason: 'Decimal number should show with both separators');
+    // Should display "1 000,5" with locale group separator
+    expect(controller.state.output, '1${sep}000,5', reason: 'Decimal number should show with both separators');
   });
 
   test('stores and displays huge exact power via M+/MR without full digit dump', () {
