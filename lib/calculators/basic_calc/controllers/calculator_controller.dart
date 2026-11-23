@@ -718,11 +718,9 @@ class CalculatorController extends ChangeNotifier {
     bool isNegative = integerPart.startsWith('-');
     String absIntegerPart = isNegative ? integerPart.substring(1) : integerPart;
 
-    // Add thousands separator to integer part
-    // Normalize non-breaking spaces: FR uses U+202F (narrow), some use U+00A0 (standard)
-    String sep = symbols.thousandsSep
-        .replaceAll('\u00A0', ' ')  // NO-BREAK SPACE
-        .replaceAll('\u202F', ' '); // NARROW NO-BREAK SPACE
+    // Keep locale group sep as-is (fr: U+202F narrow NBSP; fr_CA: U+00A0).
+    // Do not widen to U+0020 — that made live input look looser than M+/ops results.
+    final sep = symbols.thousandsSep;
 
     final formattedInteger = absIntegerPart.replaceAllMapped(
       RegExp(r'\B(?=(\d{3})+(?!\d))'),

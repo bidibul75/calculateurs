@@ -248,10 +248,13 @@ extension StringExtensions on String {
       s = s.substring(1).trimLeft();
     }
 
-    // 1. Remove thousand separators (spaces)
+    // 1. Remove thousand separators (locale group sep + common space variants)
     s = s.replaceAll(symbols.thousandsSep, '');
-    // Beware of non-breaking spaces sometimes used by Intl
-    s = s.replaceAll('\u00A0', '').replaceAll(' ', '');
+    // Intl may use NBSP (U+00A0), narrow NBSP (U+202F), or plain space
+    s = s
+        .replaceAll('\u00A0', '')
+        .replaceAll('\u202F', '')
+        .replaceAll(' ', '');
 
     // 2. Replace comma with dot
     s = s.replaceAll(symbols.decimalSep, '.');
